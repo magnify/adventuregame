@@ -28,6 +28,8 @@ jobs:
       # (npm run assets) is a local/offline step, not run in CI.
       - run: npm run build
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
