@@ -1,0 +1,18 @@
+node_modules/
+dist/
+
+# Source asset kits are too large to commit (100MB+) and are CC0/free to
+# re-download; see assets-src/README.md for where to get them.
+assets-src/*.zip
+assets-src/kaykit*/
+assets-src/quaternius*/
+assets-src/nature/
+assets-src/kaykit-*/
+
+# keep the two packed inputs the asset pipeline actually reads
+!assets-src/nature.glb
+!assets-src/rogue.glb
+!assets-src/README.md
+
+.DS_Store
+*.log

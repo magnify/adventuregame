@@ -1,0 +1,25 @@
+{
+  "name": "three-suns",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A tap-to-explore 3D story for children, built with three.js.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "assets": "node tools/pack-assets.mjs",
+    "test": "node tests/smoke.spec.mjs"
+  },
+  "dependencies": {
+    "three": "0.185.1",
+    "meshoptimizer": "^1.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.6",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "sharp": "^0.35.4"
+  }
+}

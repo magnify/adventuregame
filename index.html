@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Three Suns</title>
+
+  <meta name="description" content="A tap-to-explore 3D story for children." />
+
+  <!-- iPad/iPhone home-screen behaviour -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Three Suns" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#101830" />
+
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="icon" href="/icons/icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #101830; overflow: hidden; }
+    #view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+    #loading {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: #101830; color: #FFD98A; font-family: 'Gaegu', sans-serif; font-size: 1.5rem;
+      transition: opacity 0.6s ease;
+      z-index: 10;
+    }
+    #loading.off { opacity: 0; pointer-events: none; }
+    #ui {
+      position: fixed; inset: 0; pointer-events: none; z-index: 5;
+      font-family: 'Gaegu', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="view"></canvas>
+  <div id="loading">Loading the world…</div>
+  <div id="ui"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
