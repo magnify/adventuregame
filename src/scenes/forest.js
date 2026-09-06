@@ -78,18 +78,25 @@ export function forest(ctx) {
     else if (dk < 0.65) name = r < 0.35 ? 'TwistedTree_2' : r < 0.6 ? 'TwistedTree_4' : r < 0.8 ? 'CommonTree_3' : 'DeadTree_2';
     else name = r < 0.4 ? 'DeadTree_4' : r < 0.7 ? 'TwistedTree_4' : r < 0.85 ? 'DeadTree_2' : 'TwistedTree_2';
     const big = /Twisted|Dead/.test(name); if (big && off < 11.5) continue;
-    scatter.place(name, q.x, q.z, rnd() * Math.PI * 2, (big ? 0.45 : 0.75) + rnd() * 0.35 + dk * 0.15);
+    const s = (big ? 0.45 : 0.75) + rnd() * 0.35 + dk * 0.15;
+    if (path.distanceTo(q) - (big ? 5.3 : 2.3) * s < 5.5) continue; // keep canopies out of the camera corridor
+    scatter.place(name, q.x, q.z, rnd() * Math.PI * 2, s);
   }
   for (let i = 0; i < 480 * tier.density; i++) {
     const t = rnd(); const p = path.point(t), n = path.side(t); const dk = darkness(t);
     const q = p.clone().addScaledVector(n, (rnd() < 0.5 ? -1 : 1) * (1.4 + rnd() * 4.5)); const r = rnd(); let name;
-    if (dk < 0.35) name = r < 0.4 ? 'Grass_Common_Tall' : r < 0.6 ? 'Flower_3_Group' : r < 0.75 ? 'Clover_1' : r < 0.9 ? 'Bush_Common' : 'Plant_1';
+    if (dk < 0.35) name = r < 0.4 ? 'Grass_Common_Tall' : r < 0.6 ? 'Flower_3_Group' : r < 0.78 ? 'Clover_1' : r < 0.86 ? 'Bush_Common' : 'Plant_1';
     else if (dk < 0.7) name = r < 0.4 ? 'Grass_Wispy_Short' : r < 0.65 ? 'Fern_1' : r < 0.8 ? 'Mushroom_Common' : r < 0.9 ? 'Rock_Medium_1' : 'Bush_Common';
     else name = r < 0.35 ? 'Fern_1' : r < 0.6 ? 'Mushroom_Laetiporus' : r < 0.75 ? 'Mushroom_Common' : r < 0.9 ? 'Rock_Medium_2' : 'Grass_Wispy_Short';
     scatter.place(name, q.x, q.z, rnd() * Math.PI * 2, 0.6 + rnd() * 0.8);
   }
   for (let i = 0; i < 40; i++) { const t = rnd() * 0.5; const q = path.point(t).addScaledVector(path.side(t), (rnd() < 0.5 ? -1 : 1) * (0.9 + rnd() * 0.5)); scatter.place('Pebble_Round_1', q.x, q.z, rnd() * 6, 0.5 + rnd() * 0.6); }
-  for (let i = 0; i < 40; i++) { const t = rnd(); const q = wide.point(t).addScaledVector(wide.side(t), (rnd() < 0.5 ? -1 : 1) * (2.6 + rnd() * 5)); const r = rnd(); scatter.place(r < 0.5 ? 'CommonTree_1' : r < 0.8 ? 'Flower_3_Group' : 'Bush_Common', q.x, q.z, rnd() * 6, 0.8 + rnd() * 0.6); }
+  for (let i = 0; i < 40; i++) {
+    const t = rnd(); const q = wide.point(t).addScaledVector(wide.side(t), (rnd() < 0.5 ? -1 : 1) * (2.6 + rnd() * 5)); const r = rnd();
+    const name = r < 0.5 ? 'CommonTree_1' : r < 0.8 ? 'Flower_3_Group' : 'Bush_Common';
+    if (name === 'CommonTree_1' && path.distanceTo(q) < 8) continue;
+    scatter.place(name, q.x, q.z, rnd() * 6, 0.8 + rnd() * 0.6);
+  }
   scatter.build(scene, tier, (name, im) => {
     if (name === 'Mushroom_Laetiporus') { im.material = im.material.clone(); im.material.emissive = new THREE.Color('#ff9a3c'); im.material.emissiveIntensity = 0.9; im.material.emissiveMap = im.material.map; }
   });
