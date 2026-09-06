@@ -3,7 +3,7 @@
 A tap-to-explore story game for a child: a girl, a door in a tree, and the world with three suns.
 Wordless in play. Tap where she should go; things she meets talk in pictures.
 
-Plays at https://magnify.github.io/three-suns/ — add it to the home screen on an iPad.
+Plays at https://magnify.github.io/adventuregame/ — add it to the home screen on an iPad.
 
 ## Run it
 
