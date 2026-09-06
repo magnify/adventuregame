@@ -96,7 +96,6 @@ export class Forest extends Phaser.Scene {
     g.addColorStop(0, `rgb(${Object.values(mix(data.sky.bright, data.sky.dark, dk)).slice(0, 3).join(',')})`);
     g.addColorStop(1, `rgb(${Object.values(mix(data.sky.horizonBright, data.sky.horizonDark, dk)).slice(0, 3).join(',')})`);
     ctx.fillStyle = g; ctx.fillRect(0, 0, 8, 256); this.skyTex.refresh();
-    const cam = this.cameras.main; this.sky.setDisplaySize(cam.worldView.width + 8, cam.worldView.height + 8);
   }
 
   update(_, ms) {
@@ -111,7 +110,7 @@ export class Forest extends Phaser.Scene {
     const view = cam.width / cam.zoom; const want = this.girlX - view * 0.42;
     cam.scrollX = Phaser.Math.Linear(cam.scrollX, Phaser.Math.Clamp(want, 0, data.width - view), Math.min(1, dt * 2.5));
     cam.scrollY = data.height - cam.height / cam.zoom;
-    const wv = cam.worldView; this.sky.setPosition(wv.x - 4, wv.y - 4); this.mist.setPosition(wv.x, wv.y).setSize(wv.width, wv.height);
+    const wv = cam.worldView; this.sky.setPosition(wv.x - 4, wv.y - 4).setDisplaySize(wv.width + 8, wv.height + 8); this.mist.setPosition(wv.x, wv.y).setSize(wv.width, wv.height);
     if (this.debug) this.debug.setPosition(wv.x + 8, wv.y + 8);
     // light
     const dk = this.darkness(this.girlX);
