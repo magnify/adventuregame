@@ -3,23 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "A tap-to-explore 3D story for children, built with three.js.",
+  "description": "A tap-to-explore story game: a girl, a door in a tree, and the world with three suns.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "assets": "node tools/pack-assets.mjs",
+    "art": "node tools/render-art.mjs",
     "test": "node tests/smoke.spec.mjs"
   },
-  "dependencies": {
-    "three": "0.185.1",
-    "meshoptimizer": "^1.2.0"
-  },
   "devDependencies": {
-    "vite": "^7.3.6",
-    "@gltf-transform/core": "^4.5.0",
-    "@gltf-transform/extensions": "^4.5.0",
-    "@gltf-transform/functions": "^4.5.0",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.4",
+    "vite": "^7.3.6"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
   }
 }

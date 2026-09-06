@@ -1,53 +1,31 @@
 # Three Suns
 
-A tap-to-explore 3D story for children, built with [three.js](https://threejs.org/).
-Targets iPhone/iPad Safari first, laptops second. Deployed on GitHub Pages at
-https://magnify.github.io/three-suns/.
+A tap-to-explore story game for a child: a girl, a door in a tree, and the world with three suns.
+Wordless in play. Tap where she should go; things she meets talk in pictures.
 
-The story lives in [`docs/story.md`](docs/story.md) — read that first. Places
-in the game where the story doesn't say enough yet are marked **[open]** in
-that doc.
+Plays at https://magnify.github.io/three-suns/ — add it to the home screen on an iPad.
 
-## Running it
+## Run it
 
 ```
 npm install
-npm run dev       # local dev server
-npm run build     # production build to dist/
-npm run preview   # serve dist/ locally, same as production
-npm test          # headless smoke test (builds, serves, checks it loads)
+npm run art      # rasterise art/src/*.svg → public/art/*.png
+npm run dev      # local server
+npm test         # build, serve, load it in a headless browser
 ```
 
-Pushing to `main` builds and deploys to GitHub Pages automatically
-(`.github/workflows/pages.yml`).
+Pushing to `main` builds and deploys to GitHub Pages.
 
-## Project layout
+## How it's put together
 
-- `src/main.js` — entry point, hands off to `src/game/app.js`.
-- `src/game/`, `src/scenes/` — the game itself: scenes, story beats, controls.
-  Not this doc's concern — see whoever's building those for how a scene/world
-  is structured internally.
-- `public/models/` — committed, meshopt-compressed `.glb` files the game
-  loads at runtime via three's `GLTFLoader` + `MeshoptDecoder`.
-- `public/icons/`, `public/manifest.webmanifest` — home-screen/PWA bits for
-  iPad.
-- `tools/pack-assets.mjs` — the asset pipeline (see below).
-- `tests/smoke.spec.mjs` — the one automated check: build it, serve it,
-  confirm the loading screen clears and nothing throws.
+- **The story** is `docs/story.md`. It's the brief. Nothing goes in the game that isn't in it, and gaps are marked open rather than invented.
+- **Art is swappable by contract.** `docs/art-contract.md` lists every image, its size and its pivot. `art/src/` holds the current set as SVG; `art/src/manifest.json` describes it. Replace a file, keep its name and pivot, and the game doesn't know. Real drawings later go through the same door.
+- **Characters are paper puppets** (`src/game/puppet.js`): head, body, arms, legs as separate images hung on named points. The code does the walking, breathing and blinking, so any redraw keeps its life.
+- **Scenes are data.** `src/scenes/forest.json` says what the forest is made of; `src/scenes/forest.js` reads it. A new world is a new pair of files.
+- **Engine:** Phaser 3 via Vite. Progress is kept in the browser's local storage.
 
-## Adding a world/asset
+## Adding a world
 
-1. Drop the merged, pre-baked source `.glb` in `assets-src/` (see
-   `assets-src/README.md` — the *original* multi-hundred-MB kits are never
-   committed).
-2. Run `npm run assets`. This meshopt-compresses everything in `assets-src/`
-   into `public/models/`, and prints before/after sizes.
-3. Load it in game code with `GLTFLoader` + `MeshoptDecoder` (from the
-   `meshoptimizer` package) — the compressed files require the decoder to be
-   registered on the loader, plain `GLTFLoader` alone won't read them.
-4. Commit the result — `public/models/*.glb` is checked in; CI does not run
-   the asset pipeline, it just builds what's already there.
-
-## Credits
-
-See [`CREDITS.md`](CREDITS.md).
+1. Write the scene into `docs/story.md` first.
+2. List the art it needs in `docs/art-contract.md`; draw placeholders in `art/src/`; add them to the manifest; run `npm run art`.
+3. Add `src/scenes/<name>.json` and `src/scenes/<name>.js`, register the scene in `src/main.js`.

@@ -1,0 +1,286 @@
+{
+  "images": {
+    "girl/body": {
+      "width": 90,
+      "height": 110,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      },
+      "points": {
+        "neck": {
+          "x": 0.5,
+          "y": 0.05
+        },
+        "shoulder-l": {
+          "x": 0.18,
+          "y": 0.15
+        },
+        "shoulder-r": {
+          "x": 0.82,
+          "y": 0.15
+        },
+        "hip-l": {
+          "x": 0.35,
+          "y": 0.95
+        },
+        "hip-r": {
+          "x": 0.65,
+          "y": 0.95
+        }
+      }
+    },
+    "girl/head": {
+      "width": 100,
+      "height": 100,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.92
+      },
+      "points": {
+        "eyes": {
+          "x": 0.5,
+          "y": 0.55
+        }
+      }
+    },
+    "girl/eyes": {
+      "width": 40,
+      "height": 14,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "girl/eyes-shut": {
+      "width": 40,
+      "height": 14,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "girl/arm-l": {
+      "width": 26,
+      "height": 70,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.08
+      }
+    },
+    "girl/arm-r": {
+      "width": 26,
+      "height": 70,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.08
+      }
+    },
+    "girl/leg-l": {
+      "width": 26,
+      "height": 60,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.06
+      }
+    },
+    "girl/leg-r": {
+      "width": 26,
+      "height": 60,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.06
+      }
+    },
+    "barlin/body": {
+      "width": 60,
+      "height": 24,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "points": {
+        "wing-back": {
+          "x": 0.45,
+          "y": 0.4
+        },
+        "wing-front": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "hat": {
+          "x": 0.85,
+          "y": 0.2
+        }
+      }
+    },
+    "barlin/wing-back": {
+      "width": 54,
+      "height": 60,
+      "pivot": {
+        "x": 0.1,
+        "y": 0.9
+      }
+    },
+    "barlin/wing-front": {
+      "width": 54,
+      "height": 60,
+      "pivot": {
+        "x": 0.1,
+        "y": 0.9
+      }
+    },
+    "barlin/hat": {
+      "width": 30,
+      "height": 28,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/far-trees": {
+      "width": 1024,
+      "height": 500,
+      "pivot": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "forest/ground": {
+      "width": 512,
+      "height": 200,
+      "pivot": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "forest/tree-common-1": {
+      "width": 380,
+      "height": 620,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/tree-common-2": {
+      "width": 340,
+      "height": 580,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/tree-twisted-1": {
+      "width": 420,
+      "height": 700,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/tree-twisted-2": {
+      "width": 400,
+      "height": 660,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/tree-dead-1": {
+      "width": 360,
+      "height": 640,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/tree-dead-2": {
+      "width": 320,
+      "height": 600,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/bush": {
+      "width": 200,
+      "height": 120,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/fern": {
+      "width": 160,
+      "height": 110,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/flowers": {
+      "width": 180,
+      "height": 120,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/grass-tuft": {
+      "width": 90,
+      "height": 60,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/mushroom": {
+      "width": 70,
+      "height": 70,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/mushroom-glow": {
+      "width": 90,
+      "height": 80,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/rock": {
+      "width": 220,
+      "height": 130,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/signpost": {
+      "width": 120,
+      "height": 200,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "forest/wisp": {
+      "width": 64,
+      "height": 64,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "forest/sun": {
+      "width": 200,
+      "height": 200,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  }
+}

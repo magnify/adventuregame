@@ -1,186 +1,146 @@
-import * as THREE from 'three';
-import { Path, Walker } from '../game/path.js';
-import { Character } from '../game/character.js';
-import { makeBarlin } from '../game/barlin.js';
-import { Scatter, seeded } from '../game/instances.js';
+import Phaser from 'phaser';
+import data from './forest.json';
+import { art } from '../game/boot.js';
+import { makeGirl, Barlin } from '../game/puppet.js';
+import { ui } from '../game/ui.js';
+import { save } from '../game/save.js';
 
 // World one, scene one: the narrow path through a forest that gets darker, under three suns.
-// From the story: a fork, they take the narrow path; it gets mysteriously dark; wisps lead them on into a swamp.
+// From the story: a fork; they take the narrow path; it gets mysteriously dark; wisps lead them on into a swamp.
 
 const lerp = (a, b, k) => a + (b - a) * k;
 const smooth = k => k * k * (3 - 2 * k);
+const mix = (a, b, k) => Phaser.Display.Color.Interpolate.ColorWithColor(Phaser.Display.Color.HexStringToColor(a), Phaser.Display.Color.HexStringToColor(b), 1, k);
+const toInt = c => Phaser.Display.Color.GetColor(c.r, c.g, c.b);
+const seeded = (s = 20240906) => () => (s = (s * 16807) % 2147483647) / 2147483647;
 
-export function forest(ctx) {
-  const { camera, tier, assets, save, ui } = ctx;
-  const scene = new THREE.Scene();
-  const rnd = seeded();
+export class Forest extends Phaser.Scene {
+  constructor() { super('forest'); }
 
-  // ---- the paths
-  const path = new Path([[0, 0, 10], [0, 0, 2], [2.5, 0, -6], [-1.5, 0, -15], [2.5, 0, -25], [-3, 0, -36], [0.5, 0, -47], [-1, 0, -58]]);
-  const wide = new Path([[0.5, 0, -2], [-4, 0, -6], [-10, 0, -9], [-17, 0, -10]], 0.5);
-  const FORK_T = 0.16;
-  const darkness = t => smooth(Math.min(1, Math.max(0, (t - 0.12) / 0.8)));
+  darkness(x) { return smooth(Phaser.Math.Clamp((x - data.dark.from) / (data.dark.to - data.dark.from), 0, 1)); }
 
-  // ---- sky, suns, fog
-  const SKY_BRIGHT = new THREE.Color('#cfe3f0'), SKY_DARK = new THREE.Color('#0e1428');
-  scene.background = SKY_BRIGHT.clone();
-  scene.fog = new THREE.FogExp2(SKY_BRIGHT.clone(), 0.012);
-  const hemi = new THREE.HemisphereLight('#dff0ff', '#4a6a3a', 0.9); scene.add(hemi);
-  const suns = [
-    { color: '#FFD98A', dir: [12, 18, 14], i: 2.2, shadow: true },
-    { color: '#FFB3C6', dir: [-16, 12, 6], i: 1.1 },
-    { color: '#CFE8FF', dir: [3, 22, -14], i: 0.9 },
-  ].map(s => {
-    const l = new THREE.DirectionalLight(s.color, s.i); l.position.set(...s.dir); l.userData.base = s.i;
-    if (s.shadow && tier.shadows) { l.castShadow = true; l.shadow.mapSize.set(tier.shadowMap, tier.shadowMap); const c = l.shadow.camera; c.left = c.bottom = -16; c.right = c.top = 16; c.near = 1; c.far = 80; l.shadow.bias = -0.0008; l.shadow.normalBias = 0.02; }
-    scene.add(l); scene.add(l.target); return l;
-  });
-  const sunSprites = suns.map(l => {
-    const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
-    const grd = g.createRadialGradient(64, 64, 10, 64, 64, 64); grd.addColorStop(0, '#fff'); grd.addColorStop(0.35, l.color.getStyle()); grd.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
-    sp.position.copy(l.position).normalize().multiplyScalar(150); sp.scale.setScalar(26); scene.add(sp); return sp;
-  });
+  create() {
+    const tier = this.registry.get('tier'); const rnd = seeded();
+    const H = data.height, W = data.width, G = data.groundY;
+    this.cameras.main.setBounds(0, 0, W, H);
+    this.fitCamera(); this.scale.on('resize', () => this.fitCamera());
 
-  // ---- ground: green fading to dark, a worn strip along the path
-  const seg = tier.groundSegments;
-  const gGeo = new THREE.PlaneGeometry(160, 160, seg, seg); gGeo.rotateX(-Math.PI / 2);
-  {
-    const pos = gGeo.attributes.position, col = new Float32Array(pos.count * 3);
-    const c1 = new THREE.Color('#6fa85a'), c2 = new THREE.Color('#1d2a24'), worn = new THREE.Color('#9c8a62'), tmp = new THREE.Color(), v = new THREE.Vector3();
-    for (let i = 0; i < pos.count; i++) {
-      v.set(pos.getX(i), 0, pos.getZ(i));
-      const { t, d } = path.nearest(v); const dk = darkness(t);
-      tmp.copy(c1).lerp(c2, dk);
-      const onPath = Math.max(0, 1 - d / 1.6);
-      tmp.lerp(worn.clone().lerp(c2, dk * 0.7), onPath * 0.85);
-      pos.setY(i, (Math.sin(v.x * 0.7) * Math.cos(v.z * 0.5) * 0.25 + Math.sin(v.x * 2.1 + v.z) * 0.08) * (1 - onPath) - 0.02);
-      col.set([tmp.r, tmp.g, tmp.b], i * 3);
-    }
-    gGeo.setAttribute('color', new THREE.BufferAttribute(col, 3)); gGeo.computeVertexNormals();
-  }
-  const ground = new THREE.Mesh(gGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 })); ground.receiveShadow = tier.shadows; scene.add(ground);
-  const tapPlane = new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ visible: false })); scene.add(tapPlane);
+    // sky: a gradient we repaint as she walks, pinned to the camera
+    this.skyTex = this.textures.createCanvas('sky', 8, 256);
+    this.sky = this.add.image(0, 0, 'sky').setOrigin(0).setDepth(-100);
+    this.paintSky(0);
+    // three suns, far away
+    this.suns = ['#FFD98A', '#FFB3C6', '#CFE8FF'].map((c, i) => this.add.image(500 + i * 420, 200 + (i % 2) * 110, 'forest/sun').setScale(0.42 - i * 0.06).setTint(Phaser.Display.Color.HexStringToColor(c).color).setScrollFactor(0.08).setDepth(-90).setAlpha(0.95));
 
-  // ---- vegetation, denser and stranger as it gets darker
-  const scatter = new Scatter(assets.kit);
-  for (let i = 0; i < 400; i++) {
-    const t = rnd(); const p = path.point(t), n = path.side(t); const dk = darkness(t);
-    const side = rnd() < 0.5 ? -1 : 1; const off = 7 + rnd() * rnd() * 20;
-    const q = p.clone().addScaledVector(n, side * off);
-    if (Math.abs(q.x) > 70 || Math.abs(q.z) > 70) continue;
-    if (t < 0.13 && path.distanceTo(q) < 3.5) continue;
-    if (rnd() >= (0.2 + dk * 0.45) * tier.density) continue;
-    const r = rnd(); let name;
-    if (dk < 0.3) name = r < 0.5 ? 'CommonTree_1' : r < 0.75 ? 'CommonTree_3' : r < 0.9 ? 'CommonTree_5' : 'Pine_2';
-    else if (dk < 0.65) name = r < 0.35 ? 'TwistedTree_2' : r < 0.6 ? 'TwistedTree_4' : r < 0.8 ? 'CommonTree_3' : 'DeadTree_2';
-    else name = r < 0.4 ? 'DeadTree_4' : r < 0.7 ? 'TwistedTree_4' : r < 0.85 ? 'DeadTree_2' : 'TwistedTree_2';
-    const big = /Twisted|Dead/.test(name); if (big && off < 11.5) continue;
-    const s = (big ? 0.45 : 0.75) + rnd() * 0.35 + dk * 0.15;
-    if (path.distanceTo(q) - (big ? 5.3 : 2.3) * s < 5.5) continue; // keep canopies out of the camera corridor
-    scatter.place(name, q.x, q.z, rnd() * Math.PI * 2, s);
-  }
-  for (let i = 0; i < 480 * tier.density; i++) {
-    const t = rnd(); const p = path.point(t), n = path.side(t); const dk = darkness(t);
-    const q = p.clone().addScaledVector(n, (rnd() < 0.5 ? -1 : 1) * (1.4 + rnd() * 4.5)); const r = rnd(); let name;
-    if (dk < 0.35) name = r < 0.4 ? 'Grass_Common_Tall' : r < 0.6 ? 'Flower_3_Group' : r < 0.78 ? 'Clover_1' : r < 0.86 ? 'Bush_Common' : 'Plant_1';
-    else if (dk < 0.7) name = r < 0.4 ? 'Grass_Wispy_Short' : r < 0.65 ? 'Fern_1' : r < 0.8 ? 'Mushroom_Common' : r < 0.9 ? 'Rock_Medium_1' : 'Bush_Common';
-    else name = r < 0.35 ? 'Fern_1' : r < 0.6 ? 'Mushroom_Laetiporus' : r < 0.75 ? 'Mushroom_Common' : r < 0.9 ? 'Rock_Medium_2' : 'Grass_Wispy_Short';
-    scatter.place(name, q.x, q.z, rnd() * Math.PI * 2, 0.6 + rnd() * 0.8);
-  }
-  for (let i = 0; i < 40; i++) { const t = rnd() * 0.5; const q = path.point(t).addScaledVector(path.side(t), (rnd() < 0.5 ? -1 : 1) * (0.9 + rnd() * 0.5)); scatter.place('Pebble_Round_1', q.x, q.z, rnd() * 6, 0.5 + rnd() * 0.6); }
-  for (let i = 0; i < 40; i++) {
-    const t = rnd(); const q = wide.point(t).addScaledVector(wide.side(t), (rnd() < 0.5 ? -1 : 1) * (2.6 + rnd() * 5)); const r = rnd();
-    const name = r < 0.5 ? 'CommonTree_1' : r < 0.8 ? 'Flower_3_Group' : 'Bush_Common';
-    if (name === 'CommonTree_1' && path.distanceTo(q) < 8) continue;
-    scatter.place(name, q.x, q.z, rnd() * 6, 0.8 + rnd() * 0.6);
-  }
-  scatter.build(scene, tier, (name, im) => {
-    if (name === 'Mushroom_Laetiporus') { im.material = im.material.clone(); im.material.emissive = new THREE.Color('#ff9a3c'); im.material.emissiveIntensity = 0.9; im.material.emissiveMap = im.material.map; }
-  });
+    // tiles: far trees and ground
+    this.tiles = data.tiles.map(t => { const a = art(this, t.key); const ts = this.add.tileSprite(0, t.y, W / t.scroll + 2000, a.h / a.scale, t.key).setOrigin(0, t.key.includes('far') ? 1 : 0).setScrollFactor(t.scroll).setTileScale(1 / a.scale).setDepth(t.key.includes('ground') ? 5 : -50); ts.data_ = t; return ts; });
 
-  // ---- the girl (placeholder model), Barlin, the wisps
-  const girl = new Character(assets.rogue, { scale: 0.56 }); scene.add(girl.root); girl.play('Idle');
-  const walker = new Walker(path, Math.min(save.get('forest.t', 0), 0.9));
-  const barlin = makeBarlin(); scene.add(barlin.object);
-  const wisps = [];
-  {
-    const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
-    const grd = g.createRadialGradient(32, 32, 2, 32, 32, 32); grd.addColorStop(0, 'rgba(220,255,240,1)'); grd.addColorStop(0.3, 'rgba(120,230,200,0.8)'); grd.addColorStop(1, 'rgba(60,180,160,0)');
-    g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    for (let i = 0; i < 5; i++) {
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }));
-      sp.scale.setScalar(0.9 + i * 0.15);
-      const light = (tier.pointLights && i < 2) ? new THREE.PointLight('#7ef0d0', 0, 7, 2) : null; if (light) sp.add(light);
-      sp.userData = { phase: i * 1.3, light }; scene.add(sp); wisps.push(sp);
-    }
-  }
-
-  // ---- camera follows behind and above, looking down the path
-  const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), camDir = new THREE.Vector3(), wantDir = new THREE.Vector3();
-  function frameCamera(t) { const p = path.point(t), tan = path.tangent(t); camPos.copy(p).addScaledVector(tan, -9.5).add(new THREE.Vector3(2.4, 6.2, 0)); camLook.copy(p).addScaledVector(tan, 4).setY(0.9); }
-
-  let started = false, done = false, nudge = 0;
-
-  return {
-    scene,
-    async build() {
-      girl.snap(walker.position, walker.yaw);
-      frameCamera(walker.t); camera.position.copy(camPos); camera.lookAt(camLook);
-      if (walker.t > 0.02) { started = true; return; }
-      ui.card({ title: 'The World With Three Suns', text: 'Tap where she should go. The butterfly knows the way.', suns: true, buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { started = true; });
-    },
-    tap(ray) {
-      if (!started || done) return;
-      const hit = ray.intersectObject(tapPlane)[0]; if (!hit) return;
-      const near = path.nearest(hit.point);
-      // toward the wide path: she goes to the fork, Barlin makes a fuss over the narrow one
-      if (wide.distanceTo(hit.point) < near.d && wide.distanceTo(hit.point) < 6) { walker.goTo(FORK_T); nudge = 3.5; return; }
-      if (near.d > 9) return;
-      walker.goTo(near.t);
-    },
-    update(dt, time) {
-      const moving = walker.step(dt);
-      if (moving) girl.play('Walking_A'); else { if (girl.current === girl.actions.Walking_A) save.set('forest.t', walker.t); girl.play('Idle'); }
-      girl.place(walker.position, walker.yaw, dt); girl.update(dt);
-
-      frameCamera(walker.t);
-      camera.position.lerp(camPos, Math.min(1, dt * 2.2));
-      wantDir.copy(camLook).sub(camera.position).normalize(); camera.getWorldDirection(camDir); camDir.lerp(wantDir, Math.min(1, dt * 3)); camera.lookAt(camera.position.clone().add(camDir));
-
-      const dk = darkness(walker.t), p = walker.position;
-      scene.background.copy(SKY_BRIGHT).lerp(SKY_DARK, dk); scene.fog.color.copy(scene.background); scene.fog.density = lerp(0.012, 0.06, dk);
-      hemi.intensity = lerp(0.9, 0.28, dk);
-      suns.forEach(l => { l.intensity = l.userData.base * lerp(1, 0.14, dk); });
-      sunSprites.forEach(sp => sp.material.opacity = 1 - smooth(Math.min(1, dk * 1.6)));
-      suns[0].target.position.copy(p); suns[0].position.copy(p).add(new THREE.Vector3(12, 18, 14));
-      barlin.glow.intensity = lerp(0, 5, dk);
-      ctx.renderer.toneMappingExposure = lerp(1.05, 1.0, dk);
-
-      let bt = Math.min(1, walker.t + 0.045);
-      if (nudge > 0) { nudge -= dt; bt = FORK_T + 0.02; }
-      barlin.update(dt, time, path.point(bt), path.tangent(bt), nudge > 0 ? 1 : 0);
-
-      const wk = smooth(Math.min(1, Math.max(0, (walker.t - 0.8) / 0.15)));
-      wisps.forEach((w, i) => {
-        const wt = Math.min(1, walker.t + 0.08 + i * 0.02); const wp = path.point(wt), side = path.side(wt);
-        const ph = w.userData.phase + time * (0.8 + i * 0.1);
-        w.position.copy(wp).addScaledVector(side, Math.sin(ph) * (1.2 + i * 0.3)).setY(0.8 + Math.sin(ph * 1.7) * 0.4 + i * 0.15);
-        w.material.opacity = wk * (0.55 + 0.45 * Math.sin(ph * 2.3));
-        if (w.userData.light) w.userData.light.intensity = wk * 8;
-      });
-
-      if (!done && walker.t > 0.985 && !moving) {
-        done = true;
-        setTimeout(() => ui.card({ title: 'Into the swamp', text: "The wisps lead on. That's as far as the story goes tonight.", buttons: [{ id: 'again', label: 'Walk it again' }], small: 'Trees and plants by Quaternius. Characters by Kay Lousberg. Both gave them away free.' })
-          .then(() => { walker.t = walker.target = 0; done = false; save.set('forest.t', 0); girl.snap(walker.position, walker.yaw); frameCamera(0); camera.position.copy(camPos); }), 1200);
+    // vegetation by band; each prop tinted once by how dark it is where it stands
+    this.props = this.add.group();
+    const placeProp = (key, x, y, s, depth, scroll = 1) => {
+      const a = art(this, key); const img = this.add.image(x, y, key).setOrigin(a.pivot.x, a.pivot.y).setScale(s / a.scale).setDepth(depth).setScrollFactor(scroll);
+      img.setTint(this.tintFor(x, key)); this.props.add(img); return img;
+    };
+    for (const band of data.bands) {
+      const from = band === data.bands[0] ? 0 : data.bands[data.bands.indexOf(band) - 1].until;
+      const x0 = data.dark.from + from * (data.dark.to - data.dark.from) - (band === data.bands[0] ? data.dark.from : 0);
+      const x1 = data.dark.from + Math.min(band.until, 1) * (data.dark.to - data.dark.from) + (band.until > 1 ? W : 0);
+      for (let x = x0; x < Math.min(x1, W); x += band.treeEvery / tier.density) {
+        const key = band.trees[Math.floor(rnd() * band.trees.length)]; const back = rnd() < 0.45;
+        const px = x + (rnd() - 0.5) * band.treeEvery * 0.8; if (Math.abs(px - data.fork.x) < 120) continue;
+        if (back) placeProp(key, px, G - 60 - rnd() * 60, 0.55 + rnd() * 0.2, -20 - rnd() * 5, 0.7);
+        else placeProp(key, px, G + 8 + rnd() * 30, 0.9 + rnd() * 0.3, 10 + rnd());
       }
-    },
-    dispose() { scatter.dispose(scene); ui.clear(); },
-    // for tests
-    get state() { return { t: walker.t, target: walker.target, started, done, nudge: nudge > 0 }; },
-  };
+      for (let x = x0; x < Math.min(x1, W); x += band.underEvery / tier.density) {
+        const key = band.under[Math.floor(rnd() * band.under.length)]; const px = x + (rnd() - 0.5) * band.underEvery;
+        const front = rnd() < 0.5; placeProp(key, px, front ? G + 40 + rnd() * 60 : G - 6 + rnd() * 12, front ? 1 + rnd() * 0.3 : 0.7 + rnd() * 0.3, front ? 30 : 8);
+      }
+    }
+    for (const p of data.props) placeProp(p.key, p.x, G + 6, p.scale, 12);
+    // the wide path: a lighter strip going up and left into the trees at the fork
+    this.wide = this.add.graphics().setDepth(-30); this.wide.fillStyle(0xd8c89a, 0.55); this.wide.beginPath(); this.wide.moveTo(data.fork.x - 140, G - 10); this.wide.lineTo(data.fork.x - 700, G - 260); this.wide.lineTo(data.fork.x - 560, G - 280); this.wide.lineTo(data.fork.x + 40, G - 10); this.wide.closePath(); this.wide.fillPath();
+    this.wideZone = new Phaser.Geom.Rectangle(data.fork.x - 760, G - 320, 760, 300);
+
+    // mist that thickens with the dark
+    this.mist = this.add.rectangle(0, 0, 10, 10, 0x1a2238, 0).setOrigin(0).setDepth(40);
+
+    // the girl, Barlin, the wisps
+    const startX = save.get('forest.x', data.start.x);
+    this.girl = makeGirl(this, startX, G, 1).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = 220;
+    this.barlin = new Barlin(this, startX + 220, G - 260, 1).setDepth(21); this.fuss = 0;
+    this.wisps = Array.from({ length: 5 }, (_, i) => { const w = this.add.image(0, 0, 'forest/wisp').setScale(0.8 + i * 0.15).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0).setDepth(35).setTint(0x9df5dc); w.phase = i * 1.3; return w; });
+    this.glows = this.props.getChildren().filter(p => p.texture.key === 'forest/mushroom-glow').map(p => { const g = this.add.image(p.x, p.y - 30, 'forest/wisp').setScale(1.6).setTint(0xff9a3c).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.5).setDepth(p.depth + 1); g.phase = rnd() * 6; return g; });
+
+    // input: a tap that didn't drag
+    this.input.on('pointerdown', p => { this.down = { x: p.x, y: p.y }; });
+    this.input.on('pointerup', p => {
+      if (!this.down || !this.started || this.done) return;
+      const moved = Phaser.Math.Distance.Between(p.x, p.y, this.down.x, this.down.y); this.down = null; if (moved > 14) return;
+      const wp = this.cameras.main.getWorldPoint(p.x, p.y);
+      if (this.wideZone.contains(wp.x, wp.y)) { this.targetX = data.fork.x; this.fuss = 3.5; return; }
+      this.targetX = Phaser.Math.Clamp(wp.x, data.start.x - 200, data.end.x);
+    });
+
+    this.started = startX > data.start.x + 20; this.done = false;
+    if (!this.started) ui.card({ title: 'The World With Three Suns', text: 'Tap where she should go. The butterfly knows the way.', suns: true, buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; });
+    this.cameras.main.scrollX = startX - this.cameras.main.width / this.cameras.main.zoom * 0.4;
+    if (tier.debug) this.debug = this.add.text(8, 8, '', { font: '20px monospace', color: '#fff', backgroundColor: '#0008' }).setDepth(100);
+  }
+
+  fitCamera() { const cam = this.cameras.main; cam.setZoom(Math.max(cam.height / data.height, cam.width / data.width)); }
+
+  tintFor(x, key) { const dk = this.darkness(x); if (key === 'forest/mushroom-glow') return 0xffffff; return toInt(mix('#ffffff', '#3a4468', dk * 0.85)); }
+
+  paintSky(dk) {
+    const ctx = this.skyTex.getContext(); const g = ctx.createLinearGradient(0, 0, 0, 256);
+    g.addColorStop(0, `rgb(${Object.values(mix(data.sky.bright, data.sky.dark, dk)).slice(0, 3).join(',')})`);
+    g.addColorStop(1, `rgb(${Object.values(mix(data.sky.horizonBright, data.sky.horizonDark, dk)).slice(0, 3).join(',')})`);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 8, 256); this.skyTex.refresh();
+    const cam = this.cameras.main; this.sky.setDisplaySize(cam.worldView.width + 8, cam.worldView.height + 8);
+  }
+
+  update(_, ms) {
+    const dt = Math.min(ms / 1000, 0.05); const G = data.groundY, cam = this.cameras.main;
+    // walk
+    const d = this.targetX - this.girlX;
+    const moving = Math.abs(d) > 2;
+    if (moving) { this.girlX += Math.sign(d) * Math.min(Math.abs(d), this.speed * dt); this.girl.face(Math.sign(d)); this.girl.play('walk'); }
+    else { if (this.girl.mode === 'walk') save.set('forest.x', this.girlX); this.girl.play('idle'); }
+    this.girl.x = this.girlX; this.girl.tick(dt);
+    // camera follows, a little ahead
+    const view = cam.width / cam.zoom; const want = this.girlX - view * 0.42;
+    cam.scrollX = Phaser.Math.Linear(cam.scrollX, Phaser.Math.Clamp(want, 0, data.width - view), Math.min(1, dt * 2.5));
+    cam.scrollY = data.height - cam.height / cam.zoom;
+    const wv = cam.worldView; this.sky.setPosition(wv.x - 4, wv.y - 4); this.mist.setPosition(wv.x, wv.y).setSize(wv.width, wv.height);
+    if (this.debug) this.debug.setPosition(wv.x + 8, wv.y + 8);
+    // light
+    const dk = this.darkness(this.girlX);
+    if (Math.abs(dk - (this.lastDk ?? -1)) > 0.004) { this.paintSky(dk); this.lastDk = dk; }
+    this.suns.forEach(s => s.setAlpha(0.95 * (1 - smooth(Math.min(1, dk * 1.5)))));
+    this.tiles[0].setTint(toInt(mix(this.tiles[0].data_.tint.bright, this.tiles[0].data_.tint.dark, dk)));
+    this.tiles[1].setTint(toInt(mix('#ffffff', '#2a3352', dk * 0.9)));
+    this.mist.setAlpha(dk * 0.35);
+    const girlTint = toInt(mix('#ffffff', '#5a6488', dk * 0.7)); this.girl.each(o => o.setTint && o.setTint(girlTint));
+    // Barlin leads, and fusses at the fork if she heads for the wide path
+    this.fuss = Math.max(0, this.fuss - dt);
+    const bx = this.fuss > 0 ? data.fork.x + 160 : this.girlX + 230 * (this.girl.facing || 1);
+    const t = this.time.now / 1000;
+    this.barlin.x = Phaser.Math.Linear(this.barlin.x, bx + Math.sin(t * 1.3) * 30 + (this.fuss > 0 ? Math.sin(t * 7) * 40 : 0), Math.min(1, dt * 2.5));
+    this.barlin.y = Phaser.Math.Linear(this.barlin.y, G - 250 + Math.sin(t * 2.1) * 14, Math.min(1, dt * 3));
+    this.barlin.face(bx > this.barlin.x ? 1 : -1); this.barlin.tick(dt, this.fuss > 0 ? 1 : 0);
+    this.barlin.glow.setAlpha(dk * 0.9 * (0.8 + Math.sin(t * 5) * 0.2));
+    // wisps appear near the end
+    const wk = smooth(Phaser.Math.Clamp((this.girlX - (data.dark.to - 900)) / 700, 0, 1));
+    this.wisps.forEach((w, i) => { const ph = w.phase + t * (0.8 + i * 0.1); w.x = this.girlX + 380 + i * 90 + Math.sin(ph) * 60; w.y = G - 120 - i * 30 + Math.sin(ph * 1.7) * 40; w.setAlpha(wk * (0.55 + 0.45 * Math.sin(ph * 2.3))); });
+    this.glows.forEach(g => g.setAlpha(0.35 + 0.25 * Math.sin(t * 2 + g.phase)));
+    if (this.debug) this.debug.setText(`${Math.round(this.game.loop.actualFps)} fps  x ${Math.round(this.girlX)}  dark ${dk.toFixed(2)}`);
+    // the end of the path
+    if (!this.done && this.girlX > data.end.x - 30 && !moving) {
+      this.done = true;
+      this.time.delayedCall(1200, () => ui.card({ title: 'Into the swamp', text: "The wisps lead on. That's as far as the story goes tonight.", buttons: [{ id: 'again', label: 'Walk it again' }] })
+        .then(() => { this.girlX = this.targetX = data.start.x; save.set('forest.x', data.start.x); this.done = false; cam.scrollX = 0; }));
+    }
+  }
+
+  get state() { return { x: this.girlX, target: this.targetX, started: this.started, done: this.done, fuss: this.fuss > 0 }; }
 }

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="660" viewBox="0 0 400 660">
+
+    <path d="M186,660 Q160,571.956 210,499.224 Q234,455.202 194,411.17999999999995 Q170,344.18999999999994 208,277.2 Q240,344.18999999999994 216,411.17999999999995 Q180,455.202 204,499.224 Q260,571.956 222,660 Z" fill="#5A4436" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M194,411.17999999999995 Q240,344.18999999999994 208,277.2 Q190,334.18999999999994 194,411.17999999999995 Z" fill="#3A2E2A" opacity="0.6"/>
+    <path d="M170,535.59 Q130,505.59000000000003 110,541.956" fill="none" stroke="#3A2E2A" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M220,615.9780000000001 Q270,595.9780000000001 300,561.956" fill="none" stroke="#3A2E2A" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="129.6" cy="283.79999999999995" r="96.80000000000001" fill="#C0424F" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="288" cy="257.4" r="105.6" fill="#C0424F" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="50.400000000000006" cy="239.79999999999998" r="70.4" fill="#C0424F" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="349.6" cy="292.59999999999997" r="73.92" fill="#C0424F" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="200" cy="169.39999999999998" r="88" fill="#C0424F" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <ellipse cx="252.8" cy="266.2" rx="70.4" ry="52.8" fill="#8E2F3A" opacity="0.5"/>
+  
+</svg>

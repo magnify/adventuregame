@@ -1,0 +1,24 @@
+{
+  "name": "forest",
+  "width": 6400,
+  "height": 1080,
+  "groundY": 900,
+  "start": { "x": 400 },
+  "fork": { "x": 1500 },
+  "dark": { "from": 1400, "to": 5600 },
+  "end": { "x": 6000 },
+  "sky": { "bright": "#cfe3f0", "dark": "#0e1428", "horizonBright": "#f1eddb", "horizonDark": "#1b2440" },
+  "tiles": [
+    { "key": "forest/far-trees", "y": 760, "scroll": 0.35, "tint": { "bright": "#7fa86a", "dark": "#141c2a" } },
+    { "key": "forest/ground", "y": 880, "scroll": 1 }
+  ],
+  "bands": [
+    { "name": "bright", "until": 0.3, "trees": ["forest/tree-common-1", "forest/tree-common-2"], "under": ["forest/flowers", "forest/grass-tuft", "forest/bush", "forest/grass-tuft"], "treeEvery": 260, "underEvery": 110 },
+    { "name": "gloom",  "until": 0.65, "trees": ["forest/tree-twisted-1", "forest/tree-common-2", "forest/tree-twisted-2"], "under": ["forest/fern", "forest/mushroom", "forest/rock", "forest/grass-tuft", "forest/bush"], "treeEvery": 210, "underEvery": 120 },
+    { "name": "dark",   "until": 1.01, "trees": ["forest/tree-dead-1", "forest/tree-twisted-2", "forest/tree-dead-2", "forest/tree-twisted-1"], "under": ["forest/fern", "forest/mushroom-glow", "forest/rock", "forest/mushroom"], "treeEvery": 170, "underEvery": 130 }
+  ],
+  "props": [
+    { "key": "forest/signpost", "x": 1440, "scale": 1 }
+  ],
+  "widePath": { "x": 1500, "width": 500 }
+}

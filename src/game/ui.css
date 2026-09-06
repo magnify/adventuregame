@@ -6,7 +6,7 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
 #loading { position: fixed; inset: 0; display: grid; place-items: center; color: #FBF6EC; font-size: 26px; background: var(--night); z-index: 3; transition: opacity .6s; padding: 24px; text-align: center; }
 #loading.off { opacity: 0; pointer-events: none; }
 #loading.failed { color: #FFB3C6; }
-#ui .card { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(16, 24, 48, .45); backdrop-filter: blur(2px); z-index: 2; }
+#ui .card { pointer-events: auto; position: fixed; inset: 0; display: grid; place-items: center; background: rgba(16, 24, 48, .45); backdrop-filter: blur(2px); z-index: 2; }
 #ui .card > div { background: var(--card); border: 3px solid var(--ink); border-radius: 22px; padding: 26px 38px 28px; text-align: center; max-width: min(82vw, 460px); box-shadow: 0 10px 0 rgba(43, 42, 51, .3); }
 #ui h1 { margin: 0 0 6px; font-size: clamp(32px, 6vw, 50px); line-height: 1; text-wrap: balance; }
 #ui p { margin: 0; font-size: clamp(19px, 3vw, 25px); opacity: .85; text-wrap: balance; }
