@@ -5,10 +5,10 @@ export const ui = {
   loaded() { const l = $('loading'); if (l) l.classList.add('off'); },
   fail(text) { const l = $('loading'); if (l) { l.textContent = text; l.classList.remove('off'); l.classList.add('failed'); } },
   /** Show a card. Returns a promise that resolves with the id of the button pressed. */
-  card({ title, text, buttons = [{ id: 'ok', label: 'Begin' }], suns = false, small = '' }) {
+  card({ title, text, buttons = [{ id: 'ok', label: 'Begin' }], suns = false, small = '', bottom = false }) {
     return new Promise(res => {
       const host = $('ui'); host.innerHTML = '';
-      const card = document.createElement('div'); card.className = 'card';
+      const card = document.createElement('div'); card.className = 'card' + (bottom ? ' bottom' : '');
       card.innerHTML = `<div>${suns ? '<div class="suns"><i style="background:#FFD98A"></i><i style="background:#FFB3C6"></i><i style="background:#CFE8FF"></i></div>' : ''}<h1>${title}</h1><p>${text}</p><div class="buttons"></div>${small ? `<p class="small">${small}</p>` : ''}</div>`;
       const row = card.querySelector('.buttons');
       for (const b of buttons) { const el = document.createElement('button'); el.textContent = b.label; el.addEventListener('click', () => { host.innerHTML = ''; res(b.id); }); row.appendChild(el); }

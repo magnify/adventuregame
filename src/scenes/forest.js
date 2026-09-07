@@ -14,7 +14,6 @@ export class Forest extends Stage {
 
   async onEnter() {
     const D = data, G = D.groundY, W = D.width, rnd = this.rnd, tier = this.tier; this.started = true;
-    this.suns = ['#FFD98A', '#FFB3C6', '#CFE8FF'].map((c, i) => this.add.image(700 + i * 260, 120 + (i % 2) * 70, 'forest/sun').setScale(0.28 + i * 0.06).setTint(Phaser.Display.Color.HexStringToColor(c).color).setScrollFactor(0.08).setDepth(-90).setAlpha(0.95));
     // vegetation by band; each prop tinted once by how dark it is where it stands
     for (const band of D.bands) {
       const i = D.bands.indexOf(band); const from = i === 0 ? 0 : D.bands[i - 1].until;
@@ -47,7 +46,6 @@ export class Forest extends Stage {
   onUpdate(dt, t) {
     const dk = this.darkness(this.girlX), G = data.groundY, wv = this.cameras.main.worldView;
     if (Math.abs(dk - (this.lastDk ?? -1)) > 0.004) { this.paintSky(dk); this.lastDk = dk; }
-    this.suns.forEach(s => s.setAlpha(0.95 * (1 - smooth(Math.min(1, dk * 1.5)))));
     this.tiles[0].setTint(toInt(mix(this.tiles[0].data_.tint.bright, this.tiles[0].data_.tint.dark, dk)));
     this.tiles[1].setTint(toInt(mix('#ffffff', '#2a3352', dk * 0.9)));
     this.mist.setPosition(wv.x, wv.y).setSize(wv.width, wv.height).setAlpha(dk * 0.35);

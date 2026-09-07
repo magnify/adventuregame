@@ -9,7 +9,11 @@ export class Meadow extends Stage {
 
   async onEnter() {
     const G = this.D.groundY;
-    this.suns = [['#FFD98A', 520, 150, 0.7], ['#FFB3C6', 860, 230, 0.5], ['#CFE8FF', 1180, 120, 0.42]].map(([c, x, y, s]) => this.add.image(x, y, 'forest/sun').setScale(s).setTint(Phaser.Display.Color.HexStringToColor(c).color).setScrollFactor(0.1).setDepth(-90));
+    this.suns = [['#FFD98A', 520, 150, 0.7], ['#FFB3C6', 900, 240, 0.36], ['#CFE8FF', 1200, 120, 0.3]].map(([c, x, y, s]) => {
+      const col = Phaser.Display.Color.HexStringToColor(c).color;
+      const halo = this.add.image(x, y, 'forest/wisp').setScale(s * 7).setTint(col).setAlpha(0.55).setBlendMode(Phaser.BlendModes.ADD).setScrollFactor(0.1).setDepth(-91);
+      const sun = this.add.image(x, y, 'forest/sun').setScale(s).setTint(col).setScrollFactor(0.1).setDepth(-90); sun.halo = halo; sun.base = s; return sun;
+    });
     this.started = true;
     if (!this.flags.landed) {
       // she tumbles out of the sky, where the door dropped her
@@ -39,5 +43,5 @@ export class Meadow extends Stage {
 
   onArrive(x) { if (x > this.D.width - 140 && !this.busy) this.go('forest', { x: 400 }); }
 
-  onUpdate(dt, t) { this.suns.forEach((s, i) => s.setScale((0.7 - i * 0.14) * (1 + Math.sin(t * 0.7 + i) * 0.03))); }
+  onUpdate(dt, t) { this.suns.forEach((s, i) => { s.setScale(s.base * (1 + Math.sin(t * 0.7 + i) * 0.03)); s.halo.setAlpha(0.45 + 0.15 * Math.sin(t * 0.9 + i)); }); }
 }

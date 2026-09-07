@@ -42,7 +42,7 @@ export class Stage extends Phaser.Scene {
     this.sky = this.add.image(0, 0, `sky-${this.key}`).setOrigin(0).setDepth(-100);
     this.paintSky(0);
     // tiles
-    this.tiles = (D.tiles || []).map(t => { const a = art(this, t.key); const ts = this.add.tileSprite(0, t.y, D.width / (t.scroll || 1) + 2000, a.h / a.scale, t.key).setOrigin(0).setScrollFactor(t.scroll || 1).setTileScale(1 / a.scale).setDepth(t.depth ?? (t.scroll < 1 ? -50 : 5)); ts.data_ = t; return ts; });
+    this.tiles = (D.tiles || []).map(t => { const a = art(this, t.key); const ts = this.add.tileSprite(0, t.y, D.width / (t.scroll || 1) + 2000, a.h / a.scale, t.key).setOrigin(0).setScrollFactor(t.scroll || 1).setTileScale(1 / a.scale).setDepth(t.depth ?? (t.scroll < 1 ? -50 : 5)); ts.data_ = t; if (typeof t.tint === 'string') ts.setTint(Phaser.Display.Color.HexStringToColor(t.tint).color); return ts; });
     // props and hotspots
     this.hots = new Map(); this.props = [];
     for (const p of D.props || []) this.prop(p);
@@ -50,7 +50,7 @@ export class Stage extends Phaser.Scene {
     // the girl
     const startX = save.get(`${this.key}.x`, D.start.x);
     this.girl = makeGirl(this, startX, D.groundY, D.girlScale || 1).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = D.speed || 230; this.walkResolve = null; this.stepAt = 0;
-    if (D.barlin) { this.barlin = new Barlin(this, startX + 220, D.groundY - 260, 1).setDepth(21); this.barlin.setVisible(D.barlin !== 'later'); this.fuss = 0; this.barlinAnchor = null; }
+    if (D.barlin) { this.barlin = new Barlin(this, startX + 220, D.groundY - 260, 1.3).setDepth(21); this.barlin.setVisible(D.barlin !== 'later'); this.fuss = 0; this.barlinAnchor = null; }
     // input
     this.input.on('pointerdown', p => { this.down = { x: p.x, y: p.y }; });
     this.input.on('pointerup', p => this.tap(p));

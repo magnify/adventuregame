@@ -24,3 +24,8 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
 @keyframes bump { 0% { transform: scale(1.3); } 100% { transform: scale(1); } }
 #reset { position: fixed; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); width: 40px; height: 40px; border-radius: 50%; z-index: 4;
   border: 2px solid rgba(251, 246, 236, .5); background: rgba(16, 24, 48, .35); color: #FBF6EC; font: 700 22px Gaegu, cursive; cursor: pointer; opacity: .6; }
+#ui .card.bottom { background: none; backdrop-filter: none; place-items: end center; padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+#ui .card.bottom > div { padding: 14px 26px 16px; max-width: min(90vw, 640px); }
+#ui .card.bottom h1 { font-size: clamp(24px, 4vw, 34px); }
+#ui .card.bottom p { font-size: clamp(16px, 2.4vw, 21px); }
+#ui .card.bottom button { margin-top: 8px; font-size: 20px; padding: 6px 20px; }

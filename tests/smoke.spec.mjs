@@ -17,7 +17,7 @@ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const VITE_BIN = path.join(ROOT, 'node_modules', '.bin', 'vite');
 
 const PORT = 4173;
-const BASE_URL = `http://localhost:${PORT}/three-suns/`;
+const BASE_URL = `http://localhost:${PORT}/adventuregame/`;
 const LOADING_TIMEOUT_MS = 180_000; // software WebGL is slow — be generous
 const CHROMIUM_PATH = '/opt/pw-browsers/chromium';
 

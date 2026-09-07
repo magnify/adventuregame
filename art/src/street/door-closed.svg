@@ -1,10 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="80" height="120" viewBox="0 0 80 120">
 
   <path d="M8,120 L8,44 Q8,10 40,10 Q72,10 72,44 L72,120 Z" fill="#7A5230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
-  <path d="M40,10 Q72,10 72,44 L72,120 L46,120 L46,20 Q46,12 40,10 Z" fill="#4E2F1C" opacity="0.55"/>
-  <path d="M8,44 Q8,10 40,10 Q72,10 72,44" fill="none" stroke="#3A2E2A" stroke-width="2" opacity="0.4"/>
-  <path d="M40,10 L40,120" stroke="#3A2E2A" stroke-width="2" opacity="0.35"/>
-  <circle cx="58" cy="64" r="4.5" fill="#3A2E2A"/>
-  <path d="M57,68 L59,74 L56,74 Z" fill="#3A2E2A"/>
+  <path d="M40,10 Q72,10 72,44 L72,120 L52,120 L52,20 Q52,12 40,10 Z" fill="#4E2F1C" opacity="0.5"/>
+
+  <!-- plank lines -->
+  <path d="M24,14 L24,120 M40,10 L40,120 M56,14 L56,120" stroke="#3A2E2A" stroke-width="1.5" opacity="0.4"/>
+  <path d="M8,44 Q8,10 40,10 Q72,10 72,44" fill="none" stroke="#3A2E2A" stroke-width="2" opacity="0.35"/>
+
+  <!-- iron hinge straps -->
+  <path d="M10,38 L34,34 Q38,33.5 38,37 Q38,40.5 34,40 L10,44 Z" fill="#3A2E2A" />
+  <circle cx="14" cy="41" r="2" fill="#5C5048"/>
+  <path d="M10,84 L34,80 Q38,79.5 38,83 Q38,86.5 34,86 L10,90 Z" fill="#3A2E2A" />
+  <circle cx="14" cy="87" r="2" fill="#5C5048"/>
+
+  <!-- keyhole -->
+  <circle cx="50" cy="66" r="4.5" fill="#3A2E2A"/>
+  <path d="M49,70 L51,76 L48,76 Z" fill="#3A2E2A"/>
 
 </svg>

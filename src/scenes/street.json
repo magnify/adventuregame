@@ -1,20 +1,82 @@
 {
-  "name": "street", "width": 2400, "height": 1080, "groundY": 900, "start": { "x": 300 }, "maxX": 1900,
-  "sky": { "bright": "#a9c9e6", "horizonBright": "#f3e7d3" },
-  "tiles": [
-    { "key": "street/houses", "y": 380, "scroll": 0.6, "depth": -50 },
-    { "key": "street/pavement", "y": 880, "scroll": 1, "depth": 5 }
-  ],
-  "props": [
-    { "key": "street/lamp", "x": 700, "depth": 8 },
-    { "key": "street/tree", "x": 1700, "depth": 9, "id": "treeimg" }
-  ],
-  "hotspots": [
-    { "id": "cat", "key": "street/cat", "x": 1150, "depth": 12, "react": "hop", "sound": "chirp", "bubble": ["heart"] },
-    { "id": "lamp", "key": "street/lamp", "x": 700, "depth": 8, "react": "wiggle", "noWalk": true },
-    { "id": "tree", "key": "street/tree", "x": 1700, "depth": 9, "walkTo": 1560 },
-    { "id": "door", "key": "street/door-closed", "x": 0, "y": 0, "depth": 11, "noWalk": true },
-    { "id": "mat", "key": "street/mat", "x": 0, "y": 0, "depth": 12, "noWalk": true },
-    { "id": "key", "key": "street/key", "x": 0, "y": 0, "depth": 13, "noWalk": true, "hidden": true }
-  ]
+ "name": "street",
+ "width": 2400,
+ "height": 1080,
+ "groundY": 900,
+ "start": {
+  "x": 300
+ },
+ "maxX": 1900,
+ "sky": {
+  "bright": "#a9c9e6",
+  "horizonBright": "#f3e7d3"
+ },
+ "tiles": [
+  {
+   "key": "street/houses",
+   "y": 380,
+   "scroll": 0.6,
+   "depth": -50
+  },
+  {
+   "key": "street/pavement",
+   "y": 880,
+   "scroll": 1,
+   "depth": 5,
+   "tint": "#d9d3c8"
+  }
+ ],
+ "props": [
+  {
+   "key": "street/tree",
+   "x": 1700,
+   "depth": 9,
+   "id": "treeimg"
+  }
+ ],
+ "hotspots": [
+  {
+   "id": "cat",
+   "key": "street/cat",
+   "x": 1150,
+   "depth": 12,
+   "react": "hop",
+   "sound": "chirp",
+   "bubble": [
+    "heart"
+   ]
+  },
+  {
+   "id": "tree",
+   "key": "street/tree",
+   "x": 1700,
+   "depth": 9,
+   "walkTo": 1560
+  },
+  {
+   "id": "door",
+   "key": "street/door-closed",
+   "x": 0,
+   "y": 0,
+   "depth": 11,
+   "noWalk": true
+  },
+  {
+   "id": "mat",
+   "key": "street/mat",
+   "x": 0,
+   "y": 0,
+   "depth": 12,
+   "noWalk": true
+  },
+  {
+   "id": "key",
+   "key": "street/key",
+   "x": 0,
+   "y": 0,
+   "depth": 13,
+   "noWalk": true,
+   "hidden": true
+  }
+ ]
 }

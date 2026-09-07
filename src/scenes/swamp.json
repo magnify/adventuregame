@@ -1,29 +1,144 @@
 {
-  "name": "swamp", "width": 3600, "height": 1080, "groundY": 900, "start": { "x": 300 }, "barlin": true, "maxX": 3150,
-  "sky": { "bright": "#2a3a4a", "horizonBright": "#4a5a52" },
-  "mud": { "x": 1500 },
-  "tiles": [
-    { "key": "swamp/trees-back", "y": 340, "scroll": 0.5, "depth": -50 },
-    { "key": "swamp/ground", "y": 880, "scroll": 1, "depth": 5 }
-  ],
-  "props": [
-    { "key": "forest/tree-dead-1", "x": 500, "depth": -20, "scale": 0.7, "scroll": 0.8 },
-    { "key": "forest/tree-dead-2", "x": 2400, "depth": -20, "scale": 0.8, "scroll": 0.8 },
-    { "key": "forest/tree-twisted-2", "x": 2900, "depth": 9, "scale": 0.9 },
-    { "key": "swamp/reeds", "x": 700, "depth": 30, "y": 950 },
-    { "key": "swamp/reeds", "x": 1250, "depth": 8 },
-    { "key": "swamp/reeds", "x": 1800, "depth": 30, "y": 960 },
-    { "key": "swamp/reeds", "x": 2600, "depth": 8 },
-    { "key": "swamp/stump", "x": 950, "depth": 9 },
-    { "key": "swamp/stump", "x": 2150, "depth": 30, "y": 950 },
-    { "key": "swamp/mud", "x": 1500, "y": 900, "depth": 25, "id": "mud" },
-    { "key": "swamp/witch-house", "x": 3300, "depth": 9 },
-    { "key": "swamp/lantern", "x": 3020, "y": 560, "depth": 10 }
-  ],
-  "hotspots": [
-    { "id": "frog", "key": "swamp/frog", "x": 1050, "depth": 12, "react": "hop", "sound": "chirp", "bubble": ["exclaim"] },
-    { "id": "stick", "key": "swamp/stick-small", "x": 1140, "y": 890, "depth": 11, "walkTo": 1060, "girl": ["stick", "question"] },
-    { "id": "barlin-hot", "key": "forest/wisp", "x": 0, "y": 0, "depth": 1, "hidden": true, "noWalk": true },
-    { "id": "housedoor", "key": "swamp/lantern", "x": 3350, "y": 900, "depth": 11, "hidden": true, "noWalk": true, "walkTo": 3150 }
-  ]
+ "name": "swamp",
+ "width": 4000,
+ "height": 1080,
+ "groundY": 900,
+ "start": {
+  "x": 300
+ },
+ "barlin": true,
+ "maxX": 3150,
+ "sky": {
+  "bright": "#2a3a48",
+  "horizonBright": "#33443f"
+ },
+ "mud": {
+  "x": 1500
+ },
+ "tiles": [
+  {
+   "key": "swamp/trees-back",
+   "y": 340,
+   "scroll": 0.5,
+   "depth": -50
+  },
+  {
+   "key": "swamp/ground",
+   "y": 880,
+   "scroll": 1,
+   "depth": 5
+  }
+ ],
+ "props": [
+  {
+   "key": "forest/tree-dead-1",
+   "x": 500,
+   "depth": -20,
+   "scale": 0.7,
+   "scroll": 0.8
+  },
+  {
+   "key": "forest/tree-dead-2",
+   "x": 2400,
+   "depth": -20,
+   "scale": 0.8,
+   "scroll": 0.8
+  },
+  {
+   "key": "swamp/reeds",
+   "x": 700,
+   "depth": 30,
+   "y": 950
+  },
+  {
+   "key": "swamp/reeds",
+   "x": 1250,
+   "depth": 8
+  },
+  {
+   "key": "swamp/reeds",
+   "x": 1800,
+   "depth": 30,
+   "y": 960
+  },
+  {
+   "key": "swamp/reeds",
+   "x": 2600,
+   "depth": 8
+  },
+  {
+   "key": "swamp/stump",
+   "x": 950,
+   "depth": 9
+  },
+  {
+   "key": "swamp/stump",
+   "x": 2150,
+   "depth": 30,
+   "y": 950
+  },
+  {
+   "key": "swamp/mud",
+   "x": 1500,
+   "y": 905,
+   "depth": 25,
+   "id": "mud",
+   "scale": 1.45
+  },
+  {
+   "key": "swamp/witch-house",
+   "x": 3250,
+   "depth": 9
+  },
+  {
+   "key": "swamp/lantern",
+   "x": 2970,
+   "y": 560,
+   "depth": 10
+  }
+ ],
+ "hotspots": [
+  {
+   "id": "frog",
+   "key": "swamp/frog",
+   "x": 1050,
+   "depth": 12,
+   "react": "hop",
+   "sound": "chirp",
+   "bubble": [
+    "exclaim"
+   ]
+  },
+  {
+   "id": "stick",
+   "key": "swamp/stick-small",
+   "x": 1140,
+   "y": 890,
+   "depth": 11,
+   "walkTo": 1060,
+   "girl": [
+    "stick",
+    "question"
+   ]
+  },
+  {
+   "id": "barlin-hot",
+   "key": "forest/wisp",
+   "x": 0,
+   "y": 0,
+   "depth": 1,
+   "hidden": true,
+   "noWalk": true
+  },
+  {
+   "id": "housedoor",
+   "key": "swamp/lantern",
+   "x": 3350,
+   "y": 900,
+   "depth": 11,
+   "hidden": true,
+   "noWalk": true,
+   "walkTo": 3150
+  }
+ ]
 }

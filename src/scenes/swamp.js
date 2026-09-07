@@ -14,7 +14,7 @@ export class Swamp extends Stage {
     this.started = true; const G = data.groundY;
     this.mudImg = this.props.find(p => p.data_.id === 'mud');
     const a = art(this, 'swamp/mud'); const sink = a.meta.points?.sink || { x: 0.5, y: 0.6 };
-    this.sinkY = this.mudImg.y - a.pivot.y * a.meta.height + sink.y * a.meta.height;
+    const ms = this.mudImg.scaleY * a.scale; this.sinkY = this.mudImg.y + (sink.y - a.pivot.y) * a.meta.height * ms - 6;
     this.stuck = false; this.freed = !!this.flags.freed;
     if (this.freed) { const st = this.hots.get('stick'); st.setVisible(false); }
     // wisps drift off ahead and fade: they've done their leading
@@ -22,7 +22,10 @@ export class Swamp extends Stage {
     this.tweens.add({ targets: this.wisps, x: '+=900', y: '-=200', alpha: 0, duration: 5000, ease: 'Sine.In' });
     // lantern sways
     const lantern = this.props.find(p => p.data_.key === 'swamp/lantern'); if (lantern) this.tweens.add({ targets: lantern, angle: { from: -6, to: 6 }, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-    this.lightGlow = this.add.image(3020, 640, 'forest/wisp').setScale(2.2).setTint(0xffc070).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.5).setDepth(10);
+    this.lightGlow = this.add.image(2970, 640, 'forest/wisp').setScale(4).setTint(0xffc070).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.6).setDepth(10);
+    // murk: a band of dark mist over the back wall, and a low fog along the ground
+    this.add.rectangle(0, 0, data.width, 920, 0x1f2c2a, 0.35).setOrigin(0).setDepth(-40);
+    this.add.rectangle(0, data.groundY - 80, data.width, 120, 0x2c3a36, 0.35).setOrigin(0).setDepth(28);
     // the mud is a trap she can't see coming
     this.mudZone = { from: data.mud.x - 120, to: data.mud.x + 120 };
     // Barlin's own hotspot follows him
@@ -91,11 +94,11 @@ export class Swamp extends Stage {
 
   async atTheDoor() {
     if (this.busy || this.flags.door) return; this.busy = true; this.setFlag('door');
-    this.faceTo(3400); this.sfx.play('creak');
+    this.faceTo(3400); this.sfx.play('creak'); this.cameras.main.pan(3000, this.cameras.main.midPoint.y, 1400, 'Sine.easeInOut');
     this.barlinAnchor = { x: 3100, y: data.groundY - 320 };
     await say(this, this.barlin, ['house', 'question'], { height: 40, ms: 1400 });
     await say(this, this.girl, ['ear'], { height: 230, ms: 1200 });
-    await ui.card({ title: "The witch's house", text: 'The door is open and the light is on. That\'s as far as the story goes tonight.', buttons: [{ id: 'again', label: 'Back to the street' }] });
+    await ui.card({ title: "The witch's house", text: 'The door is open and the light is on. That\'s as far as the story goes tonight.', buttons: [{ id: 'again', label: 'Back to the street' }], bottom: true });
     save.set('street.flags', {}); save.set('street.x', 300); save.set('meadow.flags', {}); save.set('forest.x', 400); save.set('swamp.flags', {}); save.set('swamp.x', 300); pocket.set(null);
     this.flags = {}; this.busy = false; await this.go('street', { x: 300 });
   }
