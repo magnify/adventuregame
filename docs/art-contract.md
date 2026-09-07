@@ -61,3 +61,57 @@ Scene is 6000px wide, 1080px tall at 1x. Ground line at y=900. Layers scroll at 
 | signpost.svg    | 120×200   | 0.5, 1.0 | a fork sign with two blank boards, one wide one narrow. |
 | wisp.svg        | 64×64     | 0.5, 0.5 | soft pale-green blob, drawn once, tinted and pulsed by code. |
 | sun.svg         | 200×200   | 0.5, 0.5 | plain disc, tinted three ways by code. |
+
+## Street scene  (`art/src/street/`)  the opening, from the story's first page
+Scene 2400×1080. Ground (pavement top) at y=900. The tree stands at x=1700.
+
+| file              | size     | pivot    | notes |
+|-------------------|----------|----------|-------|
+| houses.svg        | 1024×520 | tile     | a row of narrow townhouses, soft colours, windows, doors, seamless. Bottom at y=900. |
+| pavement.svg      | 512×180  | tile     | paving slabs then kerb then road. Top at y=880. |
+| tree.svg          | 640×920  | 0.5, 1.0 | big leafy tree with a thick trunk and one strong side branch at about 45% height on the LEFT, wide enough to stand on. A rectangular hole in the trunk just above the branch, 80×120 at 1x, where the door goes. Leave the hole transparent. |
+| door-closed.svg   | 80×120   | 0.5, 1.0 | small arched wooden door with a keyhole, sized to the hole. |
+| door-open.svg     | 80×120   | 0.5, 1.0 | the same door swung open, showing bright light inside (flat pale yellow). |
+| mat.svg           | 100×26   | 0.5, 1.0 | little red doormat with stripes. |
+| key.svg           | 52×26    | 0.5, 0.5 | brass key, side view. |
+| lamp.svg          | 60×300   | 0.5, 1.0 | street lamp, unlit. |
+| cat.svg           | 90×70    | 0.5, 1.0 | a sitting cat, tappable, side view facing left. |
+
+## Meadow scene  (`art/src/meadow/`)  the world with three suns
+Scene 3000×1080. Ground at y=900. Flowers are big here; the insects talk.
+
+| file              | size     | pivot    | notes |
+|-------------------|----------|----------|-------|
+| hills.svg         | 1024×420 | tile     | rolling hills in two greens, seamless. Bottom at y=900. |
+| grass.svg         | 512×180  | tile     | meadow grass to soil. Top at y=880. |
+| flower-tall-1.svg | 160×420  | 0.5, 1.0 | one huge flower, taller than the girl, pink. |
+| flower-tall-2.svg | 140×380  | 0.5, 1.0 | another, yellow. |
+| flower-tall-3.svg | 180×460  | 0.5, 1.0 | another, pale blue. |
+| beetle.svg        | 110×80   | 0.5, 1.0 | round beetle, side view facing left, friendly. |
+| ladybird.svg      | 80×60    | 0.5, 1.0 | facing left. |
+| snail.svg         | 120×90   | 0.5, 1.0 | facing left. |
+| cricket.svg       | 100×90   | 0.5, 1.0 | facing left, long back legs. |
+| stone.svg         | 200×110  | 0.5, 1.0 | a smooth boulder to sit on. |
+
+## Swamp scene  (`art/src/swamp/`)
+Scene 3600×1080. Ground at y=900 but the middle stretch is mud. Dark greens and browns, mist.
+
+| file              | size     | pivot    | notes |
+|-------------------|----------|----------|-------|
+| trees-back.svg    | 1024×560 | tile     | a dense wall of dark tree trunks and hanging moss, seamless. Bottom at y=900. |
+| ground.svg        | 512×180  | tile     | wet dark earth with puddles. Top at y=880. |
+| mud.svg           | 480×140  | 0.5, 0.3 | a brown mud pool, wider than the girl, with a rim. She sinks into it up to the waist. |
+| reeds.svg         | 140×220  | 0.5, 1.0 | |
+| stump.svg         | 180×140  | 0.5, 1.0 | |
+| stick-small.svg   | 70×16    | 0.5, 0.5 | a twig, lying flat. |
+| stick-big.svg     | 280×40   | 0.5, 0.5 | the same twig grown into a proper staff. |
+| witch-house.svg   | 640×560  | 0.5, 1.0 | a crooked hut on short stilts, one lit window, a door, a chimney with smoke drawn as a shape. Faces left. |
+| lantern.svg       | 50×80    | 0.5, 0.0 | hanging lantern, lit, pivot at the hook. |
+| frog.svg          | 90×70    | 0.5, 1.0 | tappable, facing left. |
+
+## Pictograms  (`art/src/icon/`)  what characters say
+All 64×64, pivot 0.5,0.5, thick ink lines, one or two flat colours, readable at 40px on a phone.
+
+key, question, no (red circle and slash), arrow-right, hat (Barlin's top hat), heart, exclaim, sun,
+mud (brown splat), stick, magic (sparkle), house, eat (a bun with a bite), drink (a cup), ear,
+look (an eye), climb (a little figure on a ladder), door, meadow (a flower), z (a sleeping z).
