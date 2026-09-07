@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { ui } from './ui.js';
+import { preloadSfx } from './audio.js';
+import { save } from './save.js';
 
 const base = import.meta.env.BASE_URL;
 
@@ -9,12 +11,13 @@ export class Boot extends Phaser.Scene {
   preload() {
     ui.loading('Cutting out the forest…');
     this.load.json('manifest', `${base}art/manifest.json`);
+    preloadSfx(this);
   }
   create() {
     const manifest = this.cache.json.get('manifest');
     this.registry.set('manifest', manifest);
     for (const [key, meta] of Object.entries(manifest.images)) this.load.image(key, `${base}art/${meta.file}`);
-    this.load.once('complete', () => { ui.loaded(); this.scene.start('forest'); });
+    this.load.once('complete', () => { ui.loaded(); const s = save.get('scene', 'street'); this.scene.start(['street', 'meadow', 'forest', 'swamp'].includes(s) ? s : 'street'); });
     this.load.once('loaderror', f => ui.fail('Could not load ' + (f && f.key)));
     this.load.start();
   }

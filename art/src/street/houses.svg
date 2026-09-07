@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="520" viewBox="0 0 1024 520">
+
+  <rect x="0" y="0" width="1024" height="520" fill="none" />
+  <!-- unit repeats every 256px, four units, seamless left-right -->
+  <g>
+    <rect x="0" y="140" width="256" height="380" fill="#D9C9A8" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="150" y="140" width="106" height="380" fill="#C7B593" opacity="0.5"/>
+    <path d="M0,140 L0,90 L128,40 L256,90 L256,140 Z" fill="#8C5A46" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="30" y="180" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="130" y="180" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="30" y="270" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="98" y="420" width="60" height="100" fill="#7A5230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="146" cy="472" r="3" fill="#3A2E2A"/>
+  </g>
+  <g transform="translate(256,0)">
+    <rect x="0" y="100" width="256" height="420" fill="#C9AE9A" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="0" y="100" width="106" height="420" fill="#B99C86" opacity="0.5"/>
+    <path d="M0,100 L0,60 L128,10 L256,60 L256,100 Z" fill="#6B4226" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="180" y="150" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="180" y="240" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="24" y="150" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="98" y="440" width="60" height="80" fill="#5C4230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="146" cy="482" r="3" fill="#3A2E2A"/>
+  </g>
+  <g transform="translate(512,0)">
+    <rect x="0" y="140" width="256" height="380" fill="#D9C9A8" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="150" y="140" width="106" height="380" fill="#C7B593" opacity="0.5"/>
+    <path d="M0,140 L0,90 L128,40 L256,90 L256,140 Z" fill="#8C5A46" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="30" y="180" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="130" y="180" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="30" y="270" width="46" height="56" fill="#8FB8D9" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="98" y="420" width="60" height="100" fill="#7A5230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="146" cy="472" r="3" fill="#3A2E2A"/>
+  </g>
+  <g transform="translate(768,0)">
+    <rect x="0" y="100" width="256" height="420" fill="#C9AE9A" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="0" y="100" width="106" height="420" fill="#B99C86" opacity="0.5"/>
+    <path d="M0,100 L0,60 L128,10 L256,60 L256,100 Z" fill="#6B4226" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="180" y="150" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="180" y="240" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="24" y="150" width="52" height="60" fill="#EDE6D2" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <rect x="98" y="440" width="60" height="80" fill="#5C4230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+    <circle cx="146" cy="482" r="3" fill="#3A2E2A"/>
+  </g>
+
+</svg>

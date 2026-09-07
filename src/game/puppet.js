@@ -37,12 +37,13 @@ export class Puppet extends Phaser.GameObjects.Container {
   /** Called every frame. dt in seconds. */
   tick(dt) {
     this.t += dt; const P = this.parts, t = this.t;
-    const walking = this.mode === 'walk';
-    const swing = walking ? Math.sin(t * 9) * 0.55 : 0;
+    const walking = this.mode === 'walk', climbing = this.mode === 'climb', stuck = this.mode === 'stuck', reaching = this.mode === 'reach';
+    const swing = walking ? Math.sin(t * 9) * 0.55 : climbing ? Math.sin(t * 7) * 0.7 : 0;
     if (P['leg-l']) P['leg-l'].rotation = swing;
     if (P['leg-r']) P['leg-r'].rotation = -swing;
-    if (P['arm-l']) P['arm-l'].rotation = -swing * 0.7 + (walking ? 0 : Math.sin(t * 1.6) * 0.04);
-    if (P['arm-r']) P['arm-r'].rotation = swing * 0.7 - (walking ? 0 : Math.sin(t * 1.6) * 0.04);
+    const armIdle = walking || climbing ? 0 : Math.sin(t * 1.6) * 0.04;
+    if (P['arm-l']) P['arm-l'].rotation = climbing ? -2.6 + Math.sin(t * 7) * 0.4 : reaching ? -2.2 : stuck ? -1.2 + Math.sin(t * 6) * 0.3 : -swing * 0.7 + armIdle;
+    if (P['arm-r']) P['arm-r'].rotation = climbing ? -2.6 - Math.sin(t * 7) * 0.4 : reaching ? -0.4 : stuck ? -1.4 - Math.sin(t * 6) * 0.3 : swing * 0.7 - armIdle;
     const bob = walking ? Math.abs(Math.sin(t * 9)) * -4 : Math.sin(t * 1.6) * -1.2;
     const bodyPin = this.pins.neck || { x: 0, y: 0 };
     if (P.body) { P.body.y = bob; P.body.scaleY = P.body.scaleX * (walking ? 1 : 1 + Math.sin(t * 1.6) * 0.006); }

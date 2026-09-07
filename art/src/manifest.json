@@ -281,6 +281,178 @@
         "x": 0.5,
         "y": 0.5
       }
-    }
+    },
+    "street/houses": {
+      "width": 1024,
+      "height": 520,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "street/pavement": {
+      "width": 512,
+      "height": 180,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "street/tree": {
+      "width": 640,
+      "height": 920,
+      "pivot": { "x": 0.5, "y": 1 },
+      "points": {
+        "door": { "x": 0.5, "y": 0.5108695652173914 },
+        "branch": { "x": 0.2734375, "y": 0.5217391304347826 }
+      }
+    },
+    "street/door-closed": {
+      "width": 80,
+      "height": 120,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "street/door-open": {
+      "width": 80,
+      "height": 120,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "street/mat": {
+      "width": 100,
+      "height": 26,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "street/key": {
+      "width": 52,
+      "height": 26,
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    "street/lamp": {
+      "width": 60,
+      "height": 300,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "street/cat": {
+      "width": 90,
+      "height": 70,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/hills": {
+      "width": 1024,
+      "height": 420,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "meadow/grass": {
+      "width": 512,
+      "height": 180,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "meadow/flower-tall-1": {
+      "width": 160,
+      "height": 420,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/flower-tall-2": {
+      "width": 140,
+      "height": 380,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/flower-tall-3": {
+      "width": 180,
+      "height": 460,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/beetle": {
+      "width": 110,
+      "height": 80,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/ladybird": {
+      "width": 80,
+      "height": 60,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/snail": {
+      "width": 120,
+      "height": 90,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/cricket": {
+      "width": 100,
+      "height": 90,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "meadow/stone": {
+      "width": 200,
+      "height": 110,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "swamp/trees-back": {
+      "width": 1024,
+      "height": 560,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "swamp/ground": {
+      "width": 512,
+      "height": 180,
+      "pivot": { "x": 0, "y": 0 }
+    },
+    "swamp/mud": {
+      "width": 480,
+      "height": 140,
+      "pivot": { "x": 0.5, "y": 0.3 },
+      "points": {
+        "sink": { "x": 0.5, "y": 0.36 }
+      }
+    },
+    "swamp/reeds": {
+      "width": 140,
+      "height": 220,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "swamp/stump": {
+      "width": 180,
+      "height": 140,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "swamp/stick-small": {
+      "width": 70,
+      "height": 16,
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    "swamp/stick-big": {
+      "width": 280,
+      "height": 40,
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    "swamp/witch-house": {
+      "width": 640,
+      "height": 560,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "swamp/lantern": {
+      "width": 50,
+      "height": 80,
+      "pivot": { "x": 0.5, "y": 0 }
+    },
+    "swamp/frog": {
+      "width": 90,
+      "height": 70,
+      "pivot": { "x": 0.5, "y": 1 }
+    },
+    "icon/key": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/question": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/no": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/arrow-right": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/hat": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/heart": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/exclaim": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/sun": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/mud": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/stick": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/magic": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/house": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/eat": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/drink": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/ear": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/look": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/climb": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/door": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/meadow": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } },
+    "icon/z": { "width": 64, "height": 64, "pivot": { "x": 0.5, "y": 0.5 } }
   }
 }

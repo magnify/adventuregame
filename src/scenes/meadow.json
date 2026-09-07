@@ -1,0 +1,29 @@
+{
+  "name": "meadow", "width": 3000, "height": 1080, "groundY": 900, "start": { "x": 300 }, "barlin": "later",
+  "sky": { "bright": "#8fc3e8", "horizonBright": "#fbf1d6" },
+  "tiles": [
+    { "key": "meadow/hills", "y": 480, "scroll": 0.4, "depth": -50 },
+    { "key": "meadow/grass", "y": 880, "scroll": 1, "depth": 5 }
+  ],
+  "props": [
+    { "key": "meadow/flower-tall-1", "x": 520, "depth": -20, "scale": 0.8, "scroll": 0.8 },
+    { "key": "meadow/flower-tall-3", "x": 900, "depth": 8 },
+    { "key": "meadow/flower-tall-2", "x": 1300, "depth": -20, "scale": 0.7, "scroll": 0.8 },
+    { "key": "meadow/flower-tall-1", "x": 1700, "depth": 30, "scale": 1.15, "y": 960 },
+    { "key": "meadow/flower-tall-2", "x": 2200, "depth": 8 },
+    { "key": "meadow/flower-tall-3", "x": 2650, "depth": -20, "scale": 0.75, "scroll": 0.8 },
+    { "key": "meadow/stone", "x": 1500, "depth": 9 },
+    { "key": "forest/grass-tuft", "x": 400, "depth": 30, "y": 950 },
+    { "key": "forest/grass-tuft", "x": 1100, "depth": 30, "y": 940 },
+    { "key": "forest/grass-tuft", "x": 2000, "depth": 30, "y": 955 },
+    { "key": "forest/flowers", "x": 700, "depth": 8 },
+    { "key": "forest/flowers", "x": 2400, "depth": 8 }
+  ],
+  "hotspots": [
+    { "id": "beetle", "key": "meadow/beetle", "x": 780, "depth": 12, "react": "hop", "sound": "chirp", "bubble": ["sun", "sun", "sun"] },
+    { "id": "ladybird", "key": "meadow/ladybird", "x": 1180, "depth": 12, "react": "wiggle", "sound": "chirp", "bubble": ["heart"] },
+    { "id": "snail", "key": "meadow/snail", "x": 1560, "y": 860, "depth": 12, "react": "puff", "sound": "chirp", "bubble": ["z"], "ms": 1200 },
+    { "id": "cricket", "key": "meadow/cricket", "x": 2100, "depth": 12, "react": "hop", "sound": "chirp", "bubble": ["arrow-right"] },
+    { "id": "stone", "key": "meadow/stone", "x": 1500, "depth": 9, "react": "wiggle", "girl": ["look"] }
+  ]
+}

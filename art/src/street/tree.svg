@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="920" viewBox="0 0 640 920">
+
+  <!-- trunk with rectangular door-hole (80x120) punched out via evenodd, just above the left branch -->
+  <path d="M242,920 Q225,650 244,300 L396,300 Q415,650 398,920 Z M280,350 L360,350 L360,470 L280,470 Z"
+        fill="#7A5230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" fill-rule="evenodd" />
+  <path d="M320,300 L396,300 Q415,650 398,920 L340,920 Z M320,350 L360,350 L360,470 L320,470 Z"
+        fill="#4E2F1C" opacity="0.55" fill-rule="evenodd" />
+
+  <!-- left branch: trunk edge x=240 out to tip x=90, flat top surface at y=480, thickness 44 -->
+  <path d="M240,480 L110,480 Q90,480 90,502 Q90,524 110,524 L240,524 Z"
+        fill="#7A5230" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M110,524 L240,524 L240,528 Q170,533 110,528 Z" fill="#4E2F1C" opacity="0.5"/>
+  <path d="M240,480 L110,480" stroke="#9A7448" stroke-width="2" opacity="0.5"/>
+
+  <!-- canopy -->
+  <circle cx="180" cy="215" r="160" fill="#6FA85A" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+  <circle cx="440" cy="200" r="175" fill="#6FA85A" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+  <circle cx="320" cy="110" r="185" fill="#6FA85A" stroke="#3A2E2A" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M320,-75 A185,185 0 0 1 470,195 Z" fill="#4F8A42" opacity="0.5"/>
+  <ellipse cx="430" cy="240" rx="115" ry="95" fill="#4F8A42" opacity="0.45"/>
+
+</svg>

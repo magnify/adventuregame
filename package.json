@@ -9,7 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "art": "node tools/render-art.mjs",
-    "test": "node tests/smoke.spec.mjs"
+    "test": "node tests/smoke.spec.mjs",
+    "sfx": "node tools/make-sfx.mjs",
+    "play": "node tests/playthrough.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.4",
