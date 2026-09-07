@@ -18,19 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Models are pre-committed under public/models/ — the asset pipeline
-      # (npm run assets) is a local/offline step, not run in CI.
+      # Art is pre-rendered into public/art/ (npm run art), not built in CI.
       - run: npm run build
       - uses: actions/configure-pages@v5
         with:
           enablement: true
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
