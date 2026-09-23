@@ -86,10 +86,10 @@ export class Barlin extends Phaser.GameObjects.Container {
     const pt = (name, d) => { const q = body.meta.points?.[name] || d; return { x: (q.x - body.pivot.x) * bw, y: (q.y - body.pivot.y) * bh }; };
     const wb = pt('wing-back', { x: 0.45, y: 0.4 }), wf = pt('wing-front', { x: 0.5, y: 0.5 }), hat = pt('hat', { x: 0.85, y: 0.2 });
     const a = k => art(scene, `barlin/${k}`).pivot;
-    this.wingBack = scene.add.image(wb.x, wb.y, 'barlin/wing-back').setOrigin(a('wing-back').x, a('wing-back').y).setScale(px);
+    this.wingBack = scene.add.image(wb.x, wb.y, 'barlin/wing-back').setOrigin(a('wing-back').x, a('wing-back').y).setScale(px).setTint(0xd6ccc2); // the far wing sits in his own shade
     this.body = scene.add.image(0, 0, 'barlin/body').setOrigin(body.pivot.x, body.pivot.y).setScale(px);
     this.wingFront = scene.add.image(wf.x, wf.y, 'barlin/wing-front').setOrigin(a('wing-front').x, a('wing-front').y).setScale(px);
-    this.hat = scene.add.image(hat.x, hat.y, 'barlin/hat').setOrigin(a('hat').x, a('hat').y).setScale(px).setRotation(-0.2);
+    this.hat = scene.add.image(hat.x, hat.y, 'barlin/hat').setOrigin(a('hat').x, a('hat').y).setScale(px).setRotation(0.15);
     this.glow = scene.add.image(0, 0, 'forest/wisp').setOrigin(0.5).setScale(px * 3).setTint(0xffb060).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
     this.add([this.glow, this.wingBack, this.body, this.wingFront, this.hat]);
     this.setScale(scale); this.t = Math.random() * 10; this.facing = 1;
@@ -97,8 +97,8 @@ export class Barlin extends Phaser.GameObjects.Container {
   face(dir) { if (dir && dir !== this.facing) { this.facing = dir; this.scaleX = Math.abs(this.scaleX) * dir; } }
   tick(dt, fuss = 0) {
     this.t += dt; const f = Math.sin(this.t * 16) * 0.6;
-    this.wingBack.rotation = -0.9 + f * 0.9; this.wingFront.rotation = -0.3 - f * 0.9;
-    this.hat.rotation = -0.2 + Math.sin(this.t * 3) * 0.05 * (1 + fuss * 3);
+    this.wingBack.rotation = -1.15 + f * 0.7; this.wingFront.rotation = -0.8 - f * 0.7; // swept back, clear of his face
+    this.hat.rotation = 0.15 + Math.sin(this.t * 3) * 0.05 * (1 + fuss * 3);
     this.body.y = Math.sin(this.t * 2.1) * 3;
   }
 }

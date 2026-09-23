@@ -43,50 +43,29 @@
       "pivot": { "x": 0.3, "y": 0.12 }
     },
     "barlin/body": {
-      "width": 60,
-      "height": 24,
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      },
+      "width": 70,
+      "height": 36,
+      "pivot": { "x": 0.5, "y": 0.5 },
       "points": {
-        "wing-back": {
-          "x": 0.45,
-          "y": 0.4
-        },
-        "wing-front": {
-          "x": 0.5,
-          "y": 0.5
-        },
-        "hat": {
-          "x": 0.85,
-          "y": 0.2
-        }
+        "wing-back": { "x": 0.4, "y": 0.36 },
+        "wing-front": { "x": 0.45, "y": 0.4 },
+        "hat": { "x": 0.84, "y": 0.14 }
       }
     },
     "barlin/wing-back": {
-      "width": 54,
-      "height": 60,
-      "pivot": {
-        "x": 0.1,
-        "y": 0.9
-      }
+      "width": 47,
+      "height": 66,
+      "pivot": { "x": 0.03, "y": 0.9 }
     },
     "barlin/wing-front": {
-      "width": 54,
-      "height": 60,
-      "pivot": {
-        "x": 0.1,
-        "y": 0.9
-      }
+      "width": 47,
+      "height": 66,
+      "pivot": { "x": 0.03, "y": 0.9 }
     },
     "barlin/hat": {
-      "width": 30,
-      "height": 28,
-      "pivot": {
-        "x": 0.5,
-        "y": 1
-      }
+      "width": 28,
+      "height": 22,
+      "pivot": { "x": 0.5, "y": 0.92 }
     },
     "forest/far-trees": {
       "width": 1024,
