@@ -93,7 +93,7 @@ export class Stage extends Phaser.Scene {
     const wp = this.cameras.main.getWorldPoint(p.x, p.y);
     // hotspot under the finger?
     let hit = null;
-    for (const img of this.hots.values()) { if (!img.visible) continue; const b = img.getBounds(); b.inflate(30, 30); if (b.contains(wp.x, wp.y)) { if (!hit || img.depth > hit.depth) hit = img; } }
+    for (const img of this.hots.values()) { if (!img.visible) continue; const b = Phaser.Geom.Rectangle.Inflate(img.getBounds(), 30, 30); if (b.contains(wp.x, wp.y)) { if (!hit || img.depth > hit.depth) hit = img; } }
     if (hit) { this.act(hit); return; }
     if (this.onGroundTap && this.onGroundTap(wp) === true) return;
     this.walkTo(wp.x);

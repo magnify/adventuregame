@@ -24,6 +24,13 @@ const until = async (key, ms = 60000) => p.waitForFunction(k => window.__game.sc
 await loaded(); console.log('scene', await cur());
 await p.evaluate(() => document.querySelector('#ui button')?.click()); await p.waitForTimeout(500);
 await shot('1-street');
+// a real finger first: tap the pavement ahead of her and she must walk there (the story below drives hotspots directly)
+{ const before = await p.evaluate(() => window.__game.scene.getScenes(true)[0].girlX);
+  await p.mouse.click(700, 470); await p.waitForTimeout(2500);
+  const after = await p.evaluate(() => window.__game.scene.getScenes(true)[0].girlX);
+  if (!(after > before + 100)) fail(`a tap on the ground did not move her (${before} -> ${after})`);
+  console.log('tap walk', Math.round(before), '->', Math.round(after));
+  await walk(300); }
 await act('cat'); await act('door'); console.log('door locked ->', (await state()).pocket);
 await act('mat'); await act('key'); console.log('pocket', (await state()).pocket);
 await shot('2-street-branch');
