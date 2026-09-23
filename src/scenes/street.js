@@ -18,10 +18,10 @@ export class Street extends Stage {
     this.doorPos = { x: tx + pts.door.x * a.meta.width, y: ty + pts.door.y * a.meta.height };
     this.branchPos = { x: tx + pts.branch.x * a.meta.width, y: ty + pts.branch.y * a.meta.height };
     const door = this.hots.get('door'), mat = this.hots.get('mat'), key = this.hots.get('key');
-    door.setPosition(this.doorPos.x, this.doorPos.y); mat.setPosition(this.doorPos.x, this.doorPos.y + 22); key.setPosition(this.doorPos.x + 6, this.doorPos.y + 14).setAngle(-12);
+    door.setPosition(this.doorPos.x, this.doorPos.y); mat.setPosition(this.doorPos.x, this.doorPos.y + 4); key.setPosition(this.doorPos.x + 4, this.doorPos.y + 1).setAngle(-12);
     // a glint on the door so she notices something in the tree
-    this.glint = this.add.image(this.doorPos.x + 20, this.doorPos.y - 70, 'forest/wisp').setScale(0.5).setTint(0xfff3b0).setBlendMode(Phaser.BlendModes.ADD).setDepth(14);
-    this.tweens.add({ targets: this.glint, alpha: { from: 0.2, to: 0.9 }, scale: { from: 0.35, to: 0.6 }, duration: 900, yoyo: true, repeat: -1 });
+    this.glint = this.add.image(this.doorPos.x + 12, this.doorPos.y - 50, 'forest/wisp').setScale(0.7).setTint(0xffe28a).setBlendMode(Phaser.BlendModes.ADD).setDepth(14);
+    this.tweens.add({ targets: this.glint, alpha: { from: 0.35, to: 1 }, scale: { from: 0.5, to: 0.95 }, duration: 900, yoyo: true, repeat: -1 });
     this.up = !!this.flags.up;
     if (this.up) { this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
     if (this.flags.matUp && !pocket.has('key')) { mat.setAngle(-70); key.setVisible(true); }
@@ -76,7 +76,7 @@ export class Street extends Stage {
     const door = this.hots.get('door'), mat = this.hots.get('mat');
     this.girl.play('reach'); this.sfx.play('unlock'); await wait(this, 500);
     pocket.set(null); door.setTexture('street/door-open'); this.sfx.play('creak');
-    const light = this.add.image(this.doorPos.x, this.doorPos.y - 60, 'forest/wisp').setTint(0xfff6d0).setBlendMode(Phaser.BlendModes.ADD).setDepth(15).setScale(0.5).setAlpha(0);
+    const light = this.add.image(this.doorPos.x, this.doorPos.y - 42, 'forest/wisp').setTint(0xfff6d0).setBlendMode(Phaser.BlendModes.ADD).setDepth(15).setScale(0.5).setAlpha(0);
     await tween(this, { targets: light, alpha: 1, scale: 6, duration: 900, ease: 'Quad.Out' });
     await say(this, this.girl, ['meadow', 'exclaim'], { height: 230, ms: 1100 });
     // leaning closer... and pulled through
@@ -88,7 +88,7 @@ export class Street extends Stage {
     // the key rattles out and lands under the mat
     const k = this.add.image(this.doorPos.x + 10, this.doorPos.y - 40, 'street/key').setScale(0.5).setDepth(13);
     this.tweens.add({ targets: mat, angle: -60, duration: 200, yoyo: true, hold: 250 });
-    await tween(this, { targets: k, x: this.doorPos.x + 6, y: this.doorPos.y + 14, angle: 720, duration: 500, ease: 'Bounce.Out' });
+    await tween(this, { targets: k, x: this.doorPos.x + 6, y: this.doorPos.y + 1, angle: 720, duration: 500, ease: 'Bounce.Out' });
     await wait(this, 300); k.setVisible(false);
     this.setFlag('through');
     await this.go('meadow', { light: true, x: 300 });

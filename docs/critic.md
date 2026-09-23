@@ -4,7 +4,8 @@ You see screenshots only. Not the code, not the last round. Score each scene 1â€
 on every line. Say exactly what to change, in plain words a person could act on. Say first what should be removed.
 
 1. **Readable on a phone.** At a third of the size, can you tell what she is, where she can go, and what's tappable?
-2. **One hand cut it.** Do all the pieces on screen look like the same paper cut-out set: same line, same flatness, same palette family?
+2. **One hand cut it.** Does every piece on screen, the pocket and the characters included, match the paper street reference
+   (`art/reference/street-anchor.webp`): same photographed layered paper, same grain, same palette family? Name each piece that doesn't.
 3. **Her face.** Is she legible against the ground and the dark, always?
 4. **Nothing idle.** Is there anything on screen doing nothing, or two things doing the same job?
 5. **Depth.** Does near, mid and far read as three planes without effort?

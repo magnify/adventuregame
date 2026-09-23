@@ -301,34 +301,39 @@
         "branch": { "x": 0.4, "y": 0.507 }
       }
     },
+    "street/sky": {
+      "width": 2600,
+      "height": 867,
+      "pivot": { "x": 0, "y": 0 }
+    },
     "street/door-closed": {
-      "width": 80,
-      "height": 120,
+      "width": 56,
+      "height": 84,
       "pivot": { "x": 0.5, "y": 1 }
     },
     "street/door-open": {
-      "width": 80,
-      "height": 120,
+      "width": 56,
+      "height": 84,
       "pivot": { "x": 0.5, "y": 1 }
     },
     "street/mat": {
-      "width": 100,
-      "height": 26,
+      "width": 72,
+      "height": 9,
       "pivot": { "x": 0.5, "y": 1 }
     },
     "street/key": {
-      "width": 52,
-      "height": 26,
+      "width": 36,
+      "height": 11,
       "pivot": { "x": 0.5, "y": 0.5 }
     },
     "street/lamp": {
-      "width": 60,
+      "width": 48,
       "height": 300,
       "pivot": { "x": 0.5, "y": 1 }
     },
     "street/cat": {
-      "width": 90,
-      "height": 70,
+      "width": 81,
+      "height": 90,
       "pivot": { "x": 0.5, "y": 1 }
     },
     "meadow/hills": {

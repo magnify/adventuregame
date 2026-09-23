@@ -13,6 +13,14 @@
  },
  "tiles": [
   {
+   "key": "street/sky",
+   "x": -600,
+   "y": -397,
+   "scroll": 0.1,
+   "scrollY": 1,
+   "depth": -90
+  },
+  {
    "key": "street/houses",
    "y": 362,
    "scroll": 0.6,
@@ -36,6 +44,14 @@
  ],
  "hotspots": [
   {
+   "id": "lamp",
+   "key": "street/lamp",
+   "x": 820,
+   "depth": 8,
+   "react": "wiggle",
+   "sound": "locked"
+  },
+  {
    "id": "cat",
    "key": "street/cat",
    "x": 1150,
@@ -56,7 +72,6 @@
   {
    "id": "door",
    "key": "street/door-closed",
-   "scale": 0.68,
    "x": 0,
    "y": 0,
    "depth": 11,
@@ -65,7 +80,6 @@
   {
    "id": "mat",
    "key": "street/mat",
-   "scale": 0.7,
    "x": 0,
    "y": 0,
    "depth": 12,
@@ -74,7 +88,6 @@
   {
    "id": "key",
    "key": "street/key",
-   "scale": 0.7,
    "x": 0,
    "y": 0,
    "depth": 13,

@@ -16,14 +16,17 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
 #ui .buttons { display: flex; gap: 10px; justify-content: center; }
 #ui button { margin-top: 16px; font: 700 24px Gaegu, cursive; color: var(--card); background: var(--ink); border: 0; border-radius: 14px; padding: 10px 26px; cursor: pointer; box-shadow: 0 4px 0 var(--brass); }
 #ui button:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
-#pocket { position: fixed; left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); width: 72px; height: 72px; border-radius: 50%;
-  background: var(--card); border: 3px solid var(--ink); box-shadow: 0 4px 0 rgba(43, 42, 51, .3); display: grid; place-items: center; z-index: 4; transition: opacity .3s, transform .3s; }
-#pocket.empty { opacity: .35; transform: scale(.85); }
-#pocket img { width: 44px; height: 44px; }
+/* a scrap of paper card, slightly askew, lifted off the page like the rest of the cut-outs */
+#pocket { position: fixed; left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); width: 76px; height: 72px;
+  border-radius: 46% 54% 50% 50% / 52% 46% 56% 48%; background: #efe6d3; transform: rotate(-4deg);
+  box-shadow: inset 0 0 0 1px rgba(120, 95, 70, .18), 0 2px 1px rgba(90, 70, 50, .25), 0 8px 16px rgba(60, 45, 30, .22);
+  display: grid; place-items: center; z-index: 4; transition: opacity .3s, transform .3s; }
+#pocket.empty { opacity: 0; transform: rotate(-4deg) scale(.85); pointer-events: none; }
+#pocket img { width: 58px; height: 58px; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(60, 45, 30, .35)); }
 #pocket.bump { animation: bump .35s cubic-bezier(.2, 1.4, .5, 1); }
-@keyframes bump { 0% { transform: scale(1.3); } 100% { transform: scale(1); } }
+@keyframes bump { 0% { transform: rotate(-4deg) scale(1.3); } 100% { transform: rotate(-4deg) scale(1); } }
 #reset { position: fixed; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); width: 40px; height: 40px; border-radius: 50%; z-index: 4;
-  border: 2px solid rgba(251, 246, 236, .5); background: rgba(16, 24, 48, .35); color: #FBF6EC; font: 700 22px Gaegu, cursive; cursor: pointer; opacity: .6; }
+  border: 2px solid rgba(251, 246, 236, .5); background: rgba(16, 24, 48, .35); color: #FBF6EC; font: 700 22px Gaegu, cursive; cursor: pointer; opacity: .35; }
 #ui .card.bottom { background: none; backdrop-filter: none; place-items: end center; padding-bottom: max(18px, env(safe-area-inset-bottom)); }
 #ui .card.bottom > div { padding: 14px 26px 16px; max-width: min(90vw, 640px); }
 #ui .card.bottom h1 { font-size: clamp(24px, 4vw, 34px); }
