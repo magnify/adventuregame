@@ -283,22 +283,22 @@
       }
     },
     "street/houses": {
-      "width": 1024,
+      "width": 1790,
       "height": 520,
       "pivot": { "x": 0, "y": 0 }
     },
     "street/pavement": {
-      "width": 512,
-      "height": 180,
+      "width": 1068,
+      "height": 200,
       "pivot": { "x": 0, "y": 0 }
     },
     "street/tree": {
-      "width": 640,
+      "width": 637,
       "height": 920,
       "pivot": { "x": 0.5, "y": 1 },
       "points": {
-        "door": { "x": 0.5, "y": 0.5108695652173914 },
-        "branch": { "x": 0.2734375, "y": 0.5217391304347826 }
+        "door": { "x": 0.622, "y": 0.536 },
+        "branch": { "x": 0.4, "y": 0.507 }
       }
     },
     "street/door-closed": {

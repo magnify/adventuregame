@@ -42,7 +42,7 @@ export class Stage extends Phaser.Scene {
     this.sky = this.add.image(0, 0, `sky-${this.key}`).setOrigin(0).setDepth(-100);
     this.paintSky(0);
     // tiles
-    this.tiles = (D.tiles || []).map(t => { const a = art(this, t.key); const ts = this.add.tileSprite(0, t.y, D.width / (t.scroll || 1) + 2000, a.h / a.scale, t.key).setOrigin(0).setScrollFactor(t.scroll || 1).setTileScale(1 / a.scale).setDepth(t.depth ?? (t.scroll < 1 ? -50 : 5)); ts.data_ = t; if (typeof t.tint === 'string') ts.setTint(Phaser.Display.Color.HexStringToColor(t.tint).color); return ts; });
+    this.tiles = (D.tiles || []).map(t => { const a = art(this, t.key); const ts = this.add.tileSprite(-1000, t.y, D.width / (t.scroll || 1) + 3000, a.h / a.scale, t.key).setOrigin(0).setScrollFactor(t.scroll || 1, t.scrollY ?? t.scroll ?? 1).setTileScale(1 / a.scale).setDepth(t.depth ?? (t.scroll < 1 ? -50 : 5)); ts.data_ = t; if (typeof t.tint === 'string') ts.setTint(Phaser.Display.Color.HexStringToColor(t.tint).color); return ts; });
     // props and hotspots
     this.hots = new Map(); this.props = [];
     for (const p of D.props || []) this.prop(p);

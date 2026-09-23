@@ -14,16 +14,16 @@
  "tiles": [
   {
    "key": "street/houses",
-   "y": 380,
+   "y": 362,
    "scroll": 0.6,
+   "scrollY": 1,
    "depth": -50
   },
   {
    "key": "street/pavement",
    "y": 880,
    "scroll": 1,
-   "depth": 5,
-   "tint": "#d9d3c8"
+   "depth": 5
   }
  ],
  "props": [
@@ -56,6 +56,7 @@
   {
    "id": "door",
    "key": "street/door-closed",
+   "scale": 0.68,
    "x": 0,
    "y": 0,
    "depth": 11,
@@ -64,6 +65,7 @@
   {
    "id": "mat",
    "key": "street/mat",
+   "scale": 0.7,
    "x": 0,
    "y": 0,
    "depth": 12,
@@ -72,6 +74,7 @@
   {
    "id": "key",
    "key": "street/key",
+   "scale": 0.7,
    "x": 0,
    "y": 0,
    "depth": 13,
