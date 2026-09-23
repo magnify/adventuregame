@@ -11,7 +11,8 @@ Each line is checked by something that runs, except the last, which is Brian on 
 | 4 | The story plays through start to end | `npm run play` |
 | 5 | The critic scores 8+ on every line of `docs/critic.md`, from screenshots only | a reviewer who didn't build it |
 | 6 | It feels right: eased walk, footsteps, a mark where you tap, the tapped thing answers at once, a soft camera | built into `src/game/stage.js` |
-| 7 | Brian has played it on a phone or tablet and is happy | the demo link |
+| 7 | The exact demo files load and play on phone (both ways up) and tablet sizes, before the link goes out | `npm run demo && npm run demo-check` |
+| 8 | Brian has played it on a phone or tablet and is happy | the demo link |
 
 Art rules learned on the street, for every new kit:
 - Each place starts from one anchor picture; every piece is generated to match it.
@@ -21,4 +22,4 @@ Art rules learned on the street, for every new kit:
 
 ## Street, now
 1 icons still flat (heart, key, question, exclaim, meadow; GPT's icons job) · 2 passes · 3 passes · 4 passes ·
-5 last critic failed on line 2 (icons, and the girl reading as a sticker; shadows added since) and line 7 · 6 built · 7 waiting on Brian
+5 last critic failed on line 2 (icons, and the girl reading as a sticker; shadows added since) and line 7 · 6 built · 7 passes · 8 waiting on Brian

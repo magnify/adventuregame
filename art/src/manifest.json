@@ -242,8 +242,8 @@
       "pivot": { "x": 0, "y": 0 }
     },
     "street/sky": {
-      "width": 2600,
-      "height": 867,
+      "width": 3400,
+      "height": 1134,
       "pivot": { "x": 0, "y": 0 }
     },
     "street/door-closed": {

@@ -14,8 +14,8 @@
  "tiles": [
   {
    "key": "street/sky",
-   "x": -600,
-   "y": -397,
+   "x": -1300,
+   "y": -664,
    "scroll": 0.1,
    "scrollY": 1,
    "depth": -90

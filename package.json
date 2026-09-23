@@ -14,7 +14,9 @@
     "play": "node tests/playthrough.mjs",
     "poses": "node tests/poses.mjs",
     "joints": "node tests/joints.mjs",
-    "check": "node tools/check-scene.mjs"
+    "check": "node tools/check-scene.mjs",
+    "demo": "vite build --base ./ --outDir dist-demo --emptyOutDir",
+    "demo-check": "node tests/demo-check.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.4",
