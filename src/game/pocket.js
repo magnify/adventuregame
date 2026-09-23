@@ -2,7 +2,7 @@ import { save } from './save.js';
 const base = import.meta.env.BASE_URL;
 
 // Things that have their paper cut-out show that in the pocket; the rest fall back to the pictogram.
-const PAPER = { key: 'street-key.webp' };
+const PAPER = { key: 'pocket-key.webp' };
 
 /** What she carries. One thing at a time is plenty for a small child; shown bottom-left as a pictogram. */
 export const pocket = {

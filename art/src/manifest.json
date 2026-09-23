@@ -251,6 +251,11 @@
         "branch": { "x": 0.4, "y": 0.507 }
       }
     },
+    "pocket/key": {
+      "width": 64,
+      "height": 20,
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
     "street/sky": {
       "width": 2600,
       "height": 867,

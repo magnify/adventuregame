@@ -49,7 +49,7 @@ export class Stage extends Phaser.Scene {
     for (const hsp of D.hotspots || []) this.hot(hsp);
     // the girl
     const startX = save.get(`${this.key}.x`, D.start.x);
-    this.girl = makeGirl(this, startX, D.groundY, D.girlScale || 1).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = D.speed || 230; this.walkResolve = null; this.stepAt = 0;
+    this.girl = makeGirl(this, startX, D.groundY, D.girlScale || 1.3).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = D.speed || 230; this.walkResolve = null; this.stepAt = 0;
     if (D.barlin) { this.barlin = new Barlin(this, startX + 220, D.groundY - 260, 1.3).setDepth(21); this.barlin.setVisible(D.barlin !== 'later'); this.fuss = 0; this.barlinAnchor = null; }
     // input
     this.input.on('pointerdown', p => { this.down = { x: p.x, y: p.y }; });
@@ -117,7 +117,7 @@ export class Stage extends Phaser.Scene {
     if (kind === 'hop') this.tweens.add({ targets: img, y: img.y - 40, duration: 180, yoyo: true, ease: 'Quad.Out' });
     if (kind === 'puff') this.tweens.add({ targets: img, scaleX: img.scaleX * 1.25, scaleY: img.scaleY * 0.8, duration: 120, yoyo: true, ease: 'Quad.Out' });
     if (h.bubble) await say(this, img, h.bubble, { height: img.displayHeight + 10, ms: h.ms || 1500 });
-    if (h.girl) await say(this, this.girl, h.girl, { height: 230 });
+    if (h.girl) await say(this, this.girl, h.girl, { height: 285 });
   }
 
   /** Leave for another stage, with a flash of light or a fade to dark. */

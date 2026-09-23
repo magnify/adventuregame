@@ -42,7 +42,7 @@ export class Swamp extends Stage {
   }
 
   onGroundTap(wp) {
-    if (this.stuck) { this.busy = true; this.girl.play('stuck'); this.sfx.play('squelch', { volume: 0.4 }); say(this, this.girl, ['mud', 'exclaim'], { height: 200, ms: 1100 }).then(() => { this.busy = false; }); return true; }
+    if (this.stuck) { this.busy = true; this.girl.play('stuck'); this.sfx.play('squelch', { volume: 0.4 }); say(this, this.girl, ['mud', 'exclaim'], { height: 250, ms: 1100 }).then(() => { this.busy = false; }); return true; }
     if (wp.x > 3200 && this.freed) { this.walkTo(3150); this.time.delayedCall(2600, () => this.atTheDoor()); return true; }
     return false;
   }
@@ -51,7 +51,7 @@ export class Swamp extends Stage {
     this.stuck = true; this.busy = true; this.frozen = true; this.targetX = this.girlX; this.settle();
     this.sfx.play('squelch'); this.girl.play('stuck');
     await tween(this, { targets: this.girl, y: this.sinkY, duration: 700, ease: 'Quad.In' });
-    await say(this, this.girl, ['mud', 'exclaim'], { height: 200, ms: 1300 });
+    await say(this, this.girl, ['mud', 'exclaim'], { height: 250, ms: 1300 });
     this.barlinAnchor = { x: this.girlX + 140, y: data.groundY - 300 };
     await say(this, this.barlin, ['question'], { height: 40, ms: 1200 });
     this.busy = false;
@@ -60,7 +60,7 @@ export class Swamp extends Stage {
   async onHot(id, img) {
     if (id === 'stick' && !this.stuck) { return false; }
     if (id === 'barlin-hot' && this.stuck) { await this.magic(); return true; }
-    if (id === 'stick' && this.stuck) { await say(this, this.girl, ['stick', 'no'], { height: 200 }); return true; }
+    if (id === 'stick' && this.stuck) { await say(this, this.girl, ['stick', 'no'], { height: 250 }); return true; }
     return false;
   }
 
@@ -87,7 +87,7 @@ export class Swamp extends Stage {
     this.remove(stick); pocket.set('stick'); this.girl.play('idle');
     this.girlX = this.targetX = this.mudZone.to + 90; this.frozen = false; this.stuck = false; this.freed = true; this.setFlag('freed');
     this.barlinAnchor = null;
-    await say(this, this.girl, ['stick', 'heart'], { height: 230, ms: 1300 });
+    await say(this, this.girl, ['stick', 'heart'], { height: 285, ms: 1300 });
   }
 
   onArrive(x) { if (x >= 3140 && this.freed && !this.busy) this.atTheDoor(); }
@@ -97,7 +97,7 @@ export class Swamp extends Stage {
     this.faceTo(3400); this.sfx.play('creak'); this.cameras.main.pan(3000, this.cameras.main.midPoint.y, 1400, 'Sine.easeInOut');
     this.barlinAnchor = { x: 3100, y: data.groundY - 320 };
     await say(this, this.barlin, ['house', 'question'], { height: 40, ms: 1400 });
-    await say(this, this.girl, ['ear'], { height: 230, ms: 1200 });
+    await say(this, this.girl, ['ear'], { height: 285, ms: 1200 });
     await ui.card({ title: "The witch's house", text: 'The door is open and the light is on. That\'s as far as the story goes tonight.', buttons: [{ id: 'again', label: 'Back to the street' }], bottom: true });
     save.set('street.flags', {}); save.set('street.x', 300); save.set('meadow.flags', {}); save.set('forest.x', 400); save.set('swamp.flags', {}); save.set('swamp.x', 300); pocket.set(null);
     this.flags = {}; this.busy = false; await this.go('street', { x: 300 });

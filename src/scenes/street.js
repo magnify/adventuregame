@@ -52,7 +52,7 @@ export class Street extends Stage {
       await this.climb();
       if (pocket.has('key')) { await this.openDoor(); return true; }
       this.sfx.play('locked'); this.tweens.add({ targets: door, angle: { from: -3, to: 3 }, duration: 70, yoyo: true, repeat: 3, onComplete: () => door.setAngle(0) });
-      await say(this, this.girl, ['key', 'question'], { height: 230 }); return true;
+      await say(this, this.girl, ['key', 'question'], { height: 285 }); return true;
     }
     if (id === 'mat') {
       await this.climb();
@@ -78,7 +78,7 @@ export class Street extends Stage {
     pocket.set(null); door.setTexture('street/door-open'); this.sfx.play('creak');
     const light = this.add.image(this.doorPos.x, this.doorPos.y - 42, 'forest/wisp').setTint(0xfff6d0).setBlendMode(Phaser.BlendModes.ADD).setDepth(15).setScale(0.5).setAlpha(0);
     await tween(this, { targets: light, alpha: 1, scale: 6, duration: 900, ease: 'Quad.Out' });
-    await say(this, this.girl, ['meadow', 'exclaim'], { height: 230, ms: 1100 });
+    await say(this, this.girl, ['meadow', 'exclaim'], { height: 285, ms: 1100 });
     // leaning closer... and pulled through
     this.sfx.play('whoosh');
     await tween(this, { targets: this.girl, x: this.doorPos.x, y: this.doorPos.y, scale: 0.05, duration: 1100, ease: 'Quad.In' });

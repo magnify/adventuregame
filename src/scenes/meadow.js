@@ -21,7 +21,7 @@ export class Meadow extends Stage {
       await wait(this, 200); this.sfx.play('whoosh', { rate: 1.3, volume: 0.4 });
       await tween(this, { targets: this.girl, y: G, angle: 0, duration: 900, ease: 'Bounce.Out' });
       this.cameras.main.shake(150, 0.003); this.frozen = false;
-      await say(this, this.girl, ['question'], { height: 230, ms: 1000 });
+      await say(this, this.girl, ['question'], { height: 285, ms: 1000 });
       this.setFlag('landed');
       await this.barlinArrives();
       this.busy = false;

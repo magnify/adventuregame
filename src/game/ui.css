@@ -22,7 +22,7 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
   box-shadow: inset 0 0 0 1px rgba(120, 95, 70, .18), 0 2px 1px rgba(90, 70, 50, .25), 0 8px 16px rgba(60, 45, 30, .22);
   display: grid; place-items: center; z-index: 4; transition: opacity .3s, transform .3s; }
 #pocket.empty { opacity: 0; transform: rotate(-4deg) scale(.85); pointer-events: none; }
-#pocket img { width: 58px; height: 58px; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(60, 45, 30, .35)); }
+#pocket img { width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(60, 45, 30, .35)); }
 #pocket.bump { animation: bump .35s cubic-bezier(.2, 1.4, .5, 1); }
 @keyframes bump { 0% { transform: rotate(-4deg) scale(1.3); } 100% { transform: rotate(-4deg) scale(1); } }
 #reset { position: fixed; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); width: 40px; height: 40px; border-radius: 50%; z-index: 4;
