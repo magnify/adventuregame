@@ -26,6 +26,7 @@ export class Stage extends Phaser.Scene {
   darkness() { return 0; }
   tintFor() { return 0xffffff; }
   onHot() { return false; }       // return true if handled
+  async onUse() { return false; } // an item from the pocket used on a hotspot; true if handled
   onArrive() {}
   onUpdate() {}
   async onEnter() {}
@@ -57,6 +58,8 @@ export class Stage extends Phaser.Scene {
     // camera start
     const cam = this.cameras.main; cam.scrollX = Phaser.Math.Clamp(startX - cam.width / cam.zoom * 0.42, 0, D.width - cam.width / cam.zoom);
     if (this.tier.debug) this.debug = this.add.text(0, 0, '', { font: '14px monospace', color: '#fff', backgroundColor: '#0008' }).setDepth(100);
+    this.onDrop = e => this.drop(e); addEventListener('pocket-drop', this.onDrop);
+    this.events.once('shutdown', () => { removeEventListener('pocket-drop', this.onDrop); pocket.setHeld(false); });
     save.set('scene', this.key);
     this.onEnter();
   }
@@ -92,11 +95,37 @@ export class Stage extends Phaser.Scene {
     if (moved > 14 || this.busy || !this.started) return;
     const wp = this.cameras.main.getWorldPoint(p.x, p.y);
     // hotspot under the finger?
-    let hit = null;
-    for (const img of this.hots.values()) { if (!img.visible) continue; const b = Phaser.Geom.Rectangle.Inflate(img.getBounds(), 30, 30); if (b.contains(wp.x, wp.y)) { if (!hit || img.depth > hit.depth) hit = img; } }
+    const hit = this.hotAt(wp);
+    if (pocket.held) { pocket.setHeld(false); if (hit) { this.use(hit); return; } }
     if (hit) { this.act(hit); return; }
     if (this.onGroundTap && this.onGroundTap(wp) === true) return;
     this.walkTo(wp.x);
+  }
+
+  /** What's under the finger: a direct hit wins (topmost first); otherwise the nearest thing within a finger's width. */
+  hotAt(wp) {
+    let direct = null, near = null, nearD = Infinity;
+    for (const img of this.hots.values()) {
+      if (!img.visible) continue; const b = img.getBounds();
+      if (b.contains(wp.x, wp.y)) { if (!direct || img.depth > direct.depth) direct = img; continue; }
+      if (Phaser.Geom.Rectangle.Inflate(b, 30, 30).contains(wp.x, wp.y)) { const d = Phaser.Math.Distance.Between(wp.x, wp.y, b.centerX, b.centerY); if (d < nearD) { near = img; nearD = d; } }
+    }
+    return direct || near;
+  }
+  /** Something from the pocket dropped on a screen point. */
+  drop(e) {
+    if (this.busy || !this.started) return;
+    const wp = this.cameras.main.getWorldPoint(this.scale.transformX(e.detail.x), this.scale.transformY(e.detail.y));
+    const hit = this.hotAt(wp); if (hit) this.use(hit);
+  }
+  /** Use what she carries on a hotspot. Scenes say yes in onUse; anything else gets a gentle no. */
+  async use(img) {
+    const h = img.hot, item = pocket.get(); if (!item || this.busy) return; this.busy = true;
+    try {
+      if (!h.noWalk) { await this.walkTo(h.walkTo ?? (img.x - 110 * (img.x > this.girlX ? 1 : -1))); this.faceTo(img.x); }
+      const handled = await this.onUse(h.id, item, img);
+      if (!handled) { this.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 90, yoyo: true, repeat: 2, onComplete: () => img.setAngle(0) }); await say(this, this.girl, [item, 'no'], { height: 285 }); }
+    } finally { this.busy = false; }
   }
 
   async act(img) {

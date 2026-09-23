@@ -7,6 +7,8 @@ import { art } from '../game/boot.js';
 // looks under the mat, the key fits like a glove, light, the meadow, she's pulled in, the door slams,
 // the key rattles out and lands under the mat.
 
+const MAT_UP = -32; // degrees the mat tips up when lifted
+
 export class Street extends Stage {
   constructor() { super('street', data); }
 
@@ -19,13 +21,16 @@ export class Street extends Stage {
     this.branchPos = { x: tx + pts.branch.x * a.meta.width, y: ty + pts.branch.y * a.meta.height };
     this.trunkX = tx + (pts.trunk?.x ?? pts.branch.x + 0.13) * a.meta.width; // the near side of the trunk, where she climbs
     const door = this.hots.get('door'), mat = this.hots.get('mat'), key = this.hots.get('key');
-    door.setPosition(this.doorPos.x, this.doorPos.y); mat.setPosition(this.doorPos.x, this.doorPos.y + 4); key.setPosition(this.doorPos.x + 4, this.doorPos.y + 1).setAngle(-12);
+    door.setPosition(this.doorPos.x, this.doorPos.y);
+    // the mat hinges on its left edge, so lifting it tips the right end up like a real doormat; the key lies under its middle
+    mat.setOrigin(0.03, 1).setPosition(this.doorPos.x - 0.47 * mat.displayWidth, this.doorPos.y + 5);
+    key.setPosition(this.doorPos.x + 6, this.doorPos.y - 1).setAngle(-8);
     // a glint on the door so she notices something in the tree
     this.glint = this.add.image(this.doorPos.x + 12, this.doorPos.y - 50, 'forest/wisp').setScale(0.7).setTint(0xffe28a).setBlendMode(Phaser.BlendModes.ADD).setDepth(14);
     this.tweens.add({ targets: this.glint, alpha: { from: 0.35, to: 1 }, scale: { from: 0.5, to: 0.95 }, duration: 900, yoyo: true, repeat: -1 });
     this.up = !!this.flags.up;
-    if (this.up) { this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
-    if (this.flags.matUp && !pocket.has('key')) { mat.setAngle(-70); key.setVisible(true); }
+    if (this.up) { this.glint.setVisible(false); this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
+    if (this.flags.matUp && !pocket.has('key') && !this.flags.through) { mat.setAngle(MAT_UP); key.setVisible(true); }
     this.started = this.flags.begun;
     if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things. See what happens.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
   }
@@ -45,7 +50,10 @@ export class Street extends Stage {
     await tween(this, { targets: this.girl, x: this.branchPos.x, duration: 520, ease: 'Sine.InOut' });
     this.girlX = this.targetX = this.branchPos.x; this.girl.play('idle'); this.girl.face(1);
     this.up = true; this.setFlag('up');
+    this.dimGlint();
   }
+  /** The glow only has to catch her eye from the street; once she's up there it would hide the mat and key. */
+  dimGlint() { this.tweens.killTweensOf(this.glint); this.tweens.add({ targets: this.glint, alpha: 0, duration: 500, onComplete: () => this.glint.setVisible(false) }); }
   async descend() {
     this.girl.face(1); this.girl.play('walk');
     await tween(this, { targets: this.girl, x: this.trunkX, duration: 480, ease: 'Sine.InOut' });
@@ -64,26 +72,46 @@ export class Street extends Stage {
     const door = this.hots.get('door'), mat = this.hots.get('mat'), key = this.hots.get('key');
     if (id === 'tree') { await this.climb(); return true; }
     if (id === 'door') {
+      // locked, whatever she carries: the key has to be used on it (tap the pocket, then the door, or drag it here)
       await this.climb();
-      if (pocket.has('key')) { await this.openDoor(); return true; }
       this.sfx.play('locked'); this.tweens.add({ targets: door, angle: { from: -3, to: 3 }, duration: 70, yoyo: true, repeat: 3, onComplete: () => door.setAngle(0) });
-      await say(this, this.girl, ['key', 'question'], { height: 285 }); return true;
+      if (pocket.has('key')) { pocket.nudge(); await say(this, this.girl, ['key'], { height: 285, ms: 1100 }); }
+      else await say(this, this.girl, ['key', 'question'], { height: 285 });
+      return true;
     }
     if (id === 'mat') {
       await this.climb();
-      if (pocket.has('key')) { this.tweens.add({ targets: mat, angle: -30, duration: 160, yoyo: true }); return true; }
-      if (!this.flags.matUp) { this.sfx.play('creak', { rate: 1.6, volume: 0.3 }); await tween(this, { targets: mat, angle: -70, duration: 350, ease: 'Back.Out' }); key.setVisible(true); this.setFlag('matUp'); this.sfx.play('chime', { volume: 0.4 }); }
-      else { await tween(this, { targets: mat, angle: mat.angle < -30 ? 0 : -70, duration: 300 }); }
+      const lifted = mat.angle < MAT_UP / 2;
+      this.sfx.play('creak', { rate: 1.6, volume: 0.3 });
+      if (lifted || pocket.has('key') || this.flags.through) { await tween(this, { targets: mat, angle: lifted ? 0 : MAT_UP, duration: 320, ease: lifted ? 'Bounce.Out' : 'Back.Out' }); return true; }
+      await tween(this, { targets: mat, angle: MAT_UP, duration: 420, ease: 'Back.Out' });
+      if (!this.flags.matUp) {
+        // the key was there all along: it pops into view with a glint
+        key.setVisible(true).setScale(key.scaleX * 0.6); const s0 = key.scaleX / 0.6;
+        this.sfx.play('chime', { volume: 0.45 });
+        await tween(this, { targets: key, scale: s0, y: key.y - 10, duration: 260, ease: 'Back.Out' });
+        await tween(this, { targets: key, y: key.y + 10, duration: 200, ease: 'Bounce.Out' });
+        this.setFlag('matUp');
+      }
       return true;
     }
     if (id === 'key') {
       await this.climb(); if (!this.flags.matUp) return true;
-      this.girl.play('reach'); await wait(this, 250);
-      this.sfx.play('pick'); await tween(this, { targets: key, x: this.girl.x, y: this.girl.y - 120, scale: 0.2, alpha: 0, duration: 400, ease: 'Quad.In' });
+      this.girl.play('reach'); await wait(this, 250); this.sfx.play('pick');
+      // the key flies into her pocket in the corner, growing a little on the way
+      const r = pocket.el.getBoundingClientRect(); const cam = this.cameras.main;
+      const to = cam.getWorldPoint(this.scale.transformX(r.left + r.width / 2), this.scale.transformY(r.top + r.height / 2));
+      key.setDepth(40);
+      await tween(this, { targets: key, x: to.x, y: to.y, angle: 20, scale: key.scaleX * 1.8, duration: 650, ease: 'Cubic.In' });
       this.remove(key); pocket.set('key'); this.girl.play('idle');
-      await tween(this, { targets: mat, angle: 0, duration: 300 });
+      await tween(this, { targets: mat, angle: 0, duration: 300, ease: 'Bounce.Out' });
       return true;
     }
+    return false;
+  }
+
+  async onUse(id, item) {
+    if (id === 'door' && item === 'key') { await this.climb(); await this.openDoor(); return true; }
     return false;
   }
 
@@ -102,7 +130,7 @@ export class Street extends Stage {
     door.setTexture('street/door-closed'); this.sfx.play('slam'); this.cameras.main.shake(200, 0.004);
     // the key rattles out and lands under the mat
     const k = this.add.image(this.doorPos.x + 10, this.doorPos.y - 40, 'street/key').setScale(0.5).setDepth(13);
-    this.tweens.add({ targets: mat, angle: -60, duration: 200, yoyo: true, hold: 250 });
+    this.tweens.add({ targets: mat, angle: MAT_UP, duration: 200, yoyo: true, hold: 250 });
     await tween(this, { targets: k, x: this.doorPos.x + 6, y: this.doorPos.y + 1, angle: 720, duration: 500, ease: 'Bounce.Out' });
     await wait(this, 300); k.setVisible(false);
     this.setFlag('through');

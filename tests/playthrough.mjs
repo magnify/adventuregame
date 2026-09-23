@@ -34,7 +34,14 @@ await shot('1-street');
 await act('cat'); await act('door'); console.log('door locked ->', (await state()).pocket);
 await act('mat'); await act('key'); console.log('pocket', (await state()).pocket);
 await shot('2-street-branch');
-await act('door'); await until('meadow', 90000); console.log('scene', await cur());
+// use the key the way a child would: tap the pocket to hold it (tap again to let go), then drag it onto the door
+const screenOf = id => p.evaluate(id => { const s = window.__game.scene.getScenes(true)[0]; const h = s.hots.get(id), c = s.cameras.main;
+  return { x: (h.x - c.worldView.x) * c.zoom, y: (h.y - h.displayHeight / 2 - c.worldView.y) * c.zoom }; }, id);
+await idle(); await p.click('#pocket'); if (!(await p.$eval('#pocket', e => e.classList.contains('held')))) fail('tapping the pocket did not hold the key');
+await p.click('#pocket'); if (await p.$eval('#pocket', e => e.classList.contains('held'))) fail('tapping the pocket again did not let go');
+{ const pk = await p.$eval('#pocket', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }); const d = await screenOf('door');
+  await p.mouse.move(pk.x, pk.y); await p.mouse.down(); await p.mouse.move(pk.x + 40, pk.y - 40, { steps: 4 }); await p.mouse.move(d.x, d.y, { steps: 10 }); await p.mouse.up(); console.log('dragged key to door'); }
+await until('meadow', 90000); console.log('scene', await cur());
 await p.waitForTimeout(6000); await shot('3-meadow');
 await act('beetle'); await walk(2900); await until('forest'); console.log('scene', await cur());
 await act('signpost'); await walk(3300); await shot('4-forest-mid'); await walk(6050); await until('swamp', 120000); console.log('scene', await cur());

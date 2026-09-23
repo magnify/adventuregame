@@ -42,8 +42,8 @@ export class Puppet extends Phaser.GameObjects.Container {
     if (P['leg-l']) P['leg-l'].rotation = swing;
     if (P['leg-r']) P['leg-r'].rotation = -swing;
     const armIdle = walking || climbing ? 0 : Math.sin(t * 1.6) * 0.04;
-    if (P['arm-l']) P['arm-l'].rotation = climbing ? -2.6 + Math.sin(t * 7) * 0.4 : reaching ? -2.2 : stuck ? -1.2 + Math.sin(t * 6) * 0.3 : -swing * 0.7 + armIdle;
-    if (P['arm-r']) P['arm-r'].rotation = climbing ? -2.6 - Math.sin(t * 7) * 0.4 : reaching ? -0.4 : stuck ? -1.4 - Math.sin(t * 6) * 0.3 : swing * 0.7 - armIdle;
+    if (P['arm-l']) P['arm-l'].rotation = climbing ? -2.6 + Math.sin(t * 7) * 0.4 : reaching ? -2.2 : stuck ? -1.2 + Math.sin(t * 6) * 0.3 : -swing * 0.45 + armIdle;
+    if (P['arm-r']) P['arm-r'].rotation = climbing ? -2.6 - Math.sin(t * 7) * 0.4 : reaching ? -0.4 : stuck ? -1.4 - Math.sin(t * 6) * 0.3 : swing * 0.45 - armIdle;
     const bob = walking ? Math.abs(Math.sin(t * 9)) * -4 : Math.sin(t * 1.6) * -1.2;
     const bodyPin = this.pins.neck || { x: 0, y: 0 };
     if (P.body) { P.body.y = bob; P.body.scaleY = P.body.scaleX * (walking ? 1 : 1 + Math.sin(t * 1.6) * 0.006); }
