@@ -32,7 +32,7 @@ export class Street extends Stage {
     if (this.up) { this.glint.setVisible(false); this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
     if (this.flags.matUp && !pocket.has('key') && !this.flags.through) { mat.setAngle(MAT_UP); key.setVisible(true); }
     this.started = this.flags.begun;
-    if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things. See what happens.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
+    if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things, solve puzzles.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
   }
 
   // She climbs the trunk hand over hand, then steps out onto the branch; down is the same in reverse.
