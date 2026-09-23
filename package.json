@@ -11,7 +11,8 @@
     "art": "node tools/render-art.mjs",
     "test": "node tests/smoke.spec.mjs",
     "sfx": "node tools/make-sfx.mjs",
-    "play": "node tests/playthrough.mjs"
+    "play": "node tests/playthrough.mjs",
+    "poses": "node tests/poses.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.4",

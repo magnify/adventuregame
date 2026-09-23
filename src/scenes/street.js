@@ -17,6 +17,7 @@ export class Street extends Stage {
     const tx = tree.x - a.pivot.x * a.meta.width, ty = tree.y - a.pivot.y * a.meta.height;
     this.doorPos = { x: tx + pts.door.x * a.meta.width, y: ty + pts.door.y * a.meta.height };
     this.branchPos = { x: tx + pts.branch.x * a.meta.width, y: ty + pts.branch.y * a.meta.height };
+    this.trunkX = tx + (pts.trunk?.x ?? pts.branch.x + 0.13) * a.meta.width; // the near side of the trunk, where she climbs
     const door = this.hots.get('door'), mat = this.hots.get('mat'), key = this.hots.get('key');
     door.setPosition(this.doorPos.x, this.doorPos.y); mat.setPosition(this.doorPos.x, this.doorPos.y + 4); key.setPosition(this.doorPos.x + 4, this.doorPos.y + 1).setAngle(-12);
     // a glint on the door so she notices something in the tree
@@ -29,18 +30,32 @@ export class Street extends Stage {
     if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things. See what happens.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
   }
 
+  // She climbs the trunk hand over hand, then steps out onto the branch; down is the same in reverse.
   async climb() {
     if (this.up) return;
-    await this.walkTo(1560); this.faceTo(this.doorPos.x);
+    await this.walkTo(this.trunkX); this.girl.face(1);
     this.frozen = true; this.girl.play('climb');
-    await tween(this, { targets: this.girl, x: this.branchPos.x, y: this.branchPos.y, duration: 1400, ease: 'Sine.InOut' });
+    const bottom = this.D.groundY, top = this.branchPos.y, pulls = 4;
+    for (let i = 1; i <= pulls; i++) {
+      this.sfx.play('step', { rate: 0.8 + i * 0.08, volume: 0.35 });
+      await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 340, ease: 'Quad.Out' });
+      await wait(this, 110);
+    }
+    this.girl.face(-1); this.girl.play('walk');
+    await tween(this, { targets: this.girl, x: this.branchPos.x, duration: 520, ease: 'Sine.InOut' });
     this.girlX = this.targetX = this.branchPos.x; this.girl.play('idle'); this.girl.face(1);
     this.up = true; this.setFlag('up');
   }
   async descend() {
+    this.girl.face(1); this.girl.play('walk');
+    await tween(this, { targets: this.girl, x: this.trunkX, duration: 480, ease: 'Sine.InOut' });
     this.girl.play('climb');
-    await tween(this, { targets: this.girl, x: 1560, y: this.D.groundY, duration: 1200, ease: 'Sine.InOut' });
-    this.girlX = this.targetX = 1560; this.frozen = false; this.up = false; this.setFlag('up', false); this.girl.play('idle');
+    const bottom = this.D.groundY, top = this.branchPos.y, pulls = 3;
+    for (let i = pulls - 1; i >= 0; i--) {
+      await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 300, ease: 'Quad.In' });
+      this.sfx.play('step', { rate: 0.9, volume: 0.35 }); await wait(this, 90);
+    }
+    this.girlX = this.targetX = this.trunkX; this.frozen = false; this.up = false; this.setFlag('up', false); this.girl.play('idle');
   }
 
   onGroundTap(wp) { if (this.up && wp.y > this.D.groundY - 200) { this.busy = true; this.descend().then(() => { this.busy = false; this.walkTo(wp.x); }); return true; } return false; }
