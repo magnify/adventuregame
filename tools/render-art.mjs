@@ -10,9 +10,11 @@ const out = { scale: SCALE, images: {} };
 for (let [key, meta] of Object.entries(manifest.images || manifest)) {
   const file = key.replace(/\//g, '-') + '.png';
   // many phones can't hold a texture over 4096px on a side; render big strips at a lower scale instead
-  const sc = Math.min(SCALE, MAX_TEX / meta.width, MAX_TEX / meta.height);
+  // characters are seen close and move: render them sharper (5x) where the source art has the pixels for it
+  const want = /^(girl|barlin)\//.test(key) ? 5 : SCALE;
+  const sc = Math.min(want, MAX_TEX / meta.width, MAX_TEX / meta.height);
   const w = Math.round(meta.width * sc), h = Math.round(meta.height * sc);
-  if (sc < SCALE) meta = { ...meta, scale: sc };
+  if (sc !== SCALE) meta = { ...meta, scale: sc };
   // A PNG beside the SVG wins: generated paper art. Trim its empty margin, make solid paper fully opaque.
   const pngPath = [path.join(SRC, key + '.png'), path.join(SRC, 'characters', key + '.png')].find(f => fs.existsSync(f));
   if (pngPath) {
@@ -33,7 +35,7 @@ for (let [key, meta] of Object.entries(manifest.images || manifest)) {
 }
 // Soft paper shadows for things that move or stand in front: a blurred silhouette drawn just behind each piece,
 // so a cut-out sits in the scene the way the layered paper does. Baked here so phones pay nothing for them.
-const SHADOW = /^(girl|barlin)\/|^street\/(cat|lamp)$/, PAD = 6; // pad in 1x px, room for the blur
+const SHADOW = /^girl\/(body|head|arm-l)$|^barlin\/|^street\/(cat|lamp)$/, PAD = 6; // pad in 1x px, room for the blur
 for (const [key, meta] of Object.entries(out.images)) {
   if (!SHADOW.test(key) || key.endsWith('~shadow') || key === 'girl/head-blink') continue;
   const sc = meta.scale ?? SCALE, pad = Math.round(PAD * sc);
