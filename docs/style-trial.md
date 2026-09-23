@@ -3,6 +3,10 @@
 The first step of the restart. One place, four looks, pick one. Everything after this is drawn in
 the look that wins.
 
+**Picked: C, paper cut-out** (Lumino City as the reference). Easiest to keep consistent across
+generated pictures, and it matches the paper puppets the game already animates. Next: street
+pictures in this look, then reference sheets for the girl and Barlin.
+
 ## How to run it
 
 Put each prompt below into your image generator, two or three times each, and send back the best
