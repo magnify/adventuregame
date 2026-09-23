@@ -47,9 +47,9 @@
       "height": 36,
       "pivot": { "x": 0.5, "y": 0.5 },
       "points": {
-        "wing-back": { "x": 0.44, "y": 0.76 },
-        "wing-front": { "x": 0.49, "y": 0.72 },
-        "hat": { "x": 0.77, "y": 0.46 }
+        "wing-back": { "x": 0.4, "y": 0.56 },
+        "wing-front": { "x": 0.46, "y": 0.53 },
+        "hat": { "x": 0.79, "y": 0.1 }
       }
     },
     "barlin/wing-back": {
@@ -63,8 +63,8 @@
       "pivot": { "x": 0.06, "y": 0.87 }
     },
     "barlin/hat": {
-      "width": 28,
-      "height": 22,
+      "width": 23,
+      "height": 18,
       "pivot": { "x": 0.5, "y": 0.92 }
     },
     "forest/far-trees": {

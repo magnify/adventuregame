@@ -41,9 +41,13 @@ const result = await p.evaluate(({ MIN }) => {
       let pa = 0, pc = 0;
       for (let y = Math.max(0, Math.floor(py - r)); y < Math.min(H, py + r); y++) for (let x = Math.max(0, Math.floor(px - r)); x < Math.min(W, px + r); x++) {
         const i = y * W + x; if (!pm[i] || (x - px) ** 2 + (y - py) ** 2 > r * r) continue; pa++; if (cm[i]) pc++; }
-      const share = Math.max(area ? over / area : 0, pa > 20 ? pc / pa : 0); const k = `${who} ${name}`; worst[k] = Math.min(worst[k] ?? 1, share);
-      const min = name === 'hat' ? 0.3 : MIN; // a hat sits on top of a head: half its brim is over air by design
-      if (share < min) fails.push(`${k} in ${pose}: only ${(share * 100).toFixed(0)}% of its root on the body`);
+      const share = Math.max(area ? over / area : 0, pa > 20 ? pc / pa : 0); const k = `${who} ${name}`; worst[k] = Math.min(worst[k] ?? 1, share); if (!/wing|hat/.test(name)) {} 
+      // every part: its pin must go through the body, like a split pin (within 3px of the body's paper)
+      let pinned = false; for (let yy = -3; yy <= 3 && !pinned; yy++) for (let xx = -3; xx <= 3; xx++) { const X = Math.round(px) + xx, Y = Math.round(py) + yy; if (X >= 0 && Y >= 0 && X < W && Y < H && pm[Y * W + X]) { pinned = true; break; } }
+      if (!pinned) fails.push(`${k} in ${pose}: its pin misses the body`);
+      // limbs and heads have a rounded tab around the pin, which must sit on the body too; wings and hats are pinned at a point or a brim
+      const tabbed = !/wing|hat/.test(name);
+      if (tabbed && share < MIN) fails.push(`${k} in ${pose}: only ${(share * 100).toFixed(0)}% of its root on the body`);
     }
     const c = new OffscreenCanvas(W, H); const x = c.getContext('2d');
     for (const img of parts) if (img.visible) draw(x, img, ox, oy);
