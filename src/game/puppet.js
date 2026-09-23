@@ -49,7 +49,11 @@ export class Puppet extends Phaser.GameObjects.Container {
     if (P.body) { P.body.y = bob; P.body.scaleY = P.body.scaleX * (walking ? 1 : 1 + Math.sin(t * 1.6) * 0.006); }
     for (const [k, img] of Object.entries(P)) { if (k === 'body') continue; const pin = this.pins[img.getData('pin')]; if (pin && (k === 'head' || k.startsWith('arm'))) img.y = pin.y + bob; }
     if (P.head) { P.head.rotation = walking ? Math.sin(t * 9) * 0.03 : Math.sin(t * 1.1) * 0.02; }
-    if (P.eyes && P['eyes-shut']) {
+    if (this.blinkTex) {
+      // painted heads blink by swapping to the eyes-closed head
+      if (this.blinking > 0) { this.blinking -= dt; } else if (t > this.blinkAt) { this.blinking = 0.12; this.blinkAt = t + 2.5 + Math.random() * 3.5; }
+      P.head.setTexture(this.blinking > 0 ? this.blinkTex : `${this.name}/head`);
+    } else if (P.eyes && P['eyes-shut']) {
       const hp = P.head; P.eyes.x = P['eyes-shut'].x = hp.x + (this.eyeOffset?.x || 0); P.eyes.y = P['eyes-shut'].y = hp.y + (this.eyeOffset?.y || 0); P.eyes.rotation = P['eyes-shut'].rotation = hp.rotation;
       if (this.blinking > 0) { this.blinking -= dt; } else if (t > this.blinkAt) { this.blinking = 0.12; this.blinkAt = t + 2.5 + Math.random() * 3.5; }
       P.eyes.visible = this.blinking <= 0; P['eyes-shut'].visible = !P.eyes.visible;
@@ -59,12 +63,15 @@ export class Puppet extends Phaser.GameObjects.Container {
 
 /** The girl, built from the contract's parts. */
 export function makeGirl(scene, x, y, scale = 1) {
+  // the paper girl has her eyes painted on and a second head to blink with; the old one had separate eyes
+  const painted = scene.textures.exists('girl/head-blink');
   const p = new Puppet(scene, x, y, 'girl', [
     { key: 'arm-r', at: 'shoulder-r', behind: true },
     { key: 'leg-l', at: 'hip-l', behind: true }, { key: 'leg-r', at: 'hip-r', behind: true },
     { key: 'arm-l', at: 'shoulder-l' },
-    { key: 'head', at: 'neck' }, { key: 'eyes', at: 'neck' }, { key: 'eyes-shut', at: 'neck' },
+    { key: 'head', at: 'neck' }, ...(painted ? [] : [{ key: 'eyes', at: 'neck' }, { key: 'eyes-shut', at: 'neck' }]),
   ], scale);
+  if (painted) { p.blinkTex = 'girl/head-blink'; return p; }
   const head = art(scene, 'girl/head'); const eyesAt = head.meta.points?.eyes || { x: 0.5, y: 0.55 };
   p.eyeOffset = { x: (eyesAt.x - head.pivot.x) * head.meta.width, y: (eyesAt.y - head.pivot.y) * head.meta.height };
   return p;
