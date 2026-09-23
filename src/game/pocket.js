@@ -39,7 +39,7 @@ export const pocket = {
   render(bump = false) {
     if (!this.el) return; const item = this.get(); const img = this.el.querySelector('img');
     this.el.classList.toggle('empty', !item);
-    if (item) { img.src = `${base}art/${PAPER[item] || `icon-${item}.png`}`; img.hidden = false; } else { img.removeAttribute('src'); img.hidden = true; }
+    if (item) { img.src = `${base}art/${PAPER[item] || `icon-${item}.png`}?v=${__BUILD__}`; img.hidden = false; } else { img.removeAttribute('src'); img.hidden = true; }
     if (bump) { this.el.classList.remove('bump'); void this.el.offsetWidth; this.el.classList.add('bump'); }
   },
 };

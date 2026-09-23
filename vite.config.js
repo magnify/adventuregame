@@ -4,6 +4,8 @@ import { defineConfig } from 'vite';
 // so every asset URL needs the repo name as a base path.
 export default defineConfig({
   base: '/adventuregame/',
+  // every build stamps its own id onto art and sound URLs, so a phone never mixes a new game with cached old art
+  define: { __BUILD__: JSON.stringify(String(Date.now())) },
   build: {
     target: ['es2020', 'safari16'],
     assetsInlineLimit: 0, // never inline models/textures as base64 — keep them as separate cached files

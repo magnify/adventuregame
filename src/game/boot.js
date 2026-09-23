@@ -10,13 +10,13 @@ export class Boot extends Phaser.Scene {
   constructor() { super('boot'); }
   preload() {
     ui.loading('Cutting out the forest…');
-    this.load.json('manifest', `${base}art/manifest.json`);
+    this.load.json('manifest', `${base}art/manifest.json?v=${__BUILD__}`);
     preloadSfx(this);
   }
   create() {
     const manifest = this.cache.json.get('manifest');
     this.registry.set('manifest', manifest);
-    for (const [key, meta] of Object.entries(manifest.images)) this.load.image(key, `${base}art/${meta.file}`);
+    for (const [key, meta] of Object.entries(manifest.images)) this.load.image(key, `${base}art/${meta.file}?v=${__BUILD__}`);
     this.load.once('complete', () => { ui.loaded(); const s = save.get('scene', 'street'); this.scene.start(['street', 'meadow', 'forest', 'swamp'].includes(s) ? s : 'street'); });
     this.load.once('loaderror', f => ui.fail('Could not load ' + (f && f.key)));
     this.load.start();

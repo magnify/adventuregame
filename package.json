@@ -12,7 +12,8 @@
     "test": "node tests/smoke.spec.mjs",
     "sfx": "node tools/make-sfx.mjs",
     "play": "node tests/playthrough.mjs",
-    "poses": "node tests/poses.mjs"
+    "poses": "node tests/poses.mjs",
+    "joints": "node tests/joints.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.4",
