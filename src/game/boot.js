@@ -27,5 +27,6 @@ export class Boot extends Phaser.Scene {
 export function art(scene, key) {
   const m = scene.registry.get('manifest'); const im = m.images[key];
   if (!im) throw new Error('no art for ' + key);
-  return { w: im.width * m.scale, h: im.height * m.scale, scale: m.scale, pivot: im.pivot || { x: 0.5, y: 1 }, meta: im };
+  const sc = im.scale ?? m.scale; // big strips are rendered smaller to stay inside phone texture limits
+  return { w: im.width * sc, h: im.height * sc, scale: sc, pivot: im.pivot || { x: 0.5, y: 1 }, meta: im };
 }

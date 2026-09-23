@@ -3,13 +3,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const SRC = 'art/src', OUT = 'public/art', SCALE = 2;
+const SRC = 'art/src', OUT = 'public/art', SCALE = 2, MAX_TEX = 4096;
 const manifest = JSON.parse(fs.readFileSync(path.join(SRC, 'manifest.json'), 'utf8'));
 fs.mkdirSync(OUT, { recursive: true });
 const out = { scale: SCALE, images: {} };
-for (const [key, meta] of Object.entries(manifest.images || manifest)) {
+for (let [key, meta] of Object.entries(manifest.images || manifest)) {
   const file = key.replace(/\//g, '-') + '.png';
-  const w = Math.round(meta.width * SCALE), h = Math.round(meta.height * SCALE);
+  // many phones can't hold a texture over 4096px on a side; render big strips at a lower scale instead
+  const sc = Math.min(SCALE, MAX_TEX / meta.width, MAX_TEX / meta.height);
+  const w = Math.round(meta.width * sc), h = Math.round(meta.height * sc);
+  if (sc < SCALE) meta = { ...meta, scale: sc };
   // A PNG beside the SVG wins: generated paper art. Trim its empty margin, make solid paper fully opaque.
   const pngPath = [path.join(SRC, key + '.png'), path.join(SRC, 'characters', key + '.png')].find(f => fs.existsSync(f));
   if (pngPath) {
