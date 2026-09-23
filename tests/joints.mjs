@@ -42,7 +42,8 @@ const result = await p.evaluate(({ MIN }) => {
       for (let y = Math.max(0, Math.floor(py - r)); y < Math.min(H, py + r); y++) for (let x = Math.max(0, Math.floor(px - r)); x < Math.min(W, px + r); x++) {
         const i = y * W + x; if (!pm[i] || (x - px) ** 2 + (y - py) ** 2 > r * r) continue; pa++; if (cm[i]) pc++; }
       const share = Math.max(area ? over / area : 0, pa > 20 ? pc / pa : 0); const k = `${who} ${name}`; worst[k] = Math.min(worst[k] ?? 1, share);
-      if (share < MIN) fails.push(`${k} in ${pose}: only ${(share * 100).toFixed(0)}% of its root on the body`);
+      const min = name === 'hat' ? 0.3 : MIN; // a hat sits on top of a head: half its brim is over air by design
+      if (share < min) fails.push(`${k} in ${pose}: only ${(share * 100).toFixed(0)}% of its root on the body`);
     }
     const c = new OffscreenCanvas(W, H); const x = c.getContext('2d');
     for (const img of parts) if (img.visible) draw(x, img, ox, oy);
@@ -73,7 +74,11 @@ const result = await p.evaluate(({ MIN }) => {
   return sheet.convertToBlob().then(bl => bl.arrayBuffer()).then(ab => ({ png: Array.from(new Uint8Array(ab)), fails, worst }));
 }, { MIN });
 
-fs.writeFileSync(`${OUT}/joints.png`, Buffer.from(result.png));
+// put each character's reference picture at the start of the sheet, so every review compares against it, not memory
+{ const sharp = (await import('sharp')).default; const sheet = Buffer.from(result.png); const m = await sharp(sheet).metadata();
+  const refs = await Promise.all(['girl', 'barlin'].map(n => sharp(`art/reference/${n}-sheet.png`).trim({ threshold: 10 }).resize(200, 210, { fit: 'contain', background: '#ffffff' }).flatten({ background: '#ffffff' }).png().toBuffer()));
+  await sharp({ create: { width: m.width + 210, height: m.height, channels: 3, background: '#ffffff' } })
+    .composite([{ input: sheet, left: 210, top: 0 }, { input: refs[0], left: 0, top: 0 }, { input: refs[1], left: 0, top: m.height - 440 }]).png().toFile(`${OUT}/joints.png`); }
 for (const [k, v] of Object.entries(result.worst)) console.log(k.padEnd(20), 'at worst', (v * 100).toFixed(1) + '% over its body');
 await b.close(); srv.kill();
 if (result.fails.length) { console.log('FAIL', result.fails.length, 'loose joints:\n ' + [...new Set(result.fails)].slice(0, 12).join('\n ')); process.exit(1); }
