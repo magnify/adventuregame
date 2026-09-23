@@ -1,9 +1,11 @@
 const $ = id => document.getElementById(id);
 
 export const ui = {
-  loading(text) { const l = $('loading'); if (!l) return; l.textContent = text; l.classList.remove('off'); },
+  loading(text) { const l = $('loading'); if (!l) return; this.label(l).textContent = text; l.classList.remove('off'); },
   loaded() { const l = $('loading'); if (l) l.classList.add('off'); },
-  fail(text) { const l = $('loading'); if (l) { l.textContent = text; l.classList.remove('off'); l.classList.add('failed'); } },
+  fail(text) { const l = $('loading'); if (l) { this.label(l).textContent = text; l.classList.remove('off'); l.classList.add('failed'); } },
+  /** The scrap of paper the loading words sit on. */
+  label(l) { let s = l.querySelector('span'); if (!s) { s = document.createElement('span'); l.textContent = ''; l.appendChild(s); } return s; },
   /** Show a card. Returns a promise that resolves with the id of the button pressed. */
   card({ title, text, buttons = [{ id: 'ok', label: 'Begin' }], suns = false, small = '', bottom = false }) {
     return new Promise(res => {
