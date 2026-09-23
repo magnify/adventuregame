@@ -68,7 +68,11 @@ export class Stage extends Phaser.Scene {
 
   prop(p) {
     const a = art(this, p.key); const img = this.add.image(p.x, p.y ?? this.D.groundY, p.key).setOrigin(a.pivot.x, a.pivot.y).setScale((p.scale || 1) / a.scale).setDepth(p.depth ?? 10).setScrollFactor(p.scroll ?? 1);
-    if (p.flip) img.setFlipX(true); img.setTint(this.tintFor(p.x, p.key)); img.data_ = p; this.props.push(img); return img;
+    if (p.flip) img.setFlipX(true); img.setTint(this.tintFor(p.x, p.key)); img.data_ = p; this.props.push(img);
+    // things standing in the scene get the same soft paper shadow as the puppets; it follows them when they hop
+    const sk = `${p.key}~shadow`;
+    if (this.textures.exists(sk)) { const sa = art(this, sk); img.shadow = this.add.image(img.x + 2.5, img.y + 4, sk).setOrigin(sa.pivot.x, sa.pivot.y).setScale(img.scaleX * a.scale / sa.scale).setDepth(img.depth - 0.01).setScrollFactor(p.scroll ?? 1); (this.shadowed ||= []).push(img); }
+    return img;
   }
   hot(h) {
     const img = this.prop({ depth: 12, ...h }); img.setInteractive({ useHandCursor: true }); img.hot = h; this.hots.set(h.id, img);
@@ -96,12 +100,24 @@ export class Stage extends Phaser.Scene {
     const wp = this.cameras.main.getWorldPoint(p.x, p.y);
     // hotspot under the finger?
     const hit = this.hotAt(wp);
+    this.tapMark(wp, !!hit); if (hit) this.nod(hit);
     if (pocket.held) { pocket.setHeld(false); if (hit) { this.use(hit); return; } }
     if (hit) { this.act(hit); return; }
     if (this.onGroundTap && this.onGroundTap(wp) === true) return;
     this.walkTo(wp.x);
   }
 
+  /** Every tap leaves a mark where the finger landed, before anything else happens: a little ring of paper light. */
+  tapMark(wp, onThing) {
+    const g = this.add.graphics({ x: wp.x, y: wp.y }).setDepth(45);
+    g.lineStyle(5, onThing ? 0xffe6a8 : 0xfff6e6, 0.9); g.strokeCircle(0, 0, 18);
+    this.tweens.add({ targets: g, scale: 2.2, alpha: 0, duration: 420, ease: 'Quad.Out', onComplete: () => g.destroy() });
+  }
+  /** The thing tapped answers at once with a small squash, even if she has to walk there first. */
+  nod(img) {
+    if (this.tweens.isTweening(img)) return; const sx = img.scaleX, sy = img.scaleY;
+    this.tweens.add({ targets: img, scaleX: sx * 1.06, scaleY: sy * 0.94, duration: 90, yoyo: true, ease: 'Quad.Out', onComplete: () => img.setScale(sx, sy) });
+  }
   /** What's under the finger: a direct hit wins (topmost first); otherwise the nearest thing within a finger's width. */
   hotAt(wp) {
     let direct = null, near = null, nearD = Infinity;
@@ -166,14 +182,23 @@ export class Stage extends Phaser.Scene {
     // walk
     if (!this.frozen) {
       const d = this.targetX - this.girlX; const moving = Math.abs(d) > 2;
-      if (moving) { this.girlX += Math.sign(d) * Math.min(Math.abs(d), this.speed * dt); this.girl.face(Math.sign(d)); this.girl.play('walk'); if (t - this.stepAt > 0.32) { this.stepAt = t; this.sfx.play('step', { volume: 0.25, rate: 0.9 + Math.random() * 0.2 }); } }
-      else { if (this.girl.mode === 'walk') { save.set(`${this.key}.x`, this.girlX); this.onArrive(this.girlX); } if (this.girl.mode === 'walk') this.girl.play('idle'); if (this.walkResolve) { const r = this.walkResolve; this.walkResolve = null; r(); } }
+      if (moving) {
+        // ease in and out: speed builds over a few steps and falls away as she arrives, never a slide at one speed
+        const want = Math.min(this.speed, Math.sqrt(2 * 900 * Math.abs(d)) + 20);
+        this.vel = Phaser.Math.Linear(this.vel || 0, want, Math.min(1, dt * 6));
+        this.girlX += Math.sign(d) * Math.min(Math.abs(d), this.vel * dt); this.girl.face(Math.sign(d)); this.girl.play('walk');
+        this.girl.stride = Phaser.Math.Clamp(this.vel / this.speed, 0.35, 1);
+        if (t - this.stepAt > 0.33 / Math.max(0.5, this.girl.stride)) { this.stepAt = t; this.sfx.play('step', { volume: 0.22, rate: 0.9 + Math.random() * 0.2 }); }
+      }
+      else { this.vel = 0; if (this.girl.mode === 'walk') { save.set(`${this.key}.x`, this.girlX); this.onArrive(this.girlX); } if (this.girl.mode === 'walk') this.girl.play('idle'); if (this.walkResolve) { const r = this.walkResolve; this.walkResolve = null; r(); } }
       this.girl.x = this.girlX;
     }
     this.girl.tick(dt);
     // camera follows, a little ahead
-    const view = cam.width / cam.zoom; const want = this.girlX - view * 0.42;
-    cam.scrollX = Phaser.Math.Linear(cam.scrollX, Phaser.Math.Clamp(want, 0, this.D.width - view), Math.min(1, dt * 2.5));
+    // the camera drifts after her and leaves room ahead in the direction she's facing
+    const view = cam.width / cam.zoom; this.lead = Phaser.Math.Linear(this.lead ?? 0.42, (this.girl.facing || 1) > 0 ? 0.38 : 0.62, Math.min(1, dt * 1.2));
+    const want = this.girlX - view * this.lead;
+    cam.scrollX = Phaser.Math.Linear(cam.scrollX, Phaser.Math.Clamp(want, 0, this.D.width - view), Math.min(1, dt * 1.8));
     cam.scrollY = this.D.height - cam.height / cam.zoom;
     const wv = cam.worldView; this.sky.setPosition(wv.x - 4, wv.y - 4).setDisplaySize(wv.width + 8, wv.height + 8);
     if (this.debug) { this.debug.setPosition(wv.x + 8, wv.y + 8).setText(`${Math.round(this.game.loop.actualFps)} fps  ${this.key}  x ${Math.round(this.girlX)}`); }
@@ -185,6 +210,7 @@ export class Stage extends Phaser.Scene {
       this.barlin.y = Phaser.Math.Linear(this.barlin.y, a.y + Math.sin(t * 2.1) * 14, Math.min(1, dt * 3));
       this.barlin.face(a.x > this.barlin.x - 5 ? 1 : -1); this.barlin.tick(dt, this.fuss > 0 ? 1 : 0);
     }
+    for (const img of this.shadowed || []) img.shadow.setPosition(img.x + 2.5, img.y + 4).setRotation(img.rotation).setVisible(img.visible).setScale(img.scaleX * art(this, img.data_.key).scale / art(this, img.data_.key + '~shadow').scale, img.scaleY * art(this, img.data_.key).scale / art(this, img.data_.key + '~shadow').scale);
     this.onUpdate(dt, t);
   }
 

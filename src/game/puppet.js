@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { art } from './boot.js';
 
+const SHADOW = { x: 2.5, y: 4 }; // where a part's shadow falls, in 1x pixels
+
 /**
  * A paper puppet: images hung from each other at named points, animated by code.
  * The contract (docs/art-contract.md) says where each part attaches; puppet.json in the manifest carries it.
@@ -29,16 +31,24 @@ export class Puppet extends Phaser.GameObjects.Container {
     }
     // draw order: back arm, legs, body, front arm, head, eyes
     const order = parts.filter(p => p.behind).map(p => p.key).concat(['body'], parts.filter(p => !p.behind).map(p => p.key));
-    for (const k of order) this.add(this.parts[k]);
-    this.setScale(scale);
+    // each part carries a soft baked shadow just beneath it, so the pieces sit on each other like layered paper
+    this.shadows = {};
+    for (const k of order) {
+      const sk = `${name}/${k}~shadow`;
+      if (scene.textures.exists(sk)) { const sa = art(scene, sk); const sh = scene.add.image(0, 0, sk).setOrigin(sa.pivot.x, sa.pivot.y).setScale(1 / sa.scale); this.shadows[k] = sh; this.add(sh); }
+      this.add(this.parts[k]);
+    }
+    this.setScale(scale); this.syncShadows();
   }
+  /** Shadows follow their part, a little down and to the side, as if lit from the upper left. */
+  syncShadows() { for (const [k, sh] of Object.entries(this.shadows || {})) { const p = this.parts[k]; sh.setPosition(p.x + SHADOW.x, p.y + SHADOW.y).setRotation(p.rotation).setVisible(p.visible); sh.scaleY = sh.scaleX * (p.scaleY / p.scaleX); } }
   face(dir) { if (dir && dir !== this.facing) { this.facing = dir; this.scaleX = Math.abs(this.scaleX) * dir; } }
   play(mode) { this.mode = mode; }
   /** Called every frame. dt in seconds. */
   tick(dt) {
     this.t += dt; const P = this.parts, t = this.t;
     const walking = this.mode === 'walk', climbing = this.mode === 'climb', stuck = this.mode === 'stuck', reaching = this.mode === 'reach';
-    const swing = walking ? Math.sin(t * 9) * 0.55 : climbing ? Math.sin(t * 7) * 0.7 : 0;
+    const swing = walking ? Math.sin(t * 9) * 0.55 * (this.stride ?? 1) : climbing ? Math.sin(t * 7) * 0.7 : 0;
     if (P['leg-l']) P['leg-l'].rotation = swing;
     if (P['leg-r']) P['leg-r'].rotation = -swing;
     const armIdle = walking || climbing ? 0 : Math.sin(t * 1.6) * 0.04;
@@ -58,6 +68,7 @@ export class Puppet extends Phaser.GameObjects.Container {
       if (this.blinking > 0) { this.blinking -= dt; } else if (t > this.blinkAt) { this.blinking = 0.12; this.blinkAt = t + 2.5 + Math.random() * 3.5; }
       P.eyes.visible = this.blinking <= 0; P['eyes-shut'].visible = !P.eyes.visible;
     }
+    this.syncShadows();
   }
 }
 
@@ -91,7 +102,10 @@ export class Barlin extends Phaser.GameObjects.Container {
     this.wingFront = scene.add.image(wf.x, wf.y, 'barlin/wing-front').setOrigin(a('wing-front').x, a('wing-front').y).setScale(px);
     this.hat = scene.add.image(hat.x, hat.y, 'barlin/hat').setOrigin(a('hat').x, a('hat').y).setScale(px).setRotation(0.15);
     this.glow = scene.add.image(0, 0, 'forest/wisp').setOrigin(0.5).setScale(px * 3).setTint(0xffb060).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
-    this.add([this.glow, this.wingBack, this.body, this.wingFront, this.hat]);
+    const shade = (img, key) => { const sk = `barlin/${key}~shadow`; if (!scene.textures.exists(sk)) return null; const sa = art(scene, sk); return scene.add.image(0, 0, sk).setOrigin(sa.pivot.x, sa.pivot.y).setScale(1 / sa.scale); };
+    this.shadowOf = new Map([[this.wingBack, shade(this.wingBack, 'wing-back')], [this.body, shade(this.body, 'body')], [this.wingFront, shade(this.wingFront, 'wing-front')], [this.hat, shade(this.hat, 'hat')]].filter(([, s]) => s));
+    const list = [this.glow]; for (const part of [this.wingBack, this.body, this.wingFront, this.hat]) { if (this.shadowOf.get(part)) list.push(this.shadowOf.get(part)); list.push(part); }
+    this.add(list);
     this.setScale(scale); this.t = Math.random() * 10; this.facing = 1;
   }
   face(dir) { if (dir && dir !== this.facing) { this.facing = dir; this.scaleX = Math.abs(this.scaleX) * dir; } }
@@ -100,5 +114,6 @@ export class Barlin extends Phaser.GameObjects.Container {
     this.wingBack.rotation = -1.15 + f * 0.7; this.wingFront.rotation = -0.8 - f * 0.7; // swept back, clear of his face
     this.hat.rotation = 0.15 + Math.sin(this.t * 3) * 0.05 * (1 + fuss * 3);
     this.body.y = Math.sin(this.t * 2.1) * 3;
+    for (const [p, sh] of this.shadowOf) sh.setPosition(p.x + SHADOW.x, p.y + SHADOW.y).setRotation(p.rotation);
   }
 }

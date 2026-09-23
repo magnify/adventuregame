@@ -26,7 +26,7 @@ await p.evaluate(() => document.querySelector('#ui button')?.click()); await p.w
 await shot('1-street');
 // a real finger first: tap the pavement ahead of her and she must walk there (the story below drives hotspots directly)
 { const before = await p.evaluate(() => window.__game.scene.getScenes(true)[0].girlX);
-  await p.mouse.click(700, 470); await p.waitForTimeout(2500);
+  await p.mouse.click(700, 470); await p.waitForTimeout(3500);
   const after = await p.evaluate(() => window.__game.scene.getScenes(true)[0].girlX);
   if (!(after > before + 100)) fail(`a tap on the ground did not move her (${before} -> ${after})`);
   console.log('tap walk', Math.round(before), '->', Math.round(after));
