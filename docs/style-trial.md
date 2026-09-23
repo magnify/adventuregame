@@ -67,3 +67,36 @@ You pick the one you'd want her to live in. Then:
    the game moves.
 2. The street built in that look, with enough in it that most things answer a tap.
 3. Judged on a real tablet next to Lost in Play. If it holds, the other three places follow.
+
+## The anchor
+
+`art/reference/street-anchor.webp` is the first picture in the chosen look, and the style
+reference for everything after it. Right palette, right paper grain. Two things it gets wrong for
+a game: it's one flat picture, where the game needs separate layers, and the tree runs off the
+edge, where the girl has to be able to climb a whole tree.
+
+## The street, piece by piece
+
+Upload the anchor picture with each prompt and ask for a transparent background (ChatGPT can do
+this). If the tool can't, ask for a plain flat white background and we'll cut it out.
+
+Each prompt ends with: *"Same style, palette and paper texture as the reference image. Made of
+layered cut paper and card, photographed, soft shadows between layers. Side view. Transparent
+background. No text."*
+
+1. **Houses:** the row of pastel townhouses only, with roofs and chimneys, window boxes and potted
+   plants, no pavement, no tree, no lamp, no sky. Wide, and the left and right edges must line up
+   so it can repeat.
+2. **Pavement:** a strip of paving slabs, a kerb, then cobbled road, seen straight from the side.
+   Wide, edges line up so it can repeat.
+3. **Tree:** the whole tree, roots to crown, nothing cut off, a thick trunk and one strong branch
+   reaching out to the left at half height, wide enough for a child to stand on. In the trunk just
+   above the branch, an empty dark arched hole where a small door fits.
+4. **Door closed:** a small arched wooden door with a keyhole and iron hinges, face-on.
+5. **Door open:** the same door swung open, warm bright light pouring out of the doorway.
+6. **Doormat:** a little red and white striped doormat, side view, very thin.
+7. **Key:** a small old brass key, side view.
+8. **Street lamp:** an old black iron street lamp, unlit, whole.
+9. **Cat:** a grey and white cat sitting, side view facing left.
+10. **Sky:** a soft pale morning sky with a low sun and faint rooftops and a church spire far
+    away. Wide, no foreground.
