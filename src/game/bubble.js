@@ -7,7 +7,7 @@ import { L } from './lines.js';
  */
 export function bubble(scene, x, y, line, { ms, tone = 0xf3ead8, depth = 50, tail = true } = {}) {
   const words = L(line);
-  const text = scene.add.text(0, 0, words, { fontFamily: 'Gaegu, sans-serif', fontStyle: 'bold', fontSize: '40px', color: '#4a3a2e', align: 'center', wordWrap: { width: 360 } }).setOrigin(0.5);
+  const text = scene.add.text(0, 0, words, { fontFamily: 'Gaegu, sans-serif', fontStyle: 'bold', fontSize: '34px', color: '#4a3a2e', align: 'center', wordWrap: { width: 360 } }).setOrigin(0.5);
   const padX = 22, padY = 12, w = Math.max(80, text.width + padX * 2), h = text.height + padY * 2;
   // never above the top of the screen: in a close-up the speaker's head can be near the edge
   const top = scene.cameras.main.worldView.y + h + 30;
