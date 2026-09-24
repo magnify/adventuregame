@@ -10,7 +10,7 @@ Each line is checked by something that runs, except the last, which is Brian on 
 | 3 | Taps work like a finger: tap to walk, tap-then-tap and drag to use | `npm run play` |
 | 4 | The story plays through start to end | `npm run play` |
 | 5 | The critic scores 8+ on every line of `docs/critic.md`, from screenshots only | a reviewer who didn't build it |
-| 6 | It feels right: eased walk, footsteps, a mark where you tap, the tapped thing answers at once, a soft camera | built into `src/game/stage.js` |
+| 6 | It feels right, measured frame by frame: steady walk, no slide, tree off the pavement, climb on the trunk, close-up big enough, bubbles on screen and off faces. Every report from Brian becomes a check here, proved by failing on the old version first | `npm run demo && npm run feel` |
 | 7 | The exact demo files load and play on phone (both ways up) and tablet sizes, before the link goes out | `npm run demo && npm run demo-check` |
 | 8 | Brian has played it on a phone or tablet and is happy | the demo link |
 

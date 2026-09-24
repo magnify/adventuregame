@@ -27,7 +27,8 @@ const film = async (tag, every = 3) => { const fs2 = (frames[tag] || []).filter(
 await p.goto(`http://localhost:${PORT}/index.html?test`, { timeout: 90000 });
 await p.evaluate(() => localStorage.clear()); await p.reload();
 for (let i = 0; i < 600; i++) { if (await p.evaluate(() => document.getElementById('loading')?.classList.contains('off'))) break; await p.evaluate(() => window.__step?.(1)); await p.waitForTimeout(50); }
-await step(10); await p.click('#ui button'); await step(20);
+
+await step(10); await p.click('#ui button', { timeout: 15000 }); await step(20);
 
 // ---- 1. the walk: she moves steadily across the screen, never jerks or slides backwards
 {
@@ -50,14 +51,18 @@ await step(10); await p.click('#ui button'); await step(20);
   const pave = await q(`(() => { const t = s.tiles.find(t => t.data_.key === 'street/pavement'); const c = s.cameras.main; return (t.y - c.worldView.y) * c.zoom; })()`);
   const trees = `s.props.concat([...s.hots.values()]).filter(o => o.texture.key === 'street/tree')`;
   const shot = async () => sharp(await p.screenshot()).raw().toBuffer({ resolveWithObject: true });
-  const withTree = await shot(); await q(`${trees}.forEach(o => o.setAlpha(0))`); await step(1); const without = await shot(); await q(`${trees}.forEach(o => o.setAlpha(1))`); await step(1);
+  // compare the frame with and without the tree, nothing else moving: she and the glow are hidden, time barely advances
+  await q(`void (s.girl.setVisible(false), s.glint?.setVisible(false))`); await p.evaluate(() => window.__step(1, 0.01));
+  const withTree = await shot(); await q(`${trees}.forEach(o => o.setAlpha(0))`); await p.evaluate(() => window.__step(1, 0.01)); const without = await shot();
+  await q(`void (${trees}.forEach(o => o.setAlpha(1)), s.girl.setVisible(true), s.glint?.setVisible(true))`); await step(1);
+  await sharp(without.data, { raw: without.info }).png().toFile(`${OUT}/tree-without.png`); await sharp(withTree.data, { raw: withTree.info }).png().toFile(`${OUT}/tree-with.png`);
   let lowest = 0; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 3; if (Math.abs(withTree.data[i] - without.data[i]) + Math.abs(withTree.data[i + 1] - without.data[i + 1]) > 30) lowest = Math.max(lowest, y); }
   check('tree: no part of it on the pavement', lowest <= pave + 2, `tree reaches y ${lowest}, pavement starts at y ${Math.round(pave)}`);
 }
 
 // ---- 3. the climb: she goes up the trunk, hands on it, and ends on the branch
 {
-  await q(`s.act(s.hots.get('tree'))`); const trail = [];
+  await q(`void s.act(s.hots.get('tree'))`); const trail = [];
   for (let i = 0; i < FPS * 8; i++) { await step(1); const r = await q(`({ x: s.girl.x, y: s.girl.y, mode: s.girl.mode, pose: s.girl.img.texture.key, trunk: s.trunkX, up: s.up })`); trail.push(r); if (r.mode === 'climb' && i % 2 === 0) await grab('climb'); if (r.up && r.mode === 'idle') break; }
   const climbing = trail.filter(r => r.mode === 'climb');
   const off = Math.max(0, ...climbing.map(r => Math.abs(r.x - r.trunk)));
@@ -78,7 +83,7 @@ await step(10); await p.click('#ui button'); await step(20);
 
 // ---- 5. a bubble: on screen, above her head, not over her face
 {
-  await q(`s.act(s.hots.get('mat'))`); let bub = null;
+  await q(`void s.act(s.hots.get('mat'))`); let bub = null;
   for (let i = 0; i < FPS * 3 && !bub; i++) { await step(1); bub = await q(`(() => { const c = s.children.list.find(o => o.type === 'Container' && o.depth === 50 && o.alpha > 0.9); if (!c) return null; const g = c.getBounds(), v = s.cameras.main.worldView, z = s.cameras.main.zoom; return { x: (g.x - v.x) * z, y: (g.y - v.y) * z, w: g.width * z, h: g.height * z }; })()`); }
   await grab('bubble'); const girl = await box('s.girl.img');
   check('bubble: appears', !!bub, bub ? 'shown' : 'no bubble seen');

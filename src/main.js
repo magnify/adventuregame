@@ -27,6 +27,8 @@ game.registry.set('tier', tier);
 window.__game = game;
 if (TEST) {
   let now = 0;
+  // tweens read the wall clock; in a test the clock is the steps, so a two-second climb takes two seconds of steps
+  const t0 = Date.now(); Date.now = () => t0 + now;
   game.events.once('ready', () => game.loop.sleep());
   /** Advance the game by n frames of ms each. */
   // Phaser wakes its own loop on focus and visibility; keep it asleep so only the test moves time

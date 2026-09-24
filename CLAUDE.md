@@ -13,7 +13,7 @@ A tap-to-explore story for a child, told by her father. Wordless in play. The cr
    each scene against `docs/critic.md`. The builder fixes and resubmits until every scene passes. Restraint wins:
    the critic's first question is what can be removed.
 5. **Prove it before calling it done.** `npm test` loads the game; `npm run play` walks the whole story and screenshots
-   every place; `npm run poses` shows each character in every pose. Nobody says it works if nobody ran it. Real devices beat headless browsers: the site at
+   every place; `npm run poses` shows each character in every pose; `npm run feel` plays the street frame by frame and measures what Brian would otherwise catch by eye (every report of his becomes a check there). Nobody says it works if nobody ran it. Real devices beat headless browsers: the site at
    https://magnify.github.io/adventuregame/ is the truth, and a push to `main` deploys it in about a minute.
 
 ## Standards
