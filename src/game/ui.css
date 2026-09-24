@@ -1,9 +1,9 @@
 :root { --ink: #2B2A33; --card: #FBF6EC; --brass: #D9A441; --night: #101830; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaegu, "Comic Sans MS", "Chalkboard SE", cursive; overflow: hidden;
+body { margin: 0; background: var(--night); color: var(--ink); font-family: Mali, "Comic Sans MS", "Chalkboard SE", cursive; overflow: hidden;
   -webkit-user-select: none; user-select: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
 #view { position: fixed; inset: 0; display: block; cursor: pointer; }
-#loading { position: fixed; inset: 0; display: grid; place-items: center; color: #5a4636; font-size: 26px; z-index: 3; /* its background, the street's sky, is set in index.html so it shows before any script loads */ transition: opacity .6s; padding: 24px; text-align: center; }
+#loading { position: fixed; inset: 0; display: grid; place-items: center; color: #5a4636; font-size: 21px; z-index: 3; /* its background, the street's sky, is set in index.html so it shows before any script loads */ transition: opacity .6s; padding: 24px; text-align: center; }
 #loading span { background: #f3ead8; padding: 18px 34px 20px; transform: rotate(-2deg); border-radius: 46% 54% 48% 52% / 58% 44% 56% 42%;
   box-shadow: inset 0 0 0 1px rgba(120, 95, 70, .15), 0 2px 1px rgba(90, 70, 50, .25), 0 12px 24px rgba(60, 45, 30, .25); }
 #loading.off { opacity: 0; pointer-events: none; }
@@ -12,13 +12,13 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
 /* cards are cut paper too: cream stock, a soft cast shadow, a little askew */
 #ui .card > div { background: #f3ead8; color: #4a3a2e; border-radius: 30px 26px 34px 24px / 26px 32px 24px 30px; padding: 26px 38px 28px; text-align: center; max-width: min(82vw, 460px);
   transform: rotate(-1.2deg); box-shadow: inset 0 0 0 1px rgba(120, 95, 70, .15), 0 3px 1px rgba(90, 70, 50, .22), 0 18px 34px rgba(60, 45, 30, .3); }
-#ui h1 { margin: 0 0 6px; font-size: clamp(32px, 6vw, 50px); line-height: 1; text-wrap: balance; }
-#ui p { margin: 0; font-size: clamp(19px, 3vw, 25px); opacity: .85; text-wrap: balance; }
-#ui p.small { margin-top: 14px; font-size: 15px; opacity: .6; }
+#ui h1 { margin: 0 0 6px; font-size: clamp(26px, 4.8vw, 40px); line-height: 1; text-wrap: balance; }
+#ui p { margin: 0; font-size: clamp(16px, 2.4vw, 20px); opacity: .85; text-wrap: balance; }
+#ui p.small { margin-top: 14px; font-size: 12px; opacity: .6; }
 #ui .suns { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
 #ui .suns i { width: 22px; height: 22px; border-radius: 50%; display: block; border: 2px solid var(--ink); }
 #ui .buttons { display: flex; gap: 10px; justify-content: center; }
-#ui button { margin-top: 16px; font: 700 26px Gaegu, cursive; color: #f7efdf; background: #c8432f; border: 0; border-radius: 18px 14px 20px 12px / 14px 18px 12px 20px; padding: 10px 30px; cursor: pointer; transform: rotate(1.5deg);
+#ui button { margin-top: 16px; font: 700 21px Mali, cursive; color: #f7efdf; background: #c8432f; border: 0; border-radius: 18px 14px 20px 12px / 14px 18px 12px 20px; padding: 10px 30px; cursor: pointer; transform: rotate(1.5deg);
   box-shadow: 0 2px 1px rgba(90, 40, 30, .35), 0 8px 14px rgba(60, 30, 20, .25); }
 #ui button:focus-visible { outline: 3px solid #d9a441; outline-offset: 3px; }
 /* a scrap of paper card, slightly askew, lifted off the page like the rest of the cut-outs */
@@ -35,9 +35,9 @@ body { margin: 0; background: var(--night); color: var(--ink); font-family: Gaeg
 #pocket.bump { animation: bump .35s cubic-bezier(.2, 1.4, .5, 1); }
 @keyframes bump { 0% { transform: rotate(-4deg) scale(1.3); } 100% { transform: rotate(-4deg) scale(1); } }
 #reset { position: fixed; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); width: 40px; height: 40px; border-radius: 50%; z-index: 4;
-  border: 2px solid rgba(251, 246, 236, .5); background: rgba(16, 24, 48, .35); color: #FBF6EC; font: 700 22px Gaegu, cursive; cursor: pointer; opacity: .35; }
+  border: 2px solid rgba(251, 246, 236, .5); background: rgba(16, 24, 48, .35); color: #FBF6EC; font: 700 18px Mali, cursive; cursor: pointer; opacity: .35; }
 #ui .card.bottom { background: none; backdrop-filter: none; place-items: end center; padding-bottom: max(18px, env(safe-area-inset-bottom)); }
 #ui .card.bottom > div { padding: 14px 26px 16px; max-width: min(90vw, 640px); }
-#ui .card.bottom h1 { font-size: clamp(24px, 4vw, 34px); }
-#ui .card.bottom p { font-size: clamp(16px, 2.4vw, 21px); }
-#ui .card.bottom button { margin-top: 8px; font-size: 20px; padding: 6px 20px; }
+#ui .card.bottom h1 { font-size: clamp(19px, 3.2vw, 27px); }
+#ui .card.bottom p { font-size: clamp(13px, 1.9vw, 17px); }
+#ui .card.bottom button { margin-top: 8px; font-size: 16px; padding: 6px 20px; }

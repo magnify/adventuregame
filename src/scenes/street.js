@@ -36,41 +36,30 @@ export class Street extends Stage {
     if (!this.started) ui.card({ title: L('title'), text: L('tagline'), buttons: [{ id: 'da', label: 'Dansk' }, { id: 'en', label: 'English' }] }).then(l => { language.set(l); this.started = true; say(this, this.girl, 'whats-that'); this.setFlag('begun'); });
   }
 
-  // She climbs the trunk hand over hand, then steps out onto the branch; down is the same in reverse.
+  // Up the tree: she fades at the foot of the trunk and appears on the branch as the view closes in on the door.
   async climb() {
     if (this.up) return;
-    await this.walkTo(this.trunkX); this.girl.face(1);
-    this.frozen = true; this.girl.play('climb');
-    const bottom = this.D.groundY, top = this.branchPos.y, pulls = 4;
-    for (let i = 1; i <= pulls; i++) {
-      this.girl.climbStep = i; // the other hand reaches up for each pull
-      this.sfx.play('step', { rate: 0.8 + i * 0.08, volume: 0.35 });
-      await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 340, ease: 'Quad.Out' });
-      await wait(this, 110);
-    }
-    this.girl.climbStep = undefined; this.girl.face(-1); this.girl.play('walk');
-    await tween(this, { targets: this.girl, x: this.branchPos.x, duration: 520, ease: 'Sine.InOut' });
-    this.girlX = this.targetX = this.branchPos.x; this.girl.play('idle'); this.girl.face(1);
-    this.up = true; this.setFlag('up');
+    await this.walkTo(this.trunkX); this.girl.face(1); this.frozen = true;
+    this.sfx.play('whoosh', { volume: 0.3, rate: 1.3 });
+    await tween(this, { targets: this.girl, alpha: 0, duration: 260, ease: 'Sine.In' });
+    this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x;
+    this.girl.play('idle'); this.girl.face(1); this.up = true; this.setFlag('up');
     this.dimGlint();
     this.focusOn(this.doorPos.x - 30, this.doorPos.y - 75, 2); // up close: the door, the mat and her
+    await wait(this, 180);
+    await tween(this, { targets: this.girl, alpha: 1, duration: 320, ease: 'Sine.Out' });
   }
   /** The glow only has to catch her eye from the street; once she's up there it would hide the mat and key. */
   dimGlint() { this.tweens.killTweensOf(this.glint); this.tweens.add({ targets: this.glint, alpha: 0, duration: 500, onComplete: () => this.glint.setVisible(false) }); }
   async descend() {
     this.focusOff();
-    this.girl.face(1); this.girl.play('walk');
-    await tween(this, { targets: this.girl, x: this.trunkX, duration: 480, ease: 'Sine.InOut' });
-    this.girl.play('climb');
-    const bottom = this.D.groundY, top = this.branchPos.y, pulls = 3;
-    for (let i = pulls - 1; i >= 0; i--) {
-      this.girl.climbStep = i; await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 300, ease: 'Quad.In' });
-      this.sfx.play('step', { rate: 0.9, volume: 0.35 }); await wait(this, 90);
-    }
-    this.girl.climbStep = undefined;
-    this.girlX = this.targetX = this.trunkX; this.frozen = false; this.up = false; this.setFlag('up', false); this.girl.play('idle');
+    this.sfx.play('whoosh', { volume: 0.3, rate: 1.1 });
+    await tween(this, { targets: this.girl, alpha: 0, duration: 240, ease: 'Sine.In' });
+    this.girl.setPosition(this.trunkX, this.D.groundY); this.girlX = this.targetX = this.trunkX;
+    this.up = false; this.setFlag('up', false); this.girl.play('idle');
+    await tween(this, { targets: this.girl, alpha: 1, duration: 300, ease: 'Sine.Out' });
+    this.frozen = false;
   }
-
   onGroundTap(wp) { if (this.up && wp.y > this.D.groundY - 200) { this.busy = true; this.descend().then(() => { this.busy = false; this.walkTo(wp.x); }); return true; } return false; }
 
   async onHot(id, img) {

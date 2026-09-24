@@ -70,6 +70,7 @@ Scene 2400×1080. Ground (pavement top) at y=900. The tree stands at x=1700.
 | houses.svg        | 1024×520 | tile     | a row of narrow townhouses, soft colours, windows, doors, seamless. Bottom at y=900. |
 | pavement.svg      | 512×180  | tile     | paving slabs then kerb then road. Top at y=880. |
 | tree.svg          | 640×920  | 0.5, 1.0 | big leafy tree with a thick trunk and one strong side branch at about 45% height on the LEFT, wide enough to stand on. A rectangular hole in the trunk just above the branch, 80×120 at 1x, where the door goes. Leave the hole transparent. |
+| tree-bed.png      | 760×110  | 0.5, 0.3 | the patch of earth the tree grows from, cut into the pavement: dark soil with a few grass tufts and low leaves, edged by a ring of grey kerb stones matching the pavement, seen from the same slight angle as the paving. The pivot is where the roots meet the soil; its back edge sits on the pavement's top line. The tree's roots end inside the soil, never on stone. |
 | door-closed.svg   | 80×120   | 0.5, 1.0 | small arched wooden door with a keyhole, sized to the hole. |
 | door-open.svg     | 80×120   | 0.5, 1.0 | the same door swung open, showing bright light inside (flat pale yellow). |
 | mat.svg           | 100×26   | 0.5, 1.0 | little red doormat with stripes. |

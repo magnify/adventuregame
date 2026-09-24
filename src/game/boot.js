@@ -18,7 +18,9 @@ export class Boot extends Phaser.Scene {
     const manifest = this.cache.json.get('manifest');
     this.registry.set('manifest', manifest);
     for (const [key, meta] of Object.entries(manifest.images)) this.load.image(key, `${base}art/${meta.file}?v=${__BUILD__}`);
-    this.load.once('complete', () => { ui.loaded(); const s = save.get('scene', 'street'); this.scene.start(['street', 'meadow', 'forest', 'swamp'].includes(s) ? s : 'street'); });
+    // the words' font has to be in before the first bubble, or it's drawn in a stand-in; never wait more than a few seconds for it
+    const font = Promise.race([document.fonts.load('700 27px Mali', 'Hvad er det? åøæ…'), new Promise(r => setTimeout(r, 4000))]);
+    this.load.once('complete', () => font.then(() => { ui.loaded(); const s = save.get('scene', 'street'); this.scene.start(['street', 'meadow', 'forest', 'swamp'].includes(s) ? s : 'street'); }));
     this.load.once('loaderror', f => ui.fail('Could not load ' + (f && f.key)));
     this.load.start();
   }

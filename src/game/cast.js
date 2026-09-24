@@ -34,16 +34,18 @@ class Poses extends Phaser.GameObjects.Container {
 
 /** The girl: stands, walks, climbs, reaches, gets stuck. Feet are the picture's pivot, on the ground. */
 export class Girl extends Poses {
-  constructor(scene, x, y, scale = 1) { super(scene, x, y, 'girl', 'stand', scale); this.blinkAt = 2 + Math.random() * 3; this.blinking = 0; this.stride = 1; }
+  constructor(scene, x, y, scale = 1) { super(scene, x, y, 'girl', 'stand', scale); this.blinkAt = 2 + Math.random() * 3; this.blinking = 0; this.stride = 1; this.steps = 0; }
+  play(mode) { if (mode === 'walk' && this.mode !== 'walk') this.steps = 0; super.play(mode); } // every walk opens on a full first step
   tick(dt) {
     this.t += dt; const t = this.t, m = this.mode;
     if (m === 'walk') {
       // a four-beat step: one foot forward, passing, the other foot forward, passing; a small lift on each pass
       // one picture per step, alternating feet, paced to her speed so the feet don't skate
-      const rate = 4.2 * Math.max(0.6, this.stride), beat = Math.floor(t * rate) % 2;
+      // the step count builds up as she walks, so speeding up slows or quickens the steps, never skips one
+      this.steps += dt * 4.2 * Math.max(0.6, this.stride); const beat = Math.floor(this.steps) % 2, sw = Math.sin(this.steps * Math.PI);
       this.show(beat ? 'walk-2' : 'walk-1');
       const framed = this.has('walk-1');
-      this.pose(0, -Math.abs(Math.sin(t * rate * Math.PI)) * (framed ? 2 : 5) * this.stride, framed ? 0 : Math.sin(t * rate * Math.PI) * 0.025);
+      this.pose(0, -Math.abs(sw) * (framed ? 2 : 5) * this.stride, framed ? 0 : sw * 0.025);
     } else if (m === 'climb') {
       // a scene that knows her pulls sets climbStep, so the reaching hand changes with each pull, not on a timer
       const phase = this.climbStep !== undefined ? this.climbStep % 2 : Math.floor(t * 3) % 2; this.show(phase ? 'climb-2' : 'climb-1');
