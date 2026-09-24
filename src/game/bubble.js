@@ -20,7 +20,7 @@ export function bubble(scene, x, y, icons, { ms = 1600, tone = 0xf3ead8, depth =
   return new Promise(res => scene.time.delayedCall(ms, () => { scene.tweens.add({ targets: c, alpha: 0, scale: 0.8, duration: 160, onComplete: () => { c.destroy(); res(); } }); }));
 }
 
-/** Say something above a game object (a puppet, a prop). */
+/** Say something above a game object (a character, a prop). */
 export function say(scene, who, icons, opts = {}) {
   const h = opts.height ?? (who.displayHeight ? who.displayHeight : 220);
   return bubble(scene, who.x + (opts.dx || 0), who.y - h * (opts.above ?? 1) + (opts.dy || 0), icons, opts);

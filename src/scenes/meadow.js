@@ -34,7 +34,7 @@ export class Meadow extends Stage {
     this.barlinAnchor = { x: this.girlX + 200, y: G - 250 };
     await wait(this, 1400);
     // he tips his hat
-    await tween(this, { targets: this.barlin.hat, y: this.barlin.hat.y - 18, angle: -40, duration: 250, yoyo: true, ease: 'Quad.Out' });
+    await this.barlin.bow();
     await say(this, this.barlin, ['hat'], { height: 40, ms: 1200 });
     await say(this, this.barlin, ['sun', 'sun', 'sun'], { height: 40, ms: 1400 });
     await say(this, this.barlin, ['arrow-right'], { height: 40, ms: 1200 });

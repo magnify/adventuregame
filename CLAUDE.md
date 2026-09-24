@@ -8,12 +8,12 @@ A tap-to-explore story for a child, told by her father. Wordless in play. The cr
 2. **Contract before art.** Every image is listed in `docs/art-contract.md` with size and pivot before it's drawn.
    Art lives in `art/src/` as SVG; `npm run art` renders it. Swap a file, keep its name and pivot, and the game doesn't know.
 3. **Scenes are data.** `src/scenes/<name>.json` says what's in a place; `src/scenes/<name>.js` says what happens there,
-   on top of `src/game/stage.js`. Characters are paper puppets (`src/game/puppet.js`), animated by code.
+   on top of `src/game/stage.js`. Characters are whole pictures, one per pose (`src/game/cast.js`), swapped with a little bounce.
 4. **Critic before push.** Before a build goes live, someone who did not build it looks at screenshots only and scores
    each scene against `docs/critic.md`. The builder fixes and resubmits until every scene passes. Restraint wins:
    the critic's first question is what can be removed.
 5. **Prove it before calling it done.** `npm test` loads the game; `npm run play` walks the whole story and screenshots
-   every place; `npm run joints` measures every puppet joint in every pose and fails a loose one. Nobody says it works if nobody ran it. Real devices beat headless browsers: the site at
+   every place; `npm run poses` shows each character in every pose. Nobody says it works if nobody ran it. Real devices beat headless browsers: the site at
    https://magnify.github.io/adventuregame/ is the truth, and a push to `main` deploys it in about a minute.
 
 ## Standards

@@ -35,9 +35,9 @@ for (let [key, meta] of Object.entries(manifest.images || manifest)) {
 }
 // Soft paper shadows for things that move or stand in front: a blurred silhouette drawn just behind each piece,
 // so a cut-out sits in the scene the way the layered paper does. Baked here so phones pay nothing for them.
-const SHADOW = /^girl\/(body|head|arm-l)$|^barlin\/|^street\/(cat|lamp)$/, PAD = 6; // pad in 1x px, room for the blur
+const SHADOW = /^(girl|barlin)\/|^street\/(cat|lamp)$/, PAD = 6; // pad in 1x px, room for the blur
 for (const [key, meta] of Object.entries(out.images)) {
-  if (!SHADOW.test(key) || key.endsWith('~shadow') || key === 'girl/head-blink') continue;
+  if (!SHADOW.test(key) || key.endsWith('~shadow') || key === 'girl/stand-blink') continue;
   const sc = meta.scale ?? SCALE, pad = Math.round(PAD * sc);
   const { data, info } = await sharp(path.join(OUT, meta.file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const w = info.width + pad * 2, h = info.height + pad * 2, px = Buffer.alloc(w * h * 4);

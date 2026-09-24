@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { art } from './boot.js';
-import { makeGirl, Barlin } from './puppet.js';
+import { makeGirl, Barlin } from './cast.js';
 import { ui } from './ui.js';
 import { save } from './save.js';
 import { bubble, say } from './bubble.js';
@@ -50,7 +50,7 @@ export class Stage extends Phaser.Scene {
     for (const hsp of D.hotspots || []) this.hot(hsp);
     // the girl
     const startX = save.get(`${this.key}.x`, D.start.x);
-    this.girl = makeGirl(this, startX, D.groundY, D.girlScale || 1.3).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = D.speed || 230; this.walkResolve = null; this.stepAt = 0;
+    this.girl = makeGirl(this, startX, D.groundY, D.girlScale || 1.2).setDepth(20); this.girlX = startX; this.targetX = startX; this.speed = D.speed || 230; this.walkResolve = null; this.stepAt = 0;
     if (D.barlin) { this.barlin = new Barlin(this, startX + 220, D.groundY - 260, 1.3).setDepth(21); this.barlin.setVisible(D.barlin !== 'later'); this.fuss = 0; this.barlinAnchor = null; }
     // input
     this.input.on('pointerdown', p => { this.down = { x: p.x, y: p.y }; });
@@ -69,7 +69,7 @@ export class Stage extends Phaser.Scene {
   prop(p) {
     const a = art(this, p.key); const img = this.add.image(p.x, p.y ?? this.D.groundY, p.key).setOrigin(a.pivot.x, a.pivot.y).setScale((p.scale || 1) / a.scale).setDepth(p.depth ?? 10).setScrollFactor(p.scroll ?? 1);
     if (p.flip) img.setFlipX(true); img.setTint(this.tintFor(p.x, p.key)); img.data_ = p; this.props.push(img);
-    // things standing in the scene get the same soft paper shadow as the puppets; it follows them when they hop
+    // things standing in the scene get the same soft paper shadow as the characters; it follows them when they hop
     const sk = `${p.key}~shadow`;
     if (this.textures.exists(sk)) { const sa = art(this, sk); img.shadow = this.add.image(img.x + 2.5, img.y + 4, sk).setOrigin(sa.pivot.x, sa.pivot.y).setScale(img.scaleX * a.scale / sa.scale).setDepth(img.depth - 0.01).setScrollFactor(p.scroll ?? 1); (this.shadowed ||= []).push(img); }
     return img;
