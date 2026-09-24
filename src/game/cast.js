@@ -38,8 +38,11 @@ export class Girl extends Poses {
   tick(dt) {
     this.t += dt; const t = this.t, m = this.mode;
     if (m === 'walk') {
-      const phase = Math.floor(t * 5.5 * Math.max(0.6, this.stride)) % 2; this.show(phase ? 'walk-2' : 'walk-1');
-      this.pose(0, -Math.abs(Math.sin(t * 5.5 * Math.PI)) * 5 * this.stride, Math.sin(t * 5.5 * Math.PI) * 0.025);
+      // a four-beat step: one foot forward, passing, the other foot forward, passing; a small lift on each pass
+      const rate = 7 * Math.max(0.6, this.stride), beat = Math.floor(t * rate) % 4;
+      this.show(['walk-1', 'stand', 'walk-2', 'stand'][beat]);
+      const framed = this.has('walk-1');
+      this.pose(0, -Math.abs(Math.sin(t * rate * Math.PI / 2)) * (framed ? 2.5 : 5) * this.stride, framed ? 0 : Math.sin(t * rate * Math.PI / 2) * 0.025);
     } else if (m === 'climb') {
       const phase = Math.floor(t * 3) % 2; this.show(phase ? 'climb-2' : 'climb-1');
       this.pose(0, -Math.abs(Math.sin(t * 3 * Math.PI)) * 4, this.has('climb-1') ? 0 : Math.sin(t * 6) * 0.06);
@@ -67,7 +70,7 @@ export class Barlin extends Poses {
   }
   tick(dt, fuss = 0) {
     this.t += dt; if (this.bowing && this.has('bow')) { this.show('bow'); this.pose(0, 0, 0); return; } const t = this.t, wob = Math.sin(t * 3) * 0.04 * (1 + fuss * 3);
-    if (this.has('fly-2')) { const f = [1, 2, 3, 2][Math.floor(t * 14) % 4]; this.show(`fly-${f}`); this.pose(0, Math.sin(t * 2.1) * 3, wob); }
+    if (this.has('fly-2')) { const f = [1, 2, 3, 2][Math.floor(t * 11) % 4]; this.show(`fly-${f}`); this.pose(0, Math.sin(t * 2.1) * 3, wob); }
     else { const beat = Math.sin(t * 14); this.pose(0, Math.sin(t * 2.1) * 3 + beat * 1.5, wob, 1, 1 - Math.abs(beat) * 0.08); }
   }
 }

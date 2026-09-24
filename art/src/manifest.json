@@ -580,21 +580,113 @@
         "y": 0.5
       }
     },
-    "girl/stand": {
-      "width": 81,
-      "height": 210,
+    "girl/climb-1": {
+      "width": 141,
+      "height": 217,
       "pivot": {
-        "x": 0.5,
+        "x": 0.4785,
         "y": 1
-      }
+      },
+      "trim": false
     },
-    "barlin/fly-1": {
+    "girl/climb-2": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/reach": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/stand-blink": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/stand": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/stuck": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/walk-1": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "girl/walk-2": {
+      "width": 141,
+      "height": 217,
+      "pivot": {
+        "x": 0.4785,
+        "y": 1
+      },
+      "trim": false
+    },
+    "barlin/bow": {
       "width": 92,
-      "height": 88,
+      "height": 95,
       "pivot": {
         "x": 0.5,
         "y": 0.5
-      }
+      },
+      "trim": false
+    },
+    "barlin/fly-1": {
+      "width": 92,
+      "height": 95,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "trim": false
+    },
+    "barlin/fly-2": {
+      "width": 92,
+      "height": 95,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "trim": false
+    },
+    "barlin/fly-3": {
+      "width": 92,
+      "height": 95,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "trim": false
     }
   }
 }

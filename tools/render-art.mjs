@@ -18,7 +18,7 @@ for (let [key, meta] of Object.entries(manifest.images || manifest)) {
   // A PNG beside the SVG wins: generated paper art. Trim its empty margin, make solid paper fully opaque.
   const pngPath = [path.join(SRC, key + '.png'), path.join(SRC, 'characters', key + '.png')].find(f => fs.existsSync(f));
   if (pngPath) {
-    const trimmed = await sharp(pngPath).trim({ threshold: 10 }).resize(w, h, { fit: 'fill' }).raw().toBuffer({ resolveWithObject: true });
+    const trimmed = await (meta.trim === false ? sharp(pngPath) : sharp(pngPath).trim({ threshold: 10 })).resize(w, h, { fit: 'fill' }) /* poses keep their shared box so they line up */.raw().toBuffer({ resolveWithObject: true });
     const px = trimmed.data; for (let i = 3; i < px.length; i += 4) if (px[i] >= 240) px[i] = 255;
     // photographed paper is too heavy as PNG on a phone; WebP keeps the alpha at a fraction of the weight
     const webp = file.replace(/\.png$/, '.webp'); fs.rmSync(path.join(OUT, file), { force: true });
