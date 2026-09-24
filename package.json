@@ -19,6 +19,7 @@
     "feel": "node tests/feel.mjs"
   },
   "devDependencies": {
+    "playwright": "^1.63.0",
     "sharp": "^0.35.4",
     "vite": "^7.3.6"
   },

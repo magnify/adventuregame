@@ -7,7 +7,7 @@
 // that's expected and correct, not a plumbing bug. What it proves in the
 // meantime is that build, base path, static assets, and the harness itself
 // all work.
-import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+import { launch } from './browser.mjs';
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,6 @@ const VITE_BIN = path.join(ROOT, 'node_modules', '.bin', 'vite');
 const PORT = 4173;
 const BASE_URL = `http://localhost:${PORT}/adventuregame/`;
 const LOADING_TIMEOUT_MS = 180_000; // software WebGL is slow — be generous
-const CHROMIUM_PATH = '/opt/pw-browsers/chromium';
 
 function run(cmd, args, opts = {}) {
   return new Promise((resolve, reject) => {
@@ -58,10 +57,7 @@ async function main() {
   try {
     await waitForServer(BASE_URL, 30_000);
 
-    browser = await chromium.launch({
-      executablePath: CHROMIUM_PATH,
-      args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
-    });
+    browser = await launch();
     const page = await browser.newPage({ viewport: { width: 480, height: 300 } });
 
     // Only uncaught exceptions fail the run — not console.error or failed

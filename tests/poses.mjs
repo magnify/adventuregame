@@ -1,11 +1,11 @@
 // Close-ups of the girl in every pose, twice each, so a loose joint shows up in a screenshot, not on a child's tablet.
-import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+import { launch } from './browser.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 const PORT = 4181, OUT = process.env.SHOTS || 'tests/shots'; fs.mkdirSync(OUT, { recursive: true });
 const srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 2500));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const b = await launch();
 const p = await b.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 3 });
 await p.goto(`http://localhost:${PORT}/adventuregame/`, { timeout: 90000 });
 await p.waitForFunction(() => document.getElementById('loading').classList.contains('off'), null, { timeout: 180000 });

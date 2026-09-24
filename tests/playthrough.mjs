@@ -1,12 +1,12 @@
 // Plays the whole story through in a headless browser by driving the scenes' own hotspots, and screenshots each place.
 // Software WebGL is slow: keep the viewport small and the waits generous.
-import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+import { launch } from './browser.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 const PORT = 4175, OUT = process.env.SHOTS || 'tests/shots'; fs.mkdirSync(OUT, { recursive: true });
 const srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 2500));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'] });
+const b = await launch(['--autoplay-policy=no-user-gesture-required']);
 const p = await b.newPage({ viewport: { width: 960, height: 540 } });
 const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/ERR_CONNECTION|404|fonts|AudioContext/.test(m.text())) errs.push(m.text().slice(0, 200)); });
 const fail = msg => { console.log('FAIL', msg, errs); srv.kill(); process.exit(1); };
@@ -51,3 +51,4 @@ await act('barlin-hot'); console.log('freed, pocket', (await state()).pocket);
 await walk(3150); await p.waitForTimeout(6000); await shot('6-witch-house');
 console.log('errors', errs.length ? errs : 'none');
 await b.close(); srv.kill();
+if (errs.length) process.exit(1);

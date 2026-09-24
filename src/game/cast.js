@@ -23,7 +23,7 @@ class Poses extends Phaser.GameObjects.Container {
     const sk = key + '~shadow'; if (this.scene.textures.exists(sk)) { const s = art(this.scene, sk); this.shadow.setTexture(sk).setOrigin(s.pivot.x, s.pivot.y).setScale(1 / s.scale).setVisible(true); } else this.shadow.setVisible(false);
   }
   face(dir) { if (dir && dir !== this.facing) { this.facing = dir; this.scaleX = Math.abs(this.scaleX) * dir; } }
-  play(mode) { this.mode = mode; }
+  play(mode) { if (mode === this.mode) return; this.mode = mode; this.tick?.(0); } // the picture changes on the frame the action does
   /** Place the picture and its shadow together. */
   pose(x, y, rot, sx = 1, sy = 1) {
     const a = art(this.scene, this.img.texture.key);

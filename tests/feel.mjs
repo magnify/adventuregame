@@ -1,7 +1,7 @@
 // The feel checks: plays the street frame by frame (the game only moves when this steps it), records every frame,
 // and measures the things Brian has had to catch by eye. Each check is one of his reports, turned into a number.
 // Writes a filmstrip per moment for a reviewer. Usage: npm run feel -- [build dir] [out dir]
-import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+import { launch } from './browser.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import sharp from 'sharp';
@@ -9,7 +9,7 @@ const DIR = process.argv[2] || 'dist-demo', OUT = process.argv[3] || 'tests/shot
 const PORT = 4191, FPS = 30, W = 960, H = 540;
 const srv = spawn('python3', ['-m', 'http.server', String(PORT), '--directory', DIR], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 1200));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const b = await launch();
 const p = await b.newPage({ viewport: { width: W, height: H } });
 const errs = []; p.on('pageerror', e => errs.push(e.message));
 const results = []; const check = (name, ok, detail) => { results.push({ name, ok, detail }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name.padEnd(34)} ${detail}`); };
@@ -18,10 +18,10 @@ const scene = `const s = window.__game.scene.getScenes(true)[0];`;
 const q = body => p.evaluate(new Function(`${scene} return (${body});`));
 // screen box of a game object, in page pixels
 const box = expr => q(`(() => { const o = ${expr}; const c = s.cameras.main; const g = o.getBounds(); const v = c.worldView; return { x: (g.x - v.x) * c.zoom, y: (g.y - v.y) * c.zoom, w: g.width * c.zoom, h: g.height * c.zoom }; })()`);
-const frames = {}; const grab = async (tag) => { (frames[tag] ||= []).push(await p.screenshot()); };
+const frames = {}; const grab = async (tag, clip) => { (frames[tag] ||= []).push(await p.screenshot(clip ? { clip } : {})); };
 const film = async (tag, every = 3) => { const fs2 = (frames[tag] || []).filter((_, i) => i % every === 0).slice(0, 16); if (!fs2.length) return;
-  const small = await Promise.all(fs2.map(f => sharp(f).resize(320).png().toBuffer())); const cols = 4, rows = Math.ceil(small.length / cols);
-  await sharp({ create: { width: cols * 322, height: rows * 182, channels: 3, background: '#fff' } }).composite(small.map((im, i) => ({ input: im, left: (i % cols) * 322, top: Math.floor(i / cols) * 182 }))).png().toFile(`${OUT}/${tag}.png`); };
+  const small = await Promise.all(fs2.map(f => sharp(f).resize(320).png().toBuffer())); const th = (await sharp(small[0]).metadata()).height, cols = 4, rows = Math.ceil(small.length / cols);
+  await sharp({ create: { width: cols * 322, height: rows * (th + 2), channels: 3, background: '#fff' } }).composite(small.map((im, i) => ({ input: im, left: (i % cols) * 322, top: Math.floor(i / cols) * (th + 2) }))).png().toFile(`${OUT}/${tag}.png`); };
 
 // ---- load, fresh
 await p.goto(`http://localhost:${PORT}/index.html?test`, { timeout: 90000 });
@@ -63,11 +63,12 @@ await step(10); await p.click('#ui button', { timeout: 15000 }); await step(20);
 // ---- 3. the climb: she goes up the trunk, hands on it, and ends on the branch
 {
   await q(`void s.act(s.hots.get('tree'))`); const trail = [];
-  for (let i = 0; i < FPS * 8; i++) { await step(1); const r = await q(`({ x: s.girl.x, y: s.girl.y, mode: s.girl.mode, pose: s.girl.img.texture.key, trunk: s.trunkX, up: s.up })`); trail.push(r); if (r.mode === 'climb' && i % 2 === 0) await grab('climb'); if (r.up && r.mode === 'idle') break; }
+  for (let i = 0; i < FPS * 8; i++) { await step(1); const r = await q(`({ x: s.girl.x, y: s.girl.y, mode: s.girl.mode, pose: s.girl.img.texture.key, trunk: s.trunkX, up: s.up })`); trail.push(r); if (r.mode === 'climb' && i % 2 === 0) await grab('climb', { x: W - 360, y: 0, width: 360, height: H }); if (r.up && r.mode === 'idle') break; }
   const climbing = trail.filter(r => r.mode === 'climb');
   const off = Math.max(0, ...climbing.map(r => Math.abs(r.x - r.trunk)));
   check('climb: stays on the trunk', climbing.length > 0 && off < 30, `${climbing.length} climbing frames, furthest ${off.toFixed(0)} px from the trunk`);
   check('climb: hand over hand', new Set(climbing.map(r => r.pose)).size >= 2, `pictures: ${[...new Set(climbing.map(r => r.pose.split('/')[1]))].join(', ')}`);
+  check('climb: only climbing pictures', climbing.every(r => /climb/.test(r.pose)), `pictures: ${climbing.filter(r => !/climb/.test(r.pose)).length} frames not climbing`);
   await step(FPS * 2); await film('climb', 1);
 }
 

@@ -1,11 +1,11 @@
 // Tests the exact files a demo link serves (a relative-path build), as plain static files, on phone and tablet touch screens.
 // Usage: npm run demo-check -- <build dir> [screenshot dir]
-import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+import { launch } from './browser.mjs';
 import { spawn } from 'node:child_process';
 const DIR = process.argv[2] || 'dist-demo', OUT = process.argv[3] || 'tests/shots'; import('node:fs').then(fs => fs.mkdirSync(OUT, { recursive: true }));
 const srv = spawn('python3', ['-m', 'http.server', '4190', '--directory', DIR], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 1500));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const b = await launch();
 const results = [];
 for (const [name, vp] of [['phone landscape', { width: 844, height: 390 }], ['phone portrait', { width: 390, height: 844 }], ['tablet', { width: 1180, height: 820 }]]) {
   const ctx = await b.newContext({ viewport: vp, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
