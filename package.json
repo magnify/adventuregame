@@ -15,7 +15,8 @@
     "poses": "node tests/poses.mjs",
     "check": "node tools/check-scene.mjs",
     "demo": "vite build --base ./ --outDir dist-demo --emptyOutDir",
-    "demo-check": "node tests/demo-check.mjs"
+    "demo-check": "node tests/demo-check.mjs",
+    "feel": "node tests/feel.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.4",
