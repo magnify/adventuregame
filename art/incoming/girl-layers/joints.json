@@ -1,0 +1,65 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "coordinate_system": "reference-sheet pixels, top-left origin",
+  "body.png": {
+    "neck": [
+      546,
+      493
+    ],
+    "shoulder-back": [
+      643,
+      570
+    ],
+    "shoulder-front": [
+      493,
+      555
+    ],
+    "hip-back": [
+      469,
+      947
+    ],
+    "hip-front": [
+      595,
+      946
+    ]
+  },
+  "head.png": {
+    "pin": [
+      546,
+      493
+    ]
+  },
+  "head-blink.png": {
+    "pin": [
+      546,
+      493
+    ]
+  },
+  "arm-back.png": {
+    "pin": [
+      643,
+      570
+    ]
+  },
+  "arm-front.png": {
+    "pin": [
+      493,
+      555
+    ]
+  },
+  "leg-back.png": {
+    "pin": [
+      469,
+      947
+    ]
+  },
+  "leg-front.png": {
+    "pin": [
+      595,
+      946
+    ]
+  }
+}
