@@ -45,6 +45,7 @@
   {
    "key": "street/tree",
    "x": 1700,
+   "y": 884,
    "depth": 9,
    "id": "treeimg"
   }
@@ -73,6 +74,7 @@
    "id": "tree",
    "key": "street/tree",
    "x": 1700,
+   "y": 884,
    "depth": 9,
    "walkTo": 1560
   },

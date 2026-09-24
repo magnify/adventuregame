@@ -29,7 +29,7 @@ export class Street extends Stage {
     this.glint = this.add.image(this.doorPos.x + 12, this.doorPos.y - 50, 'forest/wisp').setScale(0.7).setTint(0xffe28a).setBlendMode(Phaser.BlendModes.ADD).setDepth(14);
     this.tweens.add({ targets: this.glint, alpha: { from: 0.35, to: 1 }, scale: { from: 0.5, to: 0.95 }, duration: 900, yoyo: true, repeat: -1 });
     this.up = !!this.flags.up;
-    if (this.up) { this.glint.setVisible(false); this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
+    if (this.up) { this.glint.setVisible(false); this.focusOn(this.doorPos.x - 30, this.doorPos.y - 75, 2); this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
     if (this.flags.matUp && !pocket.has('key') && !this.flags.through) { mat.setAngle(MAT_UP); key.setVisible(true); }
     this.started = this.flags.begun;
     if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things, solve puzzles.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
@@ -51,10 +51,12 @@ export class Street extends Stage {
     this.girlX = this.targetX = this.branchPos.x; this.girl.play('idle'); this.girl.face(1);
     this.up = true; this.setFlag('up');
     this.dimGlint();
+    this.focusOn(this.doorPos.x - 30, this.doorPos.y - 75, 2); // up close: the door, the mat and her
   }
   /** The glow only has to catch her eye from the street; once she's up there it would hide the mat and key. */
   dimGlint() { this.tweens.killTweensOf(this.glint); this.tweens.add({ targets: this.glint, alpha: 0, duration: 500, onComplete: () => this.glint.setVisible(false) }); }
   async descend() {
+    this.focusOff();
     this.girl.face(1); this.girl.play('walk');
     await tween(this, { targets: this.girl, x: this.trunkX, duration: 480, ease: 'Sine.InOut' });
     this.girl.play('climb');

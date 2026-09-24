@@ -64,7 +64,11 @@ export class Stage extends Phaser.Scene {
     this.onEnter();
   }
 
-  fitCamera() { const cam = this.cameras.main; cam.setZoom(Math.max(cam.height / this.D.height, cam.width / this.D.width)); }
+  baseZoom() { const cam = this.cameras.main; return Math.max(cam.height / this.D.height, cam.width / this.D.width); }
+  fitCamera() { if (!this.focus) this.cameras.main.setZoom(this.baseZoom()); }
+  /** Move in close on something small (a door, a mat) so a child can see it and tap it; focusOff() eases back out. */
+  focusOn(x, y, k = 2) { this.focus = { x, y, k }; }
+  focusOff() { this.focus = null; }
 
   prop(p) {
     const a = art(this, p.key); const img = this.add.image(p.x, p.y ?? this.D.groundY, p.key).setOrigin(a.pivot.x, a.pivot.y).setScale((p.scale || 1) / a.scale).setDepth(p.depth ?? 10).setScrollFactor(p.scroll ?? 1);
@@ -196,10 +200,18 @@ export class Stage extends Phaser.Scene {
     this.girl.tick(dt);
     // camera follows, a little ahead
     // the camera drifts after her and leaves room ahead in the direction she's facing
+    // zoom eases toward the close-up while there is a focus, and back to the whole scene when there isn't
+    cam.setZoom(Phaser.Math.Linear(cam.zoom, this.baseZoom() * (this.focus ? this.focus.k : 1), Math.min(1, dt * 3)));
+    if (this.focus) {
+      // Phaser zooms about the view's centre, so centring on a point is scroll = point - half the view (the camera's bounds clamp it)
+      cam.scrollX = Phaser.Math.Linear(cam.scrollX, this.focus.x - cam.width / 2, Math.min(1, dt * 3));
+      cam.scrollY = Phaser.Math.Linear(cam.scrollY, this.focus.y - cam.height / 2, Math.min(1, dt * 3));
+    } else {
     const view = cam.width / cam.zoom; this.lead = Phaser.Math.Linear(this.lead ?? 0.42, (this.girl.facing || 1) > 0 ? 0.38 : 0.62, Math.min(1, dt * 1.2));
     const want = this.girlX - view * this.lead;
     cam.scrollX = Phaser.Math.Linear(cam.scrollX, Phaser.Math.Clamp(want, 0, this.D.width - view), Math.min(1, dt * 1.8));
-    cam.scrollY = this.D.height - cam.height / cam.zoom;
+    cam.scrollY = Phaser.Math.Linear(cam.scrollY, this.D.height - cam.height / cam.zoom, Math.min(1, dt * 3));
+    }
     const wv = cam.worldView; this.sky.setPosition(wv.x - 4, wv.y - 4).setDisplaySize(wv.width + 8, wv.height + 8);
     if (this.debug) { this.debug.setPosition(wv.x + 8, wv.y + 8).setText(`${Math.round(this.game.loop.actualFps)} fps  ${this.key}  x ${Math.round(this.girlX)}`); }
     // Barlin hovers ahead, or where a scene asks him to
