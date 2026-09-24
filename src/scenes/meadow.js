@@ -21,7 +21,8 @@ export class Meadow extends Stage {
       await wait(this, 200); this.sfx.play('whoosh', { rate: 1.3, volume: 0.4 });
       await tween(this, { targets: this.girl, y: G, angle: 0, duration: 900, ease: 'Bounce.Out' });
       this.cameras.main.shake(150, 0.003); this.frozen = false;
-      await say(this, this.girl, ['question'], { height: 285, ms: 1000 });
+      await say(this, this.girl, 'where-am-i');
+      await say(this, this.girl, 'three-suns');
       this.setFlag('landed');
       await this.barlinArrives();
       this.busy = false;
@@ -35,9 +36,8 @@ export class Meadow extends Stage {
     await wait(this, 1400);
     // he tips his hat
     await this.barlin.bow();
-    await say(this, this.barlin, ['hat'], { height: 40, ms: 1200 });
-    await say(this, this.barlin, ['sun', 'sun', 'sun'], { height: 40, ms: 1400 });
-    await say(this, this.barlin, ['arrow-right'], { height: 40, ms: 1200 });
+    await say(this, this.barlin, 'barlin-hello');
+    await say(this, this.barlin, 'come-with-me');
     this.barlinAnchor = null;
   }
 

@@ -11,7 +11,7 @@ for (let [key, meta] of Object.entries(manifest.images || manifest)) {
   const file = key.replace(/\//g, '-') + '.png';
   // many phones can't hold a texture over 4096px on a side; render big strips at a lower scale instead
   // characters are seen close and move: render them sharper (5x) where the source art has the pixels for it
-  const want = /^(girl|barlin)\//.test(key) ? 5 : SCALE;
+  const want = /^(girl|barlin)\//.test(key) ? 3.5 : SCALE; // sharp on a tablet, light enough for eight poses in a phone's memory
   const sc = Math.min(want, MAX_TEX / meta.width, MAX_TEX / meta.height);
   const w = Math.round(meta.width * sc), h = Math.round(meta.height * sc);
   if (sc !== SCALE) meta = { ...meta, scale: sc };
@@ -43,9 +43,11 @@ for (const [key, meta] of Object.entries(out.images)) {
   const w = info.width + pad * 2, h = info.height + pad * 2, px = Buffer.alloc(w * h * 4);
   for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) px[((y + pad) * w + x + pad) * 4 + 3] = Math.round(data[(y * info.width + x) * 4 + 3] * 0.5);
   const file = key.replace(/\//g, '-') + '~shadow.webp';
-  await sharp(px, { raw: { width: w, height: h, channels: 4 } }).blur(2.2 * sc).webp({ quality: 80, alphaQuality: 80 }).toFile(path.join(OUT, file));
+  // a shadow is a blur: a third of the resolution looks the same and costs a phone a ninth of the memory
+  const ss = sc / 3;
+  await sharp(await sharp(px, { raw: { width: w, height: h, channels: 4 } }).blur(2.2 * sc).png().toBuffer()).resize(Math.round(w / 3), Math.round(h / 3)).webp({ quality: 80, alphaQuality: 80 }).toFile(path.join(OUT, file));
   const pv = meta.pivot || { x: 0.5, y: 1 };
-  out.images[key + '~shadow'] = { width: meta.width + PAD * 2, height: meta.height + PAD * 2, ...(meta.scale ? { scale: meta.scale } : {}),
+  out.images[key + '~shadow'] = { width: meta.width + PAD * 2, height: meta.height + PAD * 2, scale: ss,
     pivot: { x: (pv.x * meta.width + PAD) / (meta.width + PAD * 2), y: (pv.y * meta.height + PAD) / (meta.height + PAD * 2) }, file };
 }
 fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(out));

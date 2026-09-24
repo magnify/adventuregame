@@ -16,9 +16,14 @@ const pivot = { x: +((ref.x + ref.w / 2 - x0) / W).toFixed(4), y: pivotY ? Numbe
 const out = `art/src/characters/${who}`; fs.mkdirSync(out, { recursive: true });
 const manPath = 'art/src/manifest.json', man = JSON.parse(fs.readFileSync(manPath, 'utf8'));
 for (const k2 of Object.keys(man.images)) if (k2.startsWith(`${who}/`)) delete man.images[k2];
+// Each pose is pinned at the middle of its own head and body (the top 45% of the figure), not the canvas centre:
+// a stride shifts the feet but the body should stay put, or the walk jitters sideways.
+const bodyCentre = async f => { const { data, info } = await sharp(path.join(dir, f)).ensureAlpha().raw().toBuffer({ resolveWithObject: true }); const b = boxes[f];
+  let sx = 0, n = 0; for (let y = b.y; y < b.y + b.h * 0.45; y++) for (let x = b.x; x < b.x + b.w; x++) if (data[(y * info.width + x) * 4 + 3] > 128) { sx += x; n++; } return sx / n; };
 for (const f of files) {
   await sharp(path.join(dir, f)).extract({ left: x0, top: y0, width: W, height: H }).png().toFile(path.join(out, f));
-  man.images[`${who}/${f.replace('.png', '')}`] = { width: Math.round(W * k), height: Math.round(H * k), pivot, trim: false };
+  const px = pivotY ? pivot.x : +(((await bodyCentre(f)) - x0) / W).toFixed(4);
+  man.images[`${who}/${f.replace('.png', '')}`] = { width: Math.round(W * k), height: Math.round(H * k), pivot: { x: px, y: pivot.y }, trim: false };
 }
 fs.writeFileSync(manPath, JSON.stringify(man, null, 2) + '\n');
 console.log(`${who}: ${files.length} poses, shared box ${W}x${H}, ${Math.round(W * k)}x${Math.round(H * k)} in game, pivot`, pivot);

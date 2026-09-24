@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { L } from './lines.js';
 import { ui } from './ui.js';
 import { preloadSfx } from './audio.js';
 import { save } from './save.js';
@@ -9,7 +10,7 @@ const base = import.meta.env.BASE_URL;
 export class Boot extends Phaser.Scene {
   constructor() { super('boot'); }
   preload() {
-    ui.loading('Cutting out the street…');
+    ui.loading(L('loading'));
     this.load.json('manifest', `${base}art/manifest.json?v=${__BUILD__}`);
     preloadSfx(this);
   }

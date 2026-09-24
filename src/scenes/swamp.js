@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import data from './swamp.json';
 import { Stage, say, pocket, ui, wait, tween } from '../game/stage.js';
 import { art } from '../game/boot.js';
+import { L } from '../game/lines.js';
 
 // The swamp, as told: the wisps have led them here. She gets stuck in the mud. Barlin knows a little magic:
 // he makes a stick larger, it floats over to her, she pulls herself out. The stick is her first weapon.
@@ -42,7 +43,7 @@ export class Swamp extends Stage {
   }
 
   onGroundTap(wp) {
-    if (this.stuck) { this.busy = true; this.girl.play('stuck'); this.sfx.play('squelch', { volume: 0.4 }); say(this, this.girl, ['mud', 'exclaim'], { height: 250, ms: 1100 }).then(() => { this.busy = false; }); return true; }
+    if (this.stuck) { this.busy = true; this.girl.play('stuck'); this.sfx.play('squelch', { volume: 0.4 }); say(this, this.girl, 'stuck').then(() => { this.busy = false; }); return true; }
     if (wp.x > 3200 && this.freed) { this.walkTo(3150); this.time.delayedCall(2600, () => this.atTheDoor()); return true; }
     return false;
   }
@@ -51,16 +52,17 @@ export class Swamp extends Stage {
     this.stuck = true; this.busy = true; this.frozen = true; this.targetX = this.girlX; this.settle();
     this.sfx.play('squelch'); this.girl.play('stuck');
     await tween(this, { targets: this.girl, y: this.sinkY, duration: 700, ease: 'Quad.In' });
-    await say(this, this.girl, ['mud', 'exclaim'], { height: 250, ms: 1300 });
+    await say(this, this.girl, 'stuck');
+    await say(this, this.girl, 'help-barlin');
     this.barlinAnchor = { x: this.girlX + 140, y: data.groundY - 300 };
-    await say(this, this.barlin, ['question'], { height: 40, ms: 1200 });
+    await say(this, this.barlin, 'little-magic');
     this.busy = false;
   }
 
   async onHot(id, img) {
     if (id === 'stick' && !this.stuck) { return false; }
     if (id === 'barlin-hot' && this.stuck) { await this.magic(); return true; }
-    if (id === 'stick' && this.stuck) { await say(this, this.girl, ['stick', 'no'], { height: 250 }); return true; }
+    if (id === 'stick' && this.stuck) { await say(this, this.girl, 'cant-reach'); return true; }
     return false;
   }
 
@@ -68,7 +70,7 @@ export class Swamp extends Stage {
   async magic() {
     const stick = this.hots.get('stick'); const G = data.groundY;
     this.barlinAnchor = { x: stick.x, y: stick.y - 200 }; this.sfx.play('flutter'); await wait(this, 1400);
-    await say(this, this.barlin, ['magic'], { height: 40, ms: 900 });
+    await say(this, this.barlin, 'hold-on');
     this.sfx.play('grow'); this.sfx.play('chime', { volume: 0.4 });
     const sparkle = this.add.image(stick.x, stick.y, 'forest/wisp').setTint(0xffe28a).setBlendMode(Phaser.BlendModes.ADD).setScale(0.5).setDepth(34);
     this.tweens.add({ targets: sparkle, scale: 3, alpha: 0, duration: 900 });
@@ -87,7 +89,8 @@ export class Swamp extends Stage {
     this.remove(stick); pocket.set('stick'); this.girl.play('idle');
     this.girlX = this.targetX = this.mudZone.to + 90; this.frozen = false; this.stuck = false; this.freed = true; this.setFlag('freed');
     this.barlinAnchor = null;
-    await say(this, this.girl, ['stick', 'heart'], { height: 285, ms: 1300 });
+    await say(this, this.girl, 'thanks-barlin');
+    await say(this, this.girl, 'my-stick');
   }
 
   onArrive(x) { if (x >= 3140 && this.freed && !this.busy) this.atTheDoor(); }
@@ -96,9 +99,9 @@ export class Swamp extends Stage {
     if (this.busy || this.flags.door) return; this.busy = true; this.setFlag('door');
     this.faceTo(3400); this.sfx.play('creak'); this.cameras.main.pan(3000, this.cameras.main.midPoint.y, 1400, 'Sine.easeInOut');
     this.barlinAnchor = { x: 3100, y: data.groundY - 320 };
-    await say(this, this.barlin, ['house', 'question'], { height: 40, ms: 1400 });
-    await say(this, this.girl, ['ear'], { height: 285, ms: 1200 });
-    await ui.card({ title: "The witch's house", text: 'The door is open and the light is on. That\'s as far as the story goes tonight.', buttons: [{ id: 'again', label: 'Back to the street' }], bottom: true });
+    await say(this, this.girl, 'witch-house');
+    await say(this, this.barlin, 'dont-eat');
+    await ui.card({ title: L('witch-title'), text: L('witch-end'), buttons: [{ id: 'again', label: L('back-to-street') }], bottom: true });
     save.set('street.flags', {}); save.set('street.x', 300); save.set('meadow.flags', {}); save.set('forest.x', 400); save.set('swamp.flags', {}); save.set('swamp.x', 300); pocket.set(null);
     this.flags = {}; this.busy = false; await this.go('street', { x: 300 });
   }

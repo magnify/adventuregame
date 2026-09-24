@@ -45,8 +45,8 @@
   {
    "key": "street/tree",
    "x": 1700,
-   "y": 884,
-   "depth": 9,
+   "y": 894,
+   "depth": 4,
    "id": "treeimg"
   }
  ],
@@ -66,16 +66,14 @@
    "depth": 12,
    "react": "hop",
    "sound": "chirp",
-   "bubble": [
-    "heart"
-   ]
+   "line": "miaow"
   },
   {
    "id": "tree",
    "key": "street/tree",
    "x": 1700,
-   "y": 884,
-   "depth": 9,
+   "y": 894,
+   "depth": 4,
    "walkTo": 1560
   },
   {

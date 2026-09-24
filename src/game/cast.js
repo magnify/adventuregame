@@ -39,13 +39,15 @@ export class Girl extends Poses {
     this.t += dt; const t = this.t, m = this.mode;
     if (m === 'walk') {
       // a four-beat step: one foot forward, passing, the other foot forward, passing; a small lift on each pass
-      const rate = 7 * Math.max(0.6, this.stride), beat = Math.floor(t * rate) % 4;
-      this.show(['walk-1', 'stand', 'walk-2', 'stand'][beat]);
+      // one picture per step, alternating feet, paced to her speed so the feet don't skate
+      const rate = 4.2 * Math.max(0.6, this.stride), beat = Math.floor(t * rate) % 2;
+      this.show(beat ? 'walk-2' : 'walk-1');
       const framed = this.has('walk-1');
-      this.pose(0, -Math.abs(Math.sin(t * rate * Math.PI / 2)) * (framed ? 2.5 : 5) * this.stride, framed ? 0 : Math.sin(t * rate * Math.PI / 2) * 0.025);
+      this.pose(0, -Math.abs(Math.sin(t * rate * Math.PI)) * (framed ? 2 : 5) * this.stride, framed ? 0 : Math.sin(t * rate * Math.PI) * 0.025);
     } else if (m === 'climb') {
-      const phase = Math.floor(t * 3) % 2; this.show(phase ? 'climb-2' : 'climb-1');
-      this.pose(0, -Math.abs(Math.sin(t * 3 * Math.PI)) * 4, this.has('climb-1') ? 0 : Math.sin(t * 6) * 0.06);
+      // a scene that knows her pulls sets climbStep, so the reaching hand changes with each pull, not on a timer
+      const phase = this.climbStep !== undefined ? this.climbStep % 2 : Math.floor(t * 3) % 2; this.show(phase ? 'climb-2' : 'climb-1');
+      this.pose(0, 0, this.has('climb-1') ? 0 : Math.sin(t * 6) * 0.06);
     } else if (m === 'reach') { this.show('reach'); this.pose(0, 0, this.has('reach') ? 0 : -0.05); }
     else if (m === 'stuck') { this.show('stuck'); this.pose(0, 0, Math.sin(t * 6) * 0.05); }
     else {

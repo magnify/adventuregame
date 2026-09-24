@@ -106,11 +106,7 @@
    "depth": 12,
    "react": "hop",
    "sound": "chirp",
-   "bubble": [
-    "sun",
-    "sun",
-    "sun"
-   ]
+   "line": "bug-hello"
   },
   {
    "id": "ladybird",
@@ -119,9 +115,7 @@
    "depth": 12,
    "react": "wiggle",
    "sound": "chirp",
-   "bubble": [
-    "heart"
-   ]
+   "line": "bug-hi"
   },
   {
    "id": "cricket",
@@ -130,9 +124,7 @@
    "depth": 12,
    "react": "hop",
    "sound": "chirp",
-   "bubble": [
-    "arrow-right"
-   ]
+   "line": "that-way"
   },
   {
    "id": "stone",
@@ -140,9 +132,7 @@
    "x": 1500,
    "depth": 9,
    "react": "wiggle",
-   "girl": [
-    "look"
-   ]
+   "girlLine": "big-stone"
   }
  ]
 }

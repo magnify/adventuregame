@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import data from './street.json';
 import { Stage, say, pocket, ui, wait, tween } from '../game/stage.js';
 import { art } from '../game/boot.js';
+import { L, language } from '../game/lines.js';
 
 // The opening, as told: she walks down the street, sees something in a tree, climbs, finds a small locked door,
 // looks under the mat, the key fits like a glove, light, the meadow, she's pulled in, the door slams,
@@ -32,7 +33,7 @@ export class Street extends Stage {
     if (this.up) { this.glint.setVisible(false); this.focusOn(this.doorPos.x - 30, this.doorPos.y - 75, 2); this.frozen = true; this.girl.setPosition(this.branchPos.x, this.branchPos.y); this.girlX = this.targetX = this.branchPos.x; }
     if (this.flags.matUp && !pocket.has('key') && !this.flags.through) { mat.setAngle(MAT_UP); key.setVisible(true); }
     this.started = this.flags.begun;
-    if (!this.started) ui.card({ title: 'The Door in the Tree', text: 'Tap things, solve puzzles.', buttons: [{ id: 'go', label: 'Begin' }] }).then(() => { this.started = true; this.setFlag('begun'); });
+    if (!this.started) ui.card({ title: L('title'), text: L('tagline'), buttons: [{ id: 'da', label: 'Dansk' }, { id: 'en', label: 'English' }] }).then(l => { language.set(l); this.started = true; say(this, this.girl, 'whats-that'); this.setFlag('begun'); });
   }
 
   // She climbs the trunk hand over hand, then steps out onto the branch; down is the same in reverse.
@@ -42,11 +43,12 @@ export class Street extends Stage {
     this.frozen = true; this.girl.play('climb');
     const bottom = this.D.groundY, top = this.branchPos.y, pulls = 4;
     for (let i = 1; i <= pulls; i++) {
+      this.girl.climbStep = i; // the other hand reaches up for each pull
       this.sfx.play('step', { rate: 0.8 + i * 0.08, volume: 0.35 });
       await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 340, ease: 'Quad.Out' });
       await wait(this, 110);
     }
-    this.girl.face(-1); this.girl.play('walk');
+    this.girl.climbStep = undefined; this.girl.face(-1); this.girl.play('walk');
     await tween(this, { targets: this.girl, x: this.branchPos.x, duration: 520, ease: 'Sine.InOut' });
     this.girlX = this.targetX = this.branchPos.x; this.girl.play('idle'); this.girl.face(1);
     this.up = true; this.setFlag('up');
@@ -62,9 +64,10 @@ export class Street extends Stage {
     this.girl.play('climb');
     const bottom = this.D.groundY, top = this.branchPos.y, pulls = 3;
     for (let i = pulls - 1; i >= 0; i--) {
-      await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 300, ease: 'Quad.In' });
+      this.girl.climbStep = i; await tween(this, { targets: this.girl, y: bottom + (top - bottom) * i / pulls, duration: 300, ease: 'Quad.In' });
       this.sfx.play('step', { rate: 0.9, volume: 0.35 }); await wait(this, 90);
     }
+    this.girl.climbStep = undefined;
     this.girlX = this.targetX = this.trunkX; this.frozen = false; this.up = false; this.setFlag('up', false); this.girl.play('idle');
   }
 
@@ -77,8 +80,8 @@ export class Street extends Stage {
       // locked, whatever she carries: the key has to be used on it (tap the pocket, then the door, or drag it here)
       await this.climb();
       this.sfx.play('locked'); this.tweens.add({ targets: door, angle: { from: -3, to: 3 }, duration: 70, yoyo: true, repeat: 3, onComplete: () => door.setAngle(0) });
-      if (pocket.has('key')) { pocket.nudge(); await say(this, this.girl, ['key'], { height: 285, ms: 1100 }); }
-      else await say(this, this.girl, ['key', 'question'], { height: 285 });
+      if (pocket.has('key')) { pocket.nudge(); await say(this, this.girl, 'have-key'); }
+      else { await say(this, this.girl, this.flags.triedDoor ? 'where-key' : 'locked'); this.setFlag('triedDoor'); }
       return true;
     }
     if (id === 'mat') {
@@ -93,7 +96,7 @@ export class Street extends Stage {
         this.sfx.play('chime', { volume: 0.45 });
         await tween(this, { targets: key, scale: s0, y: key.y - 10, duration: 260, ease: 'Back.Out' });
         await tween(this, { targets: key, y: key.y + 10, duration: 200, ease: 'Bounce.Out' });
-        this.setFlag('matUp');
+        this.setFlag('matUp'); say(this, this.girl, 'a-key');
       }
       return true;
     }
@@ -123,7 +126,7 @@ export class Street extends Stage {
     pocket.set(null); door.setTexture('street/door-open'); this.sfx.play('creak');
     const light = this.add.image(this.doorPos.x, this.doorPos.y - 42, 'forest/wisp').setTint(0xfff6d0).setBlendMode(Phaser.BlendModes.ADD).setDepth(15).setScale(0.5).setAlpha(0);
     await tween(this, { targets: light, alpha: 1, scale: 6, duration: 900, ease: 'Quad.Out' });
-    await say(this, this.girl, ['meadow', 'exclaim'], { height: 285, ms: 1100 });
+    await say(this, this.girl, 'wow');
     // leaning closer... and pulled through
     this.sfx.play('whoosh');
     await tween(this, { targets: this.girl, x: this.doorPos.x, y: this.doorPos.y, scale: 0.05, duration: 1100, ease: 'Quad.In' });

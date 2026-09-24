@@ -107,9 +107,7 @@
    "depth": 12,
    "react": "wiggle",
    "sound": "creak",
-   "bubble": [
-    "arrow-right"
-   ]
+   "barlinLine": "narrow-path"
   },
   {
    "id": "shroom1",
@@ -138,9 +136,7 @@
    "depth": 12,
    "react": "wiggle",
    "sound": "locked",
-   "girl": [
-    "question"
-   ]
+   "girlLine": "just-a-rock"
   }
  ]
 }

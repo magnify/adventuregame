@@ -105,9 +105,7 @@
    "depth": 12,
    "react": "hop",
    "sound": "chirp",
-   "bubble": [
-    "exclaim"
-   ]
+   "line": "ribbit"
   },
   {
    "id": "stick",
@@ -116,10 +114,7 @@
    "y": 890,
    "depth": 11,
    "walkTo": 1060,
-   "girl": [
-    "stick",
-    "question"
-   ]
+   "girlLine": "a-stick"
   },
   {
    "id": "barlin-hot",

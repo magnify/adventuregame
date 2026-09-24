@@ -144,7 +144,7 @@ export class Stage extends Phaser.Scene {
     try {
       if (!h.noWalk) { await this.walkTo(h.walkTo ?? (img.x - 110 * (img.x > this.girlX ? 1 : -1))); this.faceTo(img.x); }
       const handled = await this.onUse(h.id, item, img);
-      if (!handled) { this.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 90, yoyo: true, repeat: 2, onComplete: () => img.setAngle(0) }); await say(this, this.girl, [item, 'no'], { height: 285 }); }
+      if (!handled) { this.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 90, yoyo: true, repeat: 2, onComplete: () => img.setAngle(0) }); await say(this, this.girl, 'no'); }
     } finally { this.busy = false; }
   }
 
@@ -165,8 +165,9 @@ export class Stage extends Phaser.Scene {
     if (kind === 'wiggle') this.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 90, yoyo: true, repeat: 3, onComplete: () => img.setAngle(0) });
     if (kind === 'hop') this.tweens.add({ targets: img, y: img.y - 40, duration: 180, yoyo: true, ease: 'Quad.Out' });
     if (kind === 'puff') this.tweens.add({ targets: img, scaleX: img.scaleX * 1.25, scaleY: img.scaleY * 0.8, duration: 120, yoyo: true, ease: 'Quad.Out' });
-    if (h.bubble) await say(this, img, h.bubble, { height: img.displayHeight + 10, ms: h.ms || 1500 });
-    if (h.girl) await say(this, this.girl, h.girl, { height: 285 });
+    if (h.line) await say(this, img, h.line);
+    if (h.girlLine) await say(this, this.girl, h.girlLine);
+    if (h.barlinLine && this.barlin?.visible) await say(this, this.barlin, h.barlinLine);
   }
 
   /** Leave for another stage, with a flash of light or a fade to dark. */
