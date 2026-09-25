@@ -7,11 +7,11 @@ export const ui = {
   /** The scrap of paper the loading words sit on. */
   label(l) { let s = l.querySelector('span'); if (!s) { s = document.createElement('span'); l.textContent = ''; l.appendChild(s); } return s; },
   /** Show a card. Returns a promise that resolves with the id of the button pressed. */
-  card({ title, text, buttons = [{ id: 'ok', label: 'Begin' }], suns = false, small = '', bottom = false }) {
+  card({ title, text, buttons = [{ id: 'ok', label: 'Begin' }], suns = false, small = '', bottom = false, top = false }) {
     return new Promise(res => {
       const host = $('ui'); host.innerHTML = '';
-      const card = document.createElement('div'); card.className = 'card' + (bottom ? ' bottom' : '');
-      card.innerHTML = `<div>${suns ? '<div class="suns"><i style="background:#FFD98A"></i><i style="background:#FFB3C6"></i><i style="background:#CFE8FF"></i></div>' : ''}<h1>${title}</h1><p>${text}</p><div class="buttons"></div>${small ? `<p class="small">${small}</p>` : ''}</div>`;
+      const card = document.createElement('div'); card.className = 'card' + (bottom ? ' bottom' : '') + (top ? ' top' : '');
+      card.innerHTML = `<div>${suns ? '<div class="suns"><i style="background:#FFD98A"></i><i style="background:#FFB3C6"></i><i style="background:#CFE8FF"></i></div>' : ''}<h1>${title}</h1>${text ? `<p>${text}</p>` : ''}<div class="buttons"></div>${small ? `<p class="small">${small}</p>` : ''}</div>`;
       const row = card.querySelector('.buttons');
       for (const b of buttons) { const el = document.createElement('button'); el.textContent = b.label; el.addEventListener('click', () => { host.innerHTML = ''; res(b.id); }); row.appendChild(el); }
       host.appendChild(card);

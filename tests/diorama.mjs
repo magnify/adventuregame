@@ -17,7 +17,9 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   await p.reload(); await p.waitForFunction(() => document.body.dataset.ready === '1', null, { timeout: 60000 });
   const step = (n = 1) => p.evaluate(n => window.__dio.step(n).then(() => 0), n);
   const q = f => p.evaluate(f);
-  const shot = async tag => { await p.waitForTimeout(400); await p.screenshot({ path: `${OUT}/${name}-${tag}.png` }); }; // lets the page's own fades finish first
+  // headless Chrome only draws a frame when asked, so the page's own fades would start at the moment of capture:
+  // draw once to start them, let them finish, then capture what a player sees
+  const shot = async tag => { await p.screenshot(); await p.waitForTimeout(700); await p.screenshot({ path: `${OUT}/${name}-${tag}.png` }); };
   const until = async (f, max = 300) => { for (let i = 0; i < max; i++) { if (await q(f)) return true; await step(1); } return false; };
   const tapOn = async thing => { const c = await p.evaluate(t => window.__dio.at(t), thing); await p.mouse.click(c.x, c.y); };
   const tag = s => `${name}: ${s}`;
@@ -39,20 +41,32 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
     await until(() => !document.querySelector('.bubble'), 200);
   };
   const inView = r => r.left >= 0 && r.top >= 0 && r.right <= vp.width && r.bottom <= vp.height;
+  const overlap = (a, b) => Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+  const cardBox = () => q(() => { const r = document.querySelector('#ui .card > div')?.getBoundingClientRect(); return r && { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; });
 
   // ---- the tree grows from its bed of earth: the bottom of its roots is in the soil, not on the stone
   { const tr = await q(() => window.__dio.box('tree')), bd = await q(() => window.__dio.box('bed')), soil = [bd.top + bd.h * 0.2, bd.bottom - bd.h * 0.25];
-    check(tag('tree: roots end in its bed of earth'), tr.bottom >= soil[0] && tr.bottom <= soil[1] && tr.left >= bd.left && tr.right <= bd.right, `roots end at y ${tr.bottom.toFixed(0)}, soil ${soil.map(v => v.toFixed(0)).join('-')}`); }
+    check(tag('tree: roots end in its bed of earth'), tr.bottom >= soil[0] && tr.bottom <= soil[1], `roots end at y ${tr.bottom.toFixed(0)}, soil ${soil.map(v => v.toFixed(0)).join('-')}`); }
 
   // ---- the start card, then her first line
   await step(5); await shot('0-card');
+  // the critic: the card hid her, the tree wasn't in the opening frame, her face was a few pixels, and play is wordless
+  { const c = await cardBox(), g = await q(() => window.__dio.box('girl')), t = await q(() => window.__dio.box('tree'));
+    check(tag('start card clear of her'), overlap(c, g) === 0, overlap(c, g) ? 'the card covers her' : 'she is in view beside it');
+    check(tag('start card has no words to read in play'), await q(() => !document.querySelector('#ui .card p')), 'title and two buttons');
+    const seen = Math.max(0, Math.min(t.right, vp.width) - Math.max(t.left, 0)) / (t.right - t.left);
+    if (name === 'landscape') {
+      const glint = await q(() => window.__dio.glint());
+      check(tag('the tree is in the opening frame'), seen >= 0.6 && glint.x > 0 && glint.x < vp.width && glint.y > 0 && glint.y < vp.height, `${Math.round(seen * 100)}% of the tree in view, the glint in the tree at ${Math.round(glint.x)},${Math.round(glint.y)}`);
+      check(tag('she is big enough to read on the street'), g.h >= vp.height * 0.3, `${Math.round(g.h)} px tall, ${Math.round(g.h / vp.height * 100)}% of the screen`);
+    } }
   check(tag('start card offers Dansk and English'), await q(() => [...document.querySelectorAll('#ui button')].map(b => b.textContent).join('/') === 'Dansk/English'), 'Dansk / English');
   await p.click('#ui button'); await step(2);
   await judge('first line', 'girl', '1-start');
 
   // ---- a real tap on the paving: she walks; the camera turns a little, smoothly, and keeps her in view
   const x0 = await q(() => window.__dio.her.x); const yaws = [], seen = [];
-  await p.mouse.click(vp.width * 0.9, vp.height * 0.72);
+  await p.mouse.click(vp.width * (name === "portrait" ? 0.9 : 0.6), vp.height * 0.72); // open paving, short of the tree
   check(tag('every tap answers where the finger lands'), await q(() => !!document.querySelector('.tapmark')), 'a ring of light at the tap');
   for (let i = 0; i < 90; i++) { await step(1); yaws.push(await q(() => window.__dio.yaw())); seen.push(inView(await q(() => window.__dio.box('girl')))); if (i === 30) await shot('2-walking'); }
   const x1 = await q(() => window.__dio.her.x);
@@ -78,16 +92,22 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   check(tag('lifting the mat shows the key'), await q(() => window.__dio.visible('key')), 'key visible');
   await judge('key found', 'girl', '6-key'); await until(() => !window.__dio.busy(), 200);
   await tapOn('key'); await until(() => window.__dio.pocket.has('key') && !window.__dio.busy(), 200); await step(10); await shot('7-pocket');
-  check(tag('tapping the key puts it in the pocket'), await q(() => window.__dio.pocket.has('key') && !document.getElementById('pocket').classList.contains('empty')), 'in the pocket, shown');
+  await p.waitForTimeout(700); // the pocket fades in on the page's own clock
+  check(tag('tapping the key puts it in the pocket, in sight'), await q(() => { const e = document.getElementById('pocket'), r = e.getBoundingClientRect(), top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return window.__dio.pocket.has('key') && +getComputedStyle(e).opacity > 0.95 && e.contains(top) && r.left > -r.width / 2 && r.bottom <= innerHeight; }), 'in the pocket, and the pocket is on screen, on top');
   await p.click('#pocket'); await step(2); await tapOn('door');
   await judge('door opens', 'girl', '8-wow');
   // the story: a bright light, and when her eyes adjust she sees a meadow through the door
   if (fs.existsSync(`${DIR}/art/street-door-open-meadow.webp`)) { const pic = await q(() => window.__dio.doorPicture()); check(tag('through the open door: the meadow'), pic === 'street-door-open-meadow', `the door shows ${pic}`); }
   else waiting(tag('through the open door: the meadow'), 'the meadow glimpse is being drawn');
+  // then she leans closer and is pulled through, and the camera leans in with her until the door fills the view
+  { let d = null; for (let i = 0; i < 60; i++) { await step(1); const b = await q(() => window.__dio.box('door')); if (!d || b.h > d.h) d = b; }
+    await shot('8b-through'); check(tag('the door fills the view as she goes through'), d.h >= vp.height * 0.4, `door up to ${Math.round(d.h)} px tall`); }
   // after the slam, the key has to be seen falling back under the mat
   let keyBack = 0, through = false;
   for (let i = 0; i < 400 && !through; i++) { await step(1); const r = await q(() => ({ t: window.__dio.flags.through, k: window.__dio.visible('key'), card: !!document.querySelector('#ui .card') })); if (r.t && r.k) keyBack++; through = r.t && r.card; }
   await shot('9-end');
+  { const c = await cardBox(), d = await q(() => window.__dio.box('door')); check(tag('end card clear of the door'), !!c && overlap(c, d) === 0, c ? (overlap(c, d) ? 'the card covers the door' : 'the door stays in view') : 'no end card'); }
   check(tag('pocket, then door: she goes through'), through, through ? 'through, end card shown' : 'did not go through');
   check(tag('the key rattles back under the mat'), keyBack > 5 && await q(() => !window.__dio.visible('key') && Math.abs(window.__dio.mat()) < 0.01), `key seen falling back for ${keyBack} frames, then covered by the mat`);
   if (through) { await p.click('#ui button'); await step(40); check(tag('back to the street starts again'), await q(() => !window.__dio.her.up && !window.__dio.flags.through && window.__dio.visible('girl')), 'reset'); }

@@ -32,7 +32,7 @@ const load = name => fetch(`${base}art/${name}.${name.startsWith('forest') ? 'pn
   }, undefined, rej)));
 addEventListener('unhandledrejection', e => ui.fail(`Couldn't load the street: ${e.reason?.message || e.reason}`));
 ui.loading(L('loading'));
-const names = ['street-sky', 'street-houses', 'street-pavement', 'street-near', 'street-tree', 'street-lamp', 'street-cat',
+const names = ['street-sky', 'street-houses', 'street-pavement', 'street-tree', 'street-lamp', 'street-cat',
   'street-door-closed', 'street-door-open', 'street-mat', 'street-key', 'street-tree-bed', 'forest-wisp',
   'girl-stand', 'girl-stand-blink', 'girl-walk-1', 'girl-walk-2', 'girl-reach'];
 const T = Object.fromEntries(await Promise.all(names.map(async n => [n, await load(n)])));
@@ -80,24 +80,24 @@ scene.add(sun, sun.target);
 const Z = { sky: -30, houses: -3.2, lamp: -2.5, cat: -2.1, tree: -1.3, path: 0, kerb: 1, rail: 5.6 };
 const X0 = -10, X1 = 34, KERB = 0.3;
 // the back of the set is drawn first, so the tree's bed can lie over the paving in front of it
-const sky = card(T['street-sky'], 108, 36, { cast: false, receive: false, lit: false }); sky.position.set(12, -2, Z.sky); sky.renderOrder = -3;
+// raised so the far rooftops and the spire at the foot of the sky picture stand above the houses, a third plane
+const sky = card(T['street-sky'], 108, 36, { cast: false, receive: false, lit: false }); sky.position.set(12, 1.5, Z.sky); sky.renderOrder = -3;
 const houses = card(T['street-houses'], 43, 6.3, { cast: false }); houses.position.set(12, 0, Z.houses); houses.renderOrder = -2;
 // the pavement picture is slabs (rows 0-168), the kerb's face (168-200) and the cobbled road (200-400)
 floor(band(T['street-pavement'], 0, 168, 400, 4.2), X0, X1, Z.houses, Z.kerb, 0);
 card(band(T['street-pavement'], 168, 200, 400, 4.2), X1 - X0, KERB, { cast: false }).position.set((X0 + X1) / 2, -KERB, Z.kerb);
 floor(crop(T['street-pavement'], 200, 400, 4.2, 7), X0, X1, Z.kerb, Z.rail + 9, -KERB); // runs on under the camera
-card(band(T['street-near'], 0, 200, 200, 4.3), X1 - X0, 1).position.set((X0 + X1) / 2, -KERB, Z.rail);
 
-const lamp = card(T['street-lamp'], 0.48, 3); lamp.position.set(8.2, 0, Z.lamp);
-const cat = card(T['street-cat'], 0.81, 0.9); cat.position.set(11.5, 0, Z.cat);
+const lamp = card(T['street-lamp'], 0.48, 3); lamp.position.set(4.4, 0, Z.lamp);
+const cat = card(T['street-cat'], 0.81, 0.9); cat.position.set(7, 0, Z.cat);
 // the tree grows from its own bed of earth cut into the paving. The bed is a picture drawn from above, so it lies over
 // the paving like the game's does (drawn after it, whatever its depth), and the tree stands in it, roots in the soil
-const TREE = { x: 17, y: -0.45, w: 6.37, h: 9.2 }, BED = { top: 0.15, w: 7.6, h: 1.1 };
+const TREE = { x: 11, y: -0.45, w: 6.37, h: 9.2 }, BED = { top: 0.15, w: 7.6, h: 1.1 };
 const bed = card(T['street-tree-bed'], BED.w, BED.h, { py: 0.7, cast: false }); bed.position.set(TREE.x, BED.top - 0.3 * BED.h, Z.tree);
 bed.material.depthTest = false; bed.renderOrder = -1;
 const tree = card(T['street-tree'], TREE.w, TREE.h); tree.position.set(TREE.x, TREE.y, Z.tree); tree.material.depthTest = false;
 const at = (fx, fy) => ({ x: TREE.x - TREE.w / 2 + fx * TREE.w, y: TREE.y + (1 - fy) * TREE.h });
-const doorP = at(0.622, 0.536), branchP = at(0.4, 0.507), trunkX = at(0.53, 0.507).x;
+const doorP = at(0.622, 0.536), branchP = { ...at(0.4, 0.507), y: at(0.4, 0.507).y - 0.08 }, trunkX = at(0.53, 0.507).x;
 const door = card(T['street-door-closed'], 0.56, 0.84, { cast: false }); door.position.set(doorP.x, doorP.y, Z.tree + 0.02);
 // the mat hinges on its left edge, so lifting it tips the right end up like a real doormat; the key lies under its middle
 const MAT_UP = 32 * Math.PI / 180;
@@ -107,8 +107,7 @@ const key = card(T['street-key'], 0.64, 0.2, { py: 0.5, cast: false }); key.posi
 const glint = glow(0xffe28a, 0.9); glint.position.set(doorP.x + 0.12, doorP.y + 0.5, Z.tree + 0.1);
 
 // ---- her: a paper puppet. One picture per pose, a hop in her step, a slight rock; she casts a real shadow
-const girl = card(T['girl-stand'], 1.69, 2.6, { px: 0.457 }); girl.position.set(3, 0, Z.path);
-const START = 3;
+const girl = card(T['girl-stand'], 1.9, 2.92, { px: 0.457 }); const START = 1.5; girl.position.set(START, 0, Z.path);
 const her = { x: START, target: START, v: 0, facing: 1, steps: 0, t: 0, blinkAt: 2.5, up: false, pose: null, shrinking: false };
 const show = k => { if (girl.material.map === T[k]) return; girl.material.map = T[k]; girl.customDepthMaterial.map = T[k]; girl.customDepthMaterial.needsUpdate = true; };
 const flags = { begun: false, matUp: false, triedDoor: false, through: false };
@@ -141,7 +140,7 @@ const headOf = o => () => { const b = screenBox(o), w = b.right - b.left; return
 const talk = (o, line) => { sfx.play('pop', { volume: 0.35 }); return say(headOf(o), line); };
 
 // ---- what she does
-const clampX = x => Math.max(0.8, Math.min(TREE.x + 1.2, x));
+const clampX = x => Math.max(-0.5, Math.min(TREE.x + 1.2, x));
 async function walkTo(x) { her.target = clampX(x); while (Math.abs(her.x - her.target) > 0.02) await wait(30); }
 async function climb() {
   if (her.up) return;
@@ -204,12 +203,13 @@ async function useOn(o) {
   await wait(350);
   if (T['street-door-open-meadow']) { door.material.map = T['street-door-open-meadow']; await tween(p => { light.material.opacity = 1 - 0.75 * p; light.scale.setScalar(4 - 2 * p); }, 0.8); }
   her.pose = null; await talk(girl, 'wow');
-  // leaning closer... and pulled through
+  // leaning closer... and pulled through; the camera leans in with her, until the meadow fills the view
+  cam.closeUp = 2;
   sfx.play('whoosh'); her.shrinking = true; const g0 = girl.position.clone(), f = her.facing;
   await tween(p => { girl.position.lerpVectors(g0, new THREE.Vector3(doorP.x, doorP.y, Z.tree + 0.07), p); girl.scale.set(f * (1 - 0.95 * p), 1 - 0.95 * p, 1); }, 1.1, ease.quadIn);
   girl.visible = false;
   await tween(p => { light.material.opacity = 1 - p; }, 0.3);
-  door.material.map = T['street-door-closed']; sfx.play('slam'); cam.shake = 0.2;
+  door.material.map = T['street-door-closed']; sfx.play('slam'); cam.shake = 0.2; cam.closeUp = 1;
   flags.through = true; scene.remove(light);
   // the key rattles out of the lock and lands neatly under the doormat, which falls back into place and covers it
   key.visible = true; key.scale.setScalar(1); const kFrom = new THREE.Vector3(doorP.x + 0.1, doorP.y + 0.4, Z.tree + 0.06);
@@ -218,7 +218,7 @@ async function useOn(o) {
   await tween(p => { key.position.lerpVectors(kFrom, KEY_AT, p); key.rotation.z = 0.14 + p * Math.PI * 4; }, 0.5, ease.bounceOut);
   await wait(250); key.visible = false; key.rotation.z = 0.14; mat.rotation.z = 0; sfx.play('creak', { rate: 1.8, volume: 0.2 });
   await wait(900);
-  await ui.card({ title: L('title'), text: L('witch-end'), buttons: [{ id: 'again', label: L('back-to-street') }] });
+  await ui.card({ title: L('title'), text: L('witch-end'), buttons: [{ id: 'again', label: L('back-to-street') }], top: true });
   reset();
 }
 function reset() {
@@ -272,22 +272,29 @@ function sampleAlpha(obj, uv) {
 
 function resize() {
   renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight;
-  camera.fov = camera.aspect < 1 ? 62 : camera.aspect < 1.5 ? 44 : 34; camera.updateProjectionMatrix();
+  camera.fov = camera.aspect < 1 ? 52 : camera.aspect < 1.5 ? 42 : 34; camera.updateProjectionMatrix();
 }
 addEventListener('resize', resize); resize();
 
 // ---- the camera looks at a point from a distance, a height and a turn. Along the street it follows her with a
 // little lead and turns a few degrees the way she walks, so the layers slide past each other; up the tree it swings
 // round and in through the leaves to the door. Each setting eases on its own, so the move curves instead of sliding.
-const cam = { closeUp: 0, shake: 0, x: 5, look: new THREE.Vector3(5, 2.4, -1), dist: 16, lift: 0.6, yaw: 0 };
+const cam = { closeUp: 0, shake: 0, x: 6, look: new THREE.Vector3(6, 2.6, -1), dist: 14, lift: 0.6, yaw: 0 };
 const YAW_MAX = 0.2; // radians, about 11 degrees: enough to feel the depth, never enough to see round the paper
 function updateCamera(dt) {
   const k = 1 - Math.exp(-dt * 2.6), kYaw = 1 - Math.exp(-dt * 1.2), close = cam.closeUp;
-  cam.x += (Math.max(4.5, Math.min(19, her.x + her.facing * 1.2)) - cam.x) * k;
-  const look = close ? new THREE.Vector3(doorP.x - 0.9, doorP.y + 1.3, Z.tree) : new THREE.Vector3(cam.x, 2.4, -1);
+  const street = camera.aspect < 1 ? 9.5 : 14; // an upright phone comes closer, so the street fills it instead of sky and cobbles
+  // lead towards where she's going, less on a narrow screen, and never so far that she leaves the frame
+  const halfW = Math.tan(camera.fov * Math.PI / 360) * cam.dist * camera.aspect, lead = 2.5 * Math.min(1, camera.aspect / 1.6);
+  const room = Math.max(0, halfW - 1.3); // how far she can be from the middle with all of her still in the frame
+  const want = Math.max(her.x - room, Math.min(her.x + room, Math.max(6, Math.min(TREE.x + 1, her.x + lead * her.facing))));
+  if (!cam.ready) cam.x = want; // the first frame starts framed on her, no glide in from elsewhere
+  cam.x += (want - cam.x) * k;
+  const look = close === 2 ? new THREE.Vector3(doorP.x, doorP.y + 0.45, Z.tree) : close ? new THREE.Vector3(doorP.x - 0.9, doorP.y + 1.3, Z.tree) : new THREE.Vector3(cam.x, 2.6, -1);
   const drift = Math.sin(clock * 0.35) * (close ? 0.05 : 0.015); // a slow breath, so the layers never sit dead still
-  const yaw = Math.max(-YAW_MAX, Math.min(YAW_MAX, (close ? 0.16 : -her.v / 2.6 * 0.09) + drift));
-  cam.look.lerp(look, k); cam.dist += ((close ? 7 : 16) - cam.dist) * k; cam.lift += ((close ? 0.4 : 0.6) - cam.lift) * k; cam.yaw += (yaw - cam.yaw) * kYaw;
+  const yaw = Math.max(-YAW_MAX, Math.min(YAW_MAX, (close === 2 ? 0.06 : close ? 0.16 : -her.v / 2.6 * 0.09) + drift));
+  if (!cam.ready) { cam.look.copy(look); cam.dist = street; cam.ready = true; }
+  cam.look.lerp(look, k); cam.dist += ((close === 2 ? 2.6 : close ? 7 : street) - cam.dist) * k; cam.lift += ((close ? 0.4 : 0.6) - cam.lift) * k; cam.yaw += (yaw - cam.yaw) * kYaw;
   camera.position.set(cam.look.x + Math.sin(cam.yaw) * cam.dist, cam.look.y + cam.lift, cam.look.z + Math.cos(cam.yaw) * cam.dist);
   if (cam.shake > 0) { cam.shake -= dt; camera.position.x += (Math.random() - 0.5) * 0.06; camera.position.y += (Math.random() - 0.5) * 0.04; }
   camera.lookAt(cam.look);
@@ -323,7 +330,7 @@ function update(dt) {
 pocket.init(); pocket.set(null);
 async function begin() {
   ui.loaded();
-  const l = await ui.card({ title: L('title'), text: L('tagline'), buttons: [{ id: 'da', label: 'Dansk' }, { id: 'en', label: 'English' }] });
+  const l = await ui.card({ title: L('title'), text: '', buttons: [{ id: 'da', label: 'Dansk' }, { id: 'en', label: 'English' }], top: true });
   language.set(l); sfx.unlock(); flags.begun = true; busy = false; talk(girl, 'whats-that');
 }
 
@@ -334,6 +341,7 @@ if (TEST) {
     step: async (n = 1, ms = 1000 / 30) => { for (let i = 0; i < n; i++) { update(ms / 1000); await new Promise(r => setTimeout(r, 0)); } renderer.render(scene, camera); },
     her, cam, flags, pocket, walkTo, descend, busy: () => busy, yaw: () => cam.yaw, mat: () => mat.rotation.z,
     doorPicture: () => Object.keys(T).find(k => T[k] === door.material.map),
+    glint: () => { v3.copy(glint.position).project(camera); return { x: (v3.x + 1) / 2 * innerWidth, y: (1 - v3.y) / 2 * innerHeight }; },
     box: name => screenBox(objs[name]), visible: name => objs[name].visible && (objs[name].material.opacity ?? 1) > 0.05,
     // where to tap a thing: the middle of its picture on screen
     at: name => {
