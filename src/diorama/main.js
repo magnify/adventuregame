@@ -33,7 +33,7 @@ const load = name => fetch(`${base}art/${name}.${name.startsWith('forest') ? 'pn
 addEventListener('unhandledrejection', e => ui.fail(`Couldn't load the street: ${e.reason?.message || e.reason}`));
 ui.loading(L('loading'));
 const names = ['street-sky', 'street-houses', 'street-pavement', 'street-near', 'street-tree', 'street-lamp', 'street-cat',
-  'street-door-closed', 'street-door-open', 'street-mat', 'street-key', 'forest-wisp',
+  'street-door-closed', 'street-door-open', 'street-mat', 'street-key', 'street-tree-bed', 'forest-wisp',
   'girl-stand', 'girl-stand-blink', 'girl-walk-1', 'girl-walk-2', 'girl-reach'];
 const T = Object.fromEntries(await Promise.all(names.map(async n => [n, await load(n)])));
 
@@ -77,8 +77,9 @@ scene.add(sun, sun.target);
 // ---- the set
 const Z = { sky: -30, houses: -3.2, lamp: -2.5, cat: -2.1, tree: -1.3, path: 0, kerb: 1, rail: 5.6 };
 const X0 = -10, X1 = 34, KERB = 0.3;
-card(T['street-sky'], 108, 36, { cast: false, receive: false, lit: false }).position.set(12, -2, Z.sky);
-card(T['street-houses'], 43, 6.3, { cast: false }).position.set(12, 0, Z.houses);
+// the back of the set is drawn first, so the tree's bed can lie over the paving in front of it
+const sky = card(T['street-sky'], 108, 36, { cast: false, receive: false, lit: false }); sky.position.set(12, -2, Z.sky); sky.renderOrder = -3;
+const houses = card(T['street-houses'], 43, 6.3, { cast: false }); houses.position.set(12, 0, Z.houses); houses.renderOrder = -2;
 // the pavement picture is slabs (rows 0-168), the kerb's face (168-200) and the cobbled road (200-400)
 floor(band(T['street-pavement'], 0, 168, 400, 4.2), X0, X1, Z.houses, Z.kerb, 0);
 card(band(T['street-pavement'], 168, 200, 400, 4.2), X1 - X0, KERB, { cast: false }).position.set((X0 + X1) / 2, -KERB, Z.kerb);
@@ -87,9 +88,13 @@ card(band(T['street-near'], 0, 200, 200, 4.3), X1 - X0, 1).position.set((X0 + X1
 
 const lamp = card(T['street-lamp'], 0.48, 3); lamp.position.set(8.2, 0, Z.lamp);
 const cat = card(T['street-cat'], 0.81, 0.9); cat.position.set(11.5, 0, Z.cat);
-const TREE = { x: 17, w: 6.37, h: 9.2 };
-const tree = card(T['street-tree'], TREE.w, TREE.h); tree.position.set(TREE.x, -0.06, Z.tree);
-const at = (fx, fy) => ({ x: TREE.x - TREE.w / 2 + fx * TREE.w, y: -0.06 + (1 - fy) * TREE.h });
+// the tree grows from its own bed of earth cut into the paving. The bed is a picture drawn from above, so it lies over
+// the paving like the game's does (drawn after it, whatever its depth), and the tree stands in it, roots in the soil
+const TREE = { x: 17, y: -0.45, w: 6.37, h: 9.2 }, BED = { top: 0.15, w: 7.6, h: 1.1 };
+const bed = card(T['street-tree-bed'], BED.w, BED.h, { py: 0.7, cast: false }); bed.position.set(TREE.x, BED.top - 0.3 * BED.h, Z.tree);
+bed.material.depthTest = false; bed.renderOrder = -1;
+const tree = card(T['street-tree'], TREE.w, TREE.h); tree.position.set(TREE.x, TREE.y, Z.tree); tree.material.depthTest = false;
+const at = (fx, fy) => ({ x: TREE.x - TREE.w / 2 + fx * TREE.w, y: TREE.y + (1 - fy) * TREE.h });
 const doorP = at(0.622, 0.536), branchP = at(0.4, 0.507), trunkX = at(0.53, 0.507).x;
 const door = card(T['street-door-closed'], 0.56, 0.84, { cast: false }); door.position.set(doorP.x, doorP.y, Z.tree + 0.02);
 // the mat hinges on its left edge, so lifting it tips the right end up like a real doormat; the key lies under its middle
@@ -300,7 +305,7 @@ async function begin() {
 
 if (TEST) {
   // the checks drive time themselves; between frames, promise hand-offs settle as they do between real frames
-  const objs = { girl, door, mat, key, tree, cat, lamp };
+  const objs = { girl, door, mat, key, tree, cat, lamp, bed };
   window.__dio = {
     step: async (n = 1, ms = 1000 / 30) => { for (let i = 0; i < n; i++) { update(ms / 1000); await new Promise(r => setTimeout(r, 0)); } renderer.render(scene, camera); },
     her, cam, flags, pocket, walkTo, descend, busy: () => busy, yaw: () => cam.yaw,

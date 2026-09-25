@@ -39,6 +39,10 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   };
   const inView = r => r.left >= 0 && r.top >= 0 && r.right <= vp.width && r.bottom <= vp.height;
 
+  // ---- the tree grows from its bed of earth: the bottom of its roots is in the soil, not on the stone
+  { const tr = await q(() => window.__dio.box('tree')), bd = await q(() => window.__dio.box('bed')), soil = [bd.top + bd.h * 0.2, bd.bottom - bd.h * 0.25];
+    check(tag('tree: roots end in its bed of earth'), tr.bottom >= soil[0] && tr.bottom <= soil[1] && tr.left >= bd.left && tr.right <= bd.right, `roots end at y ${tr.bottom.toFixed(0)}, soil ${soil.map(v => v.toFixed(0)).join('-')}`); }
+
   // ---- the start card, then her first line
   await step(5); await shot('0-card');
   check(tag('start card offers Dansk and English'), await q(() => [...document.querySelectorAll('#ui button')].map(b => b.textContent).join('/') === 'Dansk/English'), 'Dansk / English');
