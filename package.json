@@ -16,7 +16,8 @@
     "check": "node tools/check-scene.mjs",
     "demo": "vite build --base ./ --outDir dist-demo --emptyOutDir",
     "demo-check": "node tests/demo-check.mjs",
-    "feel": "node tests/feel.mjs"
+    "feel": "node tests/feel.mjs",
+    "diorama": "node tests/diorama.mjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0",

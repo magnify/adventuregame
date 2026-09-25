@@ -4,12 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Street Diorama</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    html, body { margin: 0; height: 100%; background: #e9dcc4; overflow: hidden; touch-action: none; }
+    html, body { margin: 0; height: 100%; overflow: hidden; touch-action: none; }
+    html body { background: #e9dcc4; } /* over the game's night-blue page, which its stylesheet sets on plain body */
     canvas { display: block; width: 100%; height: 100%; }
+    /* the loading screen is the street's own sky with a scrap of paper on it, as in the game */
+    #loading { background: #e9dcc4 url('art/street-sky.webp') center / cover no-repeat; }
+    #ui { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
   </style>
 </head>
 <body>
+  <div id="loading"><span>Cutting out the street…</span></div>
+  <div id="ui"></div>
   <script type="module" src="/src/diorama/main.js"></script>
 </body>
 </html>
