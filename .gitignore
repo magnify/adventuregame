@@ -18,3 +18,4 @@ assets-src/kaykit-*/
 *.log
 dist-demo
 tests/shots/feel/
+tests/shots/diorama/
