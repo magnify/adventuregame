@@ -127,10 +127,20 @@ export class Stage extends Phaser.Scene {
     let direct = null, near = null, nearD = Infinity;
     for (const img of this.hots.values()) {
       if (!img.visible) continue; const b = img.getBounds();
+      // a big picture (a tree) counts only where it's painted, or a tap on the sky or the paving beside it would
+      // climb it; small things keep a generous margin, because small fingers miss
+      const big = b.width * b.height > 120000;
+      if (big) { if (b.contains(wp.x, wp.y) && this.painted(img, b, wp) && (!direct || img.depth > direct.depth)) direct = img; continue; }
       if (b.contains(wp.x, wp.y)) { if (!direct || img.depth > direct.depth) direct = img; continue; }
       if (Phaser.Geom.Rectangle.Inflate(b, 30, 30).contains(wp.x, wp.y)) { const d = Phaser.Math.Distance.Between(wp.x, wp.y, b.centerX, b.centerY); if (d < nearD) { near = img; nearD = d; } }
     }
     return direct || near;
+  }
+  /** Is the picture solid under this point? */
+  painted(img, b, wp) {
+    const u = (wp.x - b.x) / b.width, v = (wp.y - b.y) / b.height, f = img.frame;
+    const a = this.textures.getPixelAlpha(Math.floor((img.flipX ? 1 - u : u) * f.width), Math.floor(v * f.height), img.texture.key);
+    return a == null || a > 40;
   }
   /** Something from the pocket dropped on a screen point. */
   drop(e) {

@@ -206,6 +206,14 @@
         "y": 0
       }
     },
+    "street/tree-bed": {
+      "width": 760,
+      "height": 110,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.3
+      }
+    },
     "street/door-closed": {
       "width": 56,
       "height": 84,
