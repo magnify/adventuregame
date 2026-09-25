@@ -43,10 +43,16 @@
  ],
  "props": [
   {
+   "key": "street/tree-bed",
+   "x": 1700,
+   "y": 913,
+   "depth": 6
+  },
+  {
    "key": "street/tree",
    "x": 1700,
-   "y": 894,
-   "depth": 4,
+   "y": 940,
+   "depth": 7,
    "id": "treeimg"
   }
  ],
@@ -72,8 +78,8 @@
    "id": "tree",
    "key": "street/tree",
    "x": 1700,
-   "y": 894,
-   "depth": 4,
+   "y": 940,
+   "depth": 7,
    "walkTo": 1560
   },
   {

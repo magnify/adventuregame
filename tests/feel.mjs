@@ -101,12 +101,20 @@ await step(10); await p.click('#ui button', { timeout: 15000 }); await step(20);
   const withTree = await shot(); await q(`${trees}.forEach(o => o.setAlpha(0))`); await p.evaluate(() => window.__step(1, 0.01)); const without = await shot();
   await q(`void (${trees}.forEach(o => o.setAlpha(1)), s.girl.setVisible(true), s.glint?.setVisible(true))`); await step(1);
   await sharp(without.data, { raw: without.info }).png().toFile(`${OUT}/tree-without.png`); await sharp(withTree.data, { raw: withTree.info }).png().toFile(`${OUT}/tree-with.png`);
-  let lowest = 0; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 3; if (Math.abs(withTree.data[i] - without.data[i]) + Math.abs(withTree.data[i + 1] - without.data[i + 1]) > 30) lowest = Math.max(lowest, y); }
-  check('tree: no part of it on the pavement', lowest <= pave + 2, `tree reaches y ${lowest}, pavement starts at y ${Math.round(pave)}`);
-  // Brian: a tree on the pavement is standing on stone. It has to grow from its own bed of earth.
-  const bed = await q(`s.textures.exists('street/tree-bed') && (() => { const o = s.props.find(o => o.texture.key === 'street/tree-bed'); if (!o) return null; const g = o.getBounds(), v = s.cameras.main.worldView, z = s.cameras.main.zoom; return { top: (g.top - v.y) * z, bottom: (g.bottom - v.y) * z }; })()`);
-  if (!bed) waiting('tree: grows from a bed of earth', 'no tree bed in the street yet: the art is with GPT');
-  else check('tree: grows from a bed of earth', lowest >= bed.top && lowest <= bed.bottom, `roots end at y ${lowest}, bed spans ${Math.round(bed.top)}-${Math.round(bed.bottom)}`);
+  // every pixel the tree adds; the lowest row, and how far across it spreads below the pavement's top edge
+  let lowest = 0, l = W, r = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 3; if (Math.abs(withTree.data[i] - without.data[i]) + Math.abs(withTree.data[i + 1] - without.data[i + 1]) > 30) { lowest = Math.max(lowest, y); if (y > pave + 2) { l = Math.min(l, x); r = Math.max(r, x); } } }
+  // Brian: a tree on the pavement is standing on stone. It grows from its own bed of earth: its roots end in the soil,
+  // and nothing of it touches the paving outside the bed
+  const bed = await q(`s.textures.exists('street/tree-bed') && (() => { const o = s.props.find(o => o.texture.key === 'street/tree-bed'); if (!o) return 'missing'; const g = o.getBounds(), v = s.cameras.main.worldView, z = s.cameras.main.zoom; return { top: (g.top - v.y) * z, bottom: (g.bottom - v.y) * z, left: (g.left - v.x) * z, right: (g.right - v.x) * z }; })()`);
+  if (!bed) waiting('tree: grows from a bed of earth', 'no tree bed art yet: the job is with GPT');
+  else if (bed === 'missing') check('tree: grows from a bed of earth', false, 'the bed art is in, but not placed in the street');
+  else {
+    check('tree: roots end in the bed', lowest >= bed.top + (bed.bottom - bed.top) * 0.2 && lowest <= bed.bottom - (bed.bottom - bed.top) * 0.25, `roots end at y ${lowest}, soil between ${Math.round(bed.top + (bed.bottom - bed.top) * 0.2)} and ${Math.round(bed.bottom - (bed.bottom - bed.top) * 0.25)}`);
+    const skyTap = await q(`(() => { const t = s.hots.get('tree'), b = t.getBounds(); return s.hotAt({ x: b.left + 12, y: b.top + 12 })?.hot?.id ?? null; })()`);
+    check('tree: a tap on the sky beside it is not the tree', skyTap !== 'tree', `tap at the corner of its picture: ${skyTap ?? 'nothing'}`);
+    check('tree: nothing of it on the paving', r < l || (l >= bed.left && r <= bed.right), r < l ? 'nothing below the pavement edge' : `below the pavement edge it spans x ${l}-${r}, bed spans ${Math.round(bed.left)}-${Math.round(bed.right)}`);
+  }
 }
 
 // ---- 3. up the tree: she fades at the foot of the trunk and appears on the branch; never seen halfway up
