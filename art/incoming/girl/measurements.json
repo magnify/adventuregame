@@ -1,0 +1,138 @@
+{
+  "girl-sheet": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      251,
+      87,
+      788,
+      1473
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "head": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      105,
+      145,
+      884,
+      810
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "head-blink": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      106,
+      145,
+      884,
+      810
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "body": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      125,
+      168,
+      940,
+      1305
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "arm-front": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      375,
+      269,
+      642,
+      1213
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "arm-back": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      347,
+      142,
+      684,
+      1319
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "leg-front": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      288,
+      63,
+      847,
+      1431
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  },
+  "leg-back": {
+    "canvas": [
+      1024,
+      1536
+    ],
+    "bounds_alpha_gt_128": [
+      288,
+      63,
+      847,
+      1431
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "fully_opaque_pixels": 0
+  }
+}
