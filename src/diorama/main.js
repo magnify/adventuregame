@@ -17,9 +17,13 @@ const scene = new THREE.Scene(); scene.background = new THREE.Color(0xe9dcc4);
 const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 200);
 
 const loader = new THREE.TextureLoader();
-const load = name => new Promise((res, rej) => loader.load(`${base}art/${name}.webp?v=${__BUILD__}`, t => {
-  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); res(t);
-}, undefined, rej));
+// fetched as data first (as the game does), so pictures from a different file host still draw and can be read back
+const load = name => fetch(`${base}art/${name}.webp?v=${__BUILD__}`).then(r => { if (!r.ok) throw new Error(`${name}: ${r.status}`); return r.blob(); })
+  .then(b => new Promise((res, rej) => loader.load(URL.createObjectURL(b), t => {
+    t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); res(t);
+  }, undefined, rej)));
+// if anything fails to load, say so on the page instead of showing an empty box
+addEventListener('unhandledrejection', e => { document.body.insertAdjacentHTML('beforeend', `<p style="position:fixed;inset:auto 16px 16px;font:16px sans-serif;color:#5a4636">Couldn't load the street: ${e.reason?.message || e.reason}</p>`); });
 /** A horizontal band of a picture (rows a..b of h), repeated across. */
 const band = (t, a, b, h, rep = 1) => { const c = t.clone(); c.wrapS = THREE.RepeatWrapping; c.repeat.set(rep, (b - a) / h); c.offset.set(0, 1 - b / h); c.needsUpdate = true; return c; };
 

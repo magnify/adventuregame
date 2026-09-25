@@ -11,6 +11,11 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   await p.goto(`http://localhost:${PORT}/diorama.html?test`); await p.waitForFunction(() => document.body.dataset.ready === '1', null, { timeout: 60000 });
   const step = n => p.evaluate(n => window.__dio.step(n).then(() => 0), n); const shot = tag => p.screenshot({ path: `${OUT}/${name}-${tag}.png` });
   await step(60); await shot('1-start');
+  // a real tap on the paving, far right: she has to walk towards it
+  const x0 = await p.evaluate(() => window.__dio.her.x);
+  await p.mouse.click(vp.width * 0.9, vp.height * 0.7); await step(45);
+  const x1 = await p.evaluate(() => window.__dio.her.x);
+  if (!(x1 > x0 + 0.5)) errs.push(`${name}: a tap on the paving did not move her (${x0.toFixed(2)} -> ${x1.toFixed(2)})`); else console.log(`${name}: tap-walk ${x0.toFixed(2)} -> ${x1.toFixed(2)} OK`);
   if (name === 'portrait') { await p.close(); continue; }
   await p.evaluate(() => void window.__dio.walkTo(9)); await step(40); await shot('2-walking');
   await step(90); await shot('3-by-the-lamp');
