@@ -8,4 +8,5 @@ brief="${1:?usage: tools/codex-art.sh \"<brief>\" [reference image ...]}"; shift
 status="$(env -u OPENAI_API_KEY -u CODEX_API_KEY codex login status 2>&1 || true)"
 case "$status" in *"Logged in using ChatGPT"*) ;; *) echo "codex-art: not signed in with the ChatGPT subscription ($status); run 'codex login' and choose ChatGPT" >&2; exit 1;; esac
 refs=(); for f in "$@"; do refs+=(-i "$f"); done
-exec env -u OPENAI_API_KEY -u CODEX_API_KEY codex exec -c forced_login_method='"chatgpt"' -C "$(cd "$(dirname "$0")/.." && pwd)" -s workspace-write ${refs[@]+"${refs[@]}"} "$brief"
+# the brief goes in on stdin: after -i, Codex would read it as one more image
+printf '%s' "$brief" | env -u OPENAI_API_KEY -u CODEX_API_KEY codex exec -c forced_login_method='"chatgpt"' -C "$(cd "$(dirname "$0")/.." && pwd)" -s workspace-write ${refs[@]+"${refs[@]}"}

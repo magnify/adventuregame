@@ -230,6 +230,14 @@
         "y": 1
       }
     },
+    "street/door-open-meadow": {
+      "width": 56,
+      "height": 84,
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
     "street/mat": {
       "width": 112,
       "height": 14,

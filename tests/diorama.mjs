@@ -8,6 +8,7 @@ const DIR = process.argv[2] || 'dist-demo', OUT = 'tests/shots/diorama', PORT = 
 const srv = spawn('python3', ['-m', 'http.server', String(PORT), '--directory', DIR], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 1200));
 const b = await launch(); const errs = [], results = [];
+const waiting = (name, detail) => console.log(`wait  ${name.padEnd(46)} ${detail}`); // its fix is waiting on art; shown, never skipped silently
 const check = (name, ok, detail) => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name.padEnd(46)} ${detail}`); };
 
 for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait', { width: 390, height: 844 }]]) {
@@ -52,6 +53,7 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   // ---- a real tap on the paving: she walks; the camera turns a little, smoothly, and keeps her in view
   const x0 = await q(() => window.__dio.her.x); const yaws = [], seen = [];
   await p.mouse.click(vp.width * 0.9, vp.height * 0.72);
+  check(tag('every tap answers where the finger lands'), await q(() => !!document.querySelector('.tapmark')), 'a ring of light at the tap');
   for (let i = 0; i < 90; i++) { await step(1); yaws.push(await q(() => window.__dio.yaw())); seen.push(inView(await q(() => window.__dio.box('girl')))); if (i === 30) await shot('2-walking'); }
   const x1 = await q(() => window.__dio.her.x);
   check(tag('a tap on the paving walks her there'), x1 > x0 + 1, `${x0.toFixed(2)} -> ${x1.toFixed(2)}`);
@@ -79,8 +81,15 @@ for (const [name, vp] of [['landscape', { width: 960, height: 540 }], ['portrait
   check(tag('tapping the key puts it in the pocket'), await q(() => window.__dio.pocket.has('key') && !document.getElementById('pocket').classList.contains('empty')), 'in the pocket, shown');
   await p.click('#pocket'); await step(2); await tapOn('door');
   await judge('door opens', 'girl', '8-wow');
-  const through = await until(() => window.__dio.flags.through && !!document.querySelector('#ui .card'), 400); await shot('9-end');
+  // the story: a bright light, and when her eyes adjust she sees a meadow through the door
+  if (fs.existsSync(`${DIR}/art/street-door-open-meadow.webp`)) { const pic = await q(() => window.__dio.doorPicture()); check(tag('through the open door: the meadow'), pic === 'street-door-open-meadow', `the door shows ${pic}`); }
+  else waiting(tag('through the open door: the meadow'), 'the meadow glimpse is being drawn');
+  // after the slam, the key has to be seen falling back under the mat
+  let keyBack = 0, through = false;
+  for (let i = 0; i < 400 && !through; i++) { await step(1); const r = await q(() => ({ t: window.__dio.flags.through, k: window.__dio.visible('key'), card: !!document.querySelector('#ui .card') })); if (r.t && r.k) keyBack++; through = r.t && r.card; }
+  await shot('9-end');
   check(tag('pocket, then door: she goes through'), through, through ? 'through, end card shown' : 'did not go through');
+  check(tag('the key rattles back under the mat'), keyBack > 5 && await q(() => !window.__dio.visible('key') && Math.abs(window.__dio.mat()) < 0.01), `key seen falling back for ${keyBack} frames, then covered by the mat`);
   if (through) { await p.click('#ui button'); await step(40); check(tag('back to the street starts again'), await q(() => !window.__dio.her.up && !window.__dio.flags.through && window.__dio.visible('girl')), 'reset'); }
   await p.close();
 }

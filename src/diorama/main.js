@@ -36,6 +36,8 @@ const names = ['street-sky', 'street-houses', 'street-pavement', 'street-near', 
   'street-door-closed', 'street-door-open', 'street-mat', 'street-key', 'street-tree-bed', 'forest-wisp',
   'girl-stand', 'girl-stand-blink', 'girl-walk-1', 'girl-walk-2', 'girl-reach'];
 const T = Object.fromEntries(await Promise.all(names.map(async n => [n, await load(n)])));
+// pictures the scene can do without until they're drawn: the meadow seen through the open door
+for (const n of ['street-door-open-meadow']) { try { T[n] = await load(n); } catch {} }
 
 /** A horizontal band of a picture (rows a..b of h), repeated across. */
 const band = (t, a, b, h, rep = 1) => { const c = t.clone(); c.wrapS = THREE.RepeatWrapping; c.repeat.set(rep, (b - a) / h); c.offset.set(0, 1 - b / h); c.needsUpdate = true; return c; };
@@ -198,6 +200,9 @@ async function useOn(o) {
   pocket.set(null); door.material.map = T['street-door-open']; sfx.play('creak');
   const light = glow(0xfff6d0, 0.4); light.position.set(doorP.x, doorP.y + 0.42, Z.tree + 0.12); light.material.opacity = 0;
   await tween(p => { light.material.opacity = p; light.scale.setScalar(0.4 + 3.6 * p); }, 0.9, ease.quadOut);
+  // a bright light blinds her for a moment; when her eyes adjust she sees a meadow
+  await wait(350);
+  if (T['street-door-open-meadow']) { door.material.map = T['street-door-open-meadow']; await tween(p => { light.material.opacity = 1 - 0.75 * p; light.scale.setScalar(4 - 2 * p); }, 0.8); }
   her.pose = null; await talk(girl, 'wow');
   // leaning closer... and pulled through
   sfx.play('whoosh'); her.shrinking = true; const g0 = girl.position.clone(), f = her.facing;
@@ -206,7 +211,13 @@ async function useOn(o) {
   await tween(p => { light.material.opacity = 1 - p; }, 0.3);
   door.material.map = T['street-door-closed']; sfx.play('slam'); cam.shake = 0.2;
   flags.through = true; scene.remove(light);
-  await wait(700);
+  // the key rattles out of the lock and lands neatly under the doormat, which falls back into place and covers it
+  key.visible = true; key.scale.setScalar(1); const kFrom = new THREE.Vector3(doorP.x + 0.1, doorP.y + 0.4, Z.tree + 0.06);
+  sfx.play('pick', { rate: 0.8 });
+  tween(p => { mat.rotation.z = MAT_UP * Math.sin(p * Math.PI); }, 0.7, ease.lin);
+  await tween(p => { key.position.lerpVectors(kFrom, KEY_AT, p); key.rotation.z = 0.14 + p * Math.PI * 4; }, 0.5, ease.bounceOut);
+  await wait(250); key.visible = false; key.rotation.z = 0.14; mat.rotation.z = 0; sfx.play('creak', { rate: 1.8, volume: 0.2 });
+  await wait(900);
   await ui.card({ title: L('title'), text: L('witch-end'), buttons: [{ id: 'again', label: L('back-to-street') }] });
   reset();
 }
@@ -217,6 +228,17 @@ function reset() {
   mat.rotation.z = 0; key.visible = false; key.scale.setScalar(1); key.position.copy(KEY_AT); key.rotation.z = 0.14;
   glint.material.opacity = 1; cam.closeUp = 0; pocket.set(null);
 }
+
+// ---- every tap answers at once: a ring of paper light where the finger landed, and a small squash of the thing tapped
+const mark = document.createElement('style');
+mark.textContent = `.tapmark { position: fixed; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; border: 5px solid rgba(255, 246, 230, .9);
+  box-sizing: border-box; pointer-events: none; z-index: 2; animation: tapmark .42s ease-out forwards; }
+.tapmark.on { border-color: rgba(255, 230, 168, .9); }
+@keyframes tapmark { to { transform: scale(2.2); opacity: 0; } }`;
+document.head.appendChild(mark);
+function tapMark(x, y, on) { const el = document.createElement('div'); el.className = 'tapmark' + (on ? ' on' : ''); el.style.left = `${x}px`; el.style.top = `${y}px`; document.body.appendChild(el); setTimeout(() => el.remove(), 600); }
+const nodding = new Set();
+function nod(o) { if (nodding.has(o)) return; nodding.add(o); const sx = o.scale.x, sy = o.scale.y; tween(p => { const k = Math.sin(p * Math.PI); o.scale.set(sx * (1 + 0.06 * k), sy * (1 - 0.06 * k), 1); }, 0.18, ease.lin).then(() => { o.scale.set(sx, sy, 1); nodding.delete(o); }); }
 
 // ---- taps: a thing if one is under the finger (its clear parts don't count), otherwise the ground
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -231,6 +253,7 @@ const run = async f => { busy = true; try { await f(); } finally { busy = false;
 function tap(cx, cy) {
   sfx.unlock(); if (busy) return;
   const { hit, groundAt } = pick(cx, cy);
+  tapMark(cx, cy, !!hit); if (hit && hit !== tree) nod(hit);
   if (pocket.held) { pocket.setHeld(false); if (hit) { run(() => useOn(hit)); return; } }
   if (her.up && (!hit || hit === tree)) { if (groundAt) run(async () => { await descend(); her.target = clampX(groundAt.x); }); return; }
   if (hit) { run(act[named.get(hit)]); return; }
@@ -282,7 +305,8 @@ function update(dt) {
   const walking = Math.abs(her.v) > 0.15; her.t += dt;
   if (!her.shrinking) {
     if (walking) {
-      her.steps += Math.abs(her.v) * dt * 1.7; show(Math.floor(her.steps) % 2 ? 'girl-walk-2' : 'girl-walk-1');
+      const was = Math.floor(her.steps); her.steps += Math.abs(her.v) * dt * 1.7; show(Math.floor(her.steps) % 2 ? 'girl-walk-2' : 'girl-walk-1');
+    if (Math.floor(her.steps) !== was) sfx.play('step', { volume: 0.22, rate: 0.9 + Math.random() * 0.2 });
       girl.position.y = (her.up ? branchP.y : 0) + Math.abs(Math.sin(her.steps * Math.PI)) * 0.05; girl.rotation.z = Math.sin(her.steps * Math.PI) * 0.03 * her.facing;
     } else {
       her.steps = 0; girl.rotation.z = 0; girl.position.y = her.up ? branchP.y : 0;
@@ -308,7 +332,8 @@ if (TEST) {
   const objs = { girl, door, mat, key, tree, cat, lamp, bed };
   window.__dio = {
     step: async (n = 1, ms = 1000 / 30) => { for (let i = 0; i < n; i++) { update(ms / 1000); await new Promise(r => setTimeout(r, 0)); } renderer.render(scene, camera); },
-    her, cam, flags, pocket, walkTo, descend, busy: () => busy, yaw: () => cam.yaw,
+    her, cam, flags, pocket, walkTo, descend, busy: () => busy, yaw: () => cam.yaw, mat: () => mat.rotation.z,
+    doorPicture: () => Object.keys(T).find(k => T[k] === door.material.map),
     box: name => screenBox(objs[name]), visible: name => objs[name].visible && (objs[name].material.opacity ?? 1) > 0.05,
     // where to tap a thing: the middle of its picture on screen
     at: name => {
